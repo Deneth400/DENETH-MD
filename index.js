@@ -159,7 +159,7 @@ conn.sendFileUrl = async (jid, url, caption, quoted, options = {}) => {
               }
             }
         //============================btn fuction============================================
-conn.sendButtonMessage = async (jid, quoted, opts = {}) => {
+conn.sendMessage = async (jid, quoted, opts = {}) => {
     
         let documentMessage = {
             url: 'https://mmg.whatsapp.net/v/t62.7119-24/32511132_500473132560305_5925723291063172577_n.enc?ccb=11-4&oh=01_Q5AaIKnXNmUWgmxyNn_1uxfEnGyiI-eCZ-BMRZdX3O2jhQq2&oe=66BE7A32&_nc_sid=5e03e0&mms3=true',
@@ -171,53 +171,22 @@ conn.sendButtonMessage = async (jid, quoted, opts = {}) => {
             fileEncSha256: 'K+Bkh4AGLJTffSvs63DuMZumwquU014W8XsaWvfakPM=',
             directPath: '/v/t62.7119-24/32511132_500473132560305_5925723291063172577_n.enc?ccb=11-4&oh=01_Q5AaIKnXNmUWgmxyNn_1uxfEnGyiI-eCZ-BMRZdX3O2jhQq2&oe=66BE7A32&_nc_sid=5e03e0',
         };
-
                 let message = generateWAMessageFromContent(jid, {
-                    viewOnceMessage: {
-                        message: {
-                            messageContextInfo: {
-                                deviceListMetadata: {},
-                                deviceListMetadataVersion: 2,
-                            },
                             interactiveMessage: {
                                 body: {
                                     text: opts && opts.body ? opts.body : ''
-                                },
-                                footer: {
-                                    text: opts && opts.footer ? opts.footer : ''
                                 },
                                 header: {
                                     title: opts && opts.header ? opts.header : '',
                                     hasMediaAttachment: true,
                                     documentMessage,
                                 },
-                                nativeFlowMessage: {
-                                    buttons: buttons,
-                                    messageParamsJson: ''
-                                },
                             contextInfo: {
-                              mentionedJid: ['0@s.whatsapp.net'],
                               forwardingScore: 999,
                               isForwarded: true,
-                              forwardedNewsletterMessageInfo: {
-                                newsletterJid: '120363192956026815@newsletter',
-                                newsletterName: "😼ＫＥＮＺＩ-ＭＤ🤍",
-                                serverMessageId: 999
                             },
-                            externalAdReply: {
-                                mediaType: 1,
-                                previewType: 1,
-                                renderLargerThumbnail: true,
-                                sourceUrl: "https://whatsapp.com/channel/0029Va8f3smKWEKvPUzXQv34" ,
-                                thumbnailUrl: opts && opts.image ? opts.image : 'https://8030.us.kg/file/mKXIMtf1PF1i.jpg' ,
-                                title: 'Qᴜᴇᴇɴ-ᴋᴇɴᴢɪ ᴍᴅ ᴠ2',
-                                body: 'ᴀ ꜱɪᴍᴘʟᴇ ᴡʜᴀᴛꜱᴀᴘᴘ ʙᴏᴛ'
-                            }
                         }
-                            }
-                        }
-                    }
-                },{
+                            },{
                     quoted: quoted
                 })
                 //await conn.sendPresenceUpdate('composing', jid)
