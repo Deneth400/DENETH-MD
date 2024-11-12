@@ -35,6 +35,7 @@ return await conn.sendMessage(
                         isForwarded: true,
                         },
                     {image: {url: `https://github.com/Deneth400/DENETH-MD-HARD/blob/main/Images/Connect.jpg?raw=true`}
+                },
                         
                     },
                 },
