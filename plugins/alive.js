@@ -34,11 +34,7 @@ return await conn.sendMessage(
                         forwardingScore: 999,
                         isForwarded: true,
                         },
-                    {image: {url: `https://github.com/Deneth400/DENETH-MD-HARD/blob/main/Images/Connect.jpg?raw=true`}
-                },
-                        
-                    },
-                },
+                    image: {url: `https://github.com/Deneth400/DENETH-MD-HARD/blob/main/Images/Connect.jpg?raw=true`}},            
                 { quoted: mek },
             );
 }catch(e){
