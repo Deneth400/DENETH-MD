@@ -207,7 +207,7 @@ conn.sendButtonMessage = async (jid, buttons, quoted, opts = {}) => {
                             }
                         }
                     }
-                },{
+                ,{
                     quoted: quoted
                 })
                 //await conn.sendPresenceUpdate('composing', jid)
