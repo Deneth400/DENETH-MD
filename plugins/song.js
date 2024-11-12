@@ -55,7 +55,7 @@ async (conn, mek, m, { from, q, reply }) => {
         const prog = await fetchJson(`https://api-pink-venom.vercel.app/api/ytmp3?url=${q}`);
         
         if (prog && prog.result && prog.result.download_url) {
-            const audioUrl = prog.result.download_url; // Get the audio download URL
+            const audioUrl = ${result.url}; // Get the audio download URL
             await conn.sendMessage(from, { audio: { url: audioUrl }, mimetype: 'audio/mpeg' }, { quoted: mek });
             reply('🎶 Audio download started.');
         } else {
