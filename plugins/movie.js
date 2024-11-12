@@ -52,11 +52,13 @@ async (conn, mek, m, { from, q, reply }) => {
         msg += `Release Date: ${movie.release_date}\n`;
         msg += `IMDb Rating: ${movie.IMDb_Rating}\n`;
         msg += `Director: ${movie.director.name}\n\n`;
-        msg += `*ᴍᴇᴅᴢ-ᴍᴅ ʙʏ ɴᴇᴛʜᴍɪᴋᴀᴛᴇᴄʜ*\n\n`;
-        msg += "Available formats:\n - SD 420\n - HD 720\n - FHD 1080\n\n";
-        msg += "Use `.mv <format> <movie_link>` to download.";
+        msg += `ᴅᴇɴᴇᴛʜ-ᴍᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ\n\n`;
+        msg += "Available formats:\n 🔰 𝗦𝗗 𝟰𝟴𝟬\n 🔰 𝗛𝗗 𝟳𝟮𝟬\n 🔰 𝗙𝗛𝗗 𝟭𝟬𝟴𝟬\n\n";
+        msg += "Use `.mv <quality> <movie_link>` to download.";
 
-        await conn.sendMessage(from, { text: msg }, { quoted: mek });
+         const imageUrl = movie.images && movie.images.length > 0 ? movie.images[0] : null;
+
+        await conn.sendMessage(from, {image: {url: imageUrl},{ text: msg }, { quoted: mek });
     } catch (e) {
         console.log(e);
         reply('*Error !!*');
