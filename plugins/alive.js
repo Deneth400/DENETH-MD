@@ -3,6 +3,7 @@ const {cmd , commands} = require('../command')
 
 cmd({
     pattern: "alive",
+    react: "👋",
     desc: "Check bot online or no.",
     category: "main",
     filename: __filename
@@ -14,6 +15,13 @@ let alive = `👋 Hey ${pushnam}, I Aᴍ Aʟɪᴠᴇ Nᴏᴡ
 
 𝗜 𝗮𝗺 *𝗗𝗘𝗡𝗘𝗧𝗛-𝗠𝗗* 𝗪𝗵𝗮𝘁𝘀𝗔𝗽𝗽 𝗕𝗼𝘁
 
+> ʙᴏᴛ ɴᴀᴍᴇ : ᴅᴇɴᴇᴛʜ-ᴍᴅ ᴠ1
+> ᴜᴘᴛɪᴍᴇ : ${runtime(process.uptime())}
+> ʀᴀᴍ ᴜꜱᴀɢᴇ : ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)}MB / ${Math.round(require('os').totalmem / 1024 / 1024)}MB
+> ʜᴏꜱᴛ ɴᴀᴍᴇ : ${os.hostname()}
+> ᴏᴡɴᴇʀ : ᴅᴇɴᴇᴛʜ-xᴅ
+
+> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®
 `
     
 return await conn.sendMessage(from,{image: {url: config.ALIVE_IMG},caption: config.ALIVE_MSG},{quoted: mek})
