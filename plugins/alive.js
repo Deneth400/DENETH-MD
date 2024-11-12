@@ -24,7 +24,7 @@ let alive = `👋 Hey ${pushnam}, I Aᴍ Aʟɪᴠᴇ Nᴏᴡ
 > ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®
 `
     
-return await conn.sendMessage(from,{image: {url: config.ALIVE_IMG},caption: config.ALIVE_MSG},{quoted: mek})
+return await conn.sendMessage(from,{image: {url: config.ALIVE_IMG},caption: alive},{quoted: mek})
 }catch(e){
 console.log(e)
 reply(`${e}`)
