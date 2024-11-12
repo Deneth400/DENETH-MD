@@ -11,7 +11,7 @@ cmd({
 async(conn, mek, m,{from, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply}) => {
 try{
 
-let alive = `👋 Hey ${pushnam}, I Aᴍ Aʟɪᴠᴇ Nᴏᴡ
+let desc = `👋 Hey ${pushnam}, I Aᴍ Aʟɪᴠᴇ Nᴏᴡ
 
 𝗜 𝗮𝗺 *𝗗𝗘𝗡𝗘𝗧𝗛-𝗠𝗗* 𝗪𝗵𝗮𝘁𝘀𝗔𝗽𝗽 𝗕𝗼𝘁
 
@@ -21,10 +21,9 @@ let alive = `👋 Hey ${pushnam}, I Aᴍ Aʟɪᴠᴇ Nᴏᴡ
 > ʜᴏꜱᴛ ɴᴀᴍᴇ : ${os.hostname()}
 > ᴏᴡɴᴇʀ : ᴅᴇɴᴇᴛʜ-xᴅ
 
-> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®
-`
+> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`
     
-return await conn.sendMessage(from,{image: {url: config.ALIVE_IMG},caption: alive},{quoted: mek})
+return await conn.sendMessage(from,{image: {url: config.ALIVE_IMG},caption: desc},{quoted: mek})
 }catch(e){
 console.log(e)
 reply(`${e}`)
