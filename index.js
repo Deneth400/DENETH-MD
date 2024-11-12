@@ -39,7 +39,7 @@ const port = process.env.PORT || 8000;
 //=============================================
 
 async function connectToWA() {
-console.log("Connecting...");
+console.log("Connecting...🔄");
 const { state, saveCreds } = await useMultiFileAuthState(__dirname + '/auth_info_baileys/')
 var { version } = await fetchLatestBaileysVersion()
 
@@ -59,15 +59,15 @@ if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
 connectToWA()
 }
 } else if (connection === 'open') {
-console.log('😼 Installing... ')
+console.log('Plugins Installing...🔄')
 const path = require('path');
 fs.readdirSync("./plugins/").forEach((plugin) => {
 if (path.extname(plugin).toLowerCase() == ".js") {
 require("./plugins/" + plugin);
 }
 });
-console.log('Plugins installed successful ✅')
-console.log('Bot connected to whatsapp ✅')
+console.log('Plugins Installed SuccessFul ✅')
+console.log('DENETH-MD Connected to WhatsApp ✅')
 
 let up = `*𝘋𝘌𝘕𝘌𝘛𝘏-𝘔𝘋 𝘉𝘖𝘛 𝘊𝘖𝘕𝘕𝘌𝘊𝘛𝘌𝘋*
 
@@ -75,7 +75,7 @@ _Type .menu For Get Bot Menu_
 
 _Type .settings For Customize Bot Settings Work For Owner Only_
 
-ʙᴏᴛ ꜰᴇᴀᴛᴜʀᴇꜱ ✔️
+𝗕𝗢𝗧 𝗙𝗘𝗔𝗧𝗨𝗥𝗘𝗦 🎨
 
 • DOWNLOAD MENU
 • OWNER MENU
