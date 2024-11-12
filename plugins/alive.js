@@ -36,20 +36,17 @@ let desc = `👋 Hey ${pushname}, I Aᴍ Aʟɪᴠᴇ Nᴏᴡ
 
 > ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`
     
-const sentMsg = await conn.sendMessage(from, {
-            image: { url: `https://github.com/Deneth400/DENETH-MD-HARD/blob/main/Images/DENETH-MD.jpg?raw=true`},// Add the image URL here
-            caption: desc,  // Send the description as the caption
-            header: {
-            title: opts && opts.header ? opts.header : '',
-            hasMediaAttachment: true,
-            documentMessage,
-            },
-            contextInfo: {
-                forwardingScore: 999,
-                isForwarded: true,
-            }
-        }, { quoted: mek });
+let message = {
+        image: config.LOGO,
+      header: '',
+      footer: config.FOOTER,
+      
     
+    
+      body: txt
+    
+    }
+return await conn.sendMessage(from, m, message)
 }catch(e){
 console.log(e)
 reply(`${e}`)
