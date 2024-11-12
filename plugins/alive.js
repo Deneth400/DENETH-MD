@@ -32,8 +32,7 @@ let desc = `👋 Hey ${pushname}, I Aᴍ Aʟɪᴠᴇ Nᴏᴡ
             body: desc
         }
 
-        return await conn.sendButtonMessage(from, m, opts)
-return await conn.sendMessage(from, m, message)
+return await conn.sendButtonMessage(from, m, opts)
 }catch(e){
 console.log(e)
 reply(`${e}`)
