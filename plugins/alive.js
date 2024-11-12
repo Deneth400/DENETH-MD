@@ -29,12 +29,13 @@ let desc = `👋 Hey ${pushname}, I Aᴍ Aʟɪᴠᴇ Nᴏᴡ
 return await conn.sendMessage(
                 from,
                 {
+                    image: {url: `https://github.com/Deneth400/DENETH-MD-HARD/blob/main/Images/Connect.jpg?raw=true`},
                     text: desc,
                     contextInfo: {
                         forwardingScore: 999,
                         isForwarded: true,
                         },
-                    image: {url: `https://github.com/Deneth400/DENETH-MD-HARD/blob/main/Images/Connect.jpg?raw=true`}},            
+                   },            
                 { quoted: mek },
             );
 }catch(e){
