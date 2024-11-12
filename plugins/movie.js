@@ -57,7 +57,7 @@ async (conn, mek, m, { from, q, reply }) => {
         msg += `Director: ${movie.director.name}\n\n`;
         msg += `Select The Number For Download Movie\n\n`;
         msg += "Available formats:\n 1. 𝗦𝗗 𝟰𝟴𝟬\n 2. 𝗛𝗗 𝟳𝟮𝟬\n 3. 𝗙𝗛𝗗 𝟭𝟬𝟴𝟬\n\n";
-        msg += "Use `.mv <quality> <movie_link>` to download.\n\n";
+        msg += "Use `.mv <Quality Number> <movie_link>` to download.\n\n";
         msg += `> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`;
 
          const imageUrl = movie.images && movie.images.length > 0 ? movie.images[0] : null;
@@ -83,14 +83,14 @@ async (conn, mek, m, { from, q, reply }) => {
         const movie = result.result;
 
         let quality;
-        if (format === '480') {
+        if (format === '1') {
             quality = "SD 480p";
-        } else if (format === '720') {
+        } else if (format === '2') {
             quality = "HD 720p";
-        } else if (format === '1080') {
+        } else if (format === '3') {
             quality = "FHD 1080p";
         } else {
-            return reply("Invalid format. Please choose from 480, 720, or 1080.");
+            return reply("Invalid format. Please choose from 1, 2, or 3.");
         }
 
         const directLink = await PixaldrainDL(url, quality, "direct");
@@ -99,7 +99,7 @@ async (conn, mek, m, { from, q, reply }) => {
                 document: { url: directLink },
                 mimetype: 'video/mp4',
                 fileName: `${movie.title}.mp4`,
-                caption: "*ᴍᴇᴅᴢ-ᴍᴅ ʙʏ ɴᴇᴛʜᴍɪᴋᴀᴛᴇᴄʜ*"
+                caption: "> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®"
             }, { quoted: mek });
         } else {
             reply(`Could not find the ${format}p download link. Please check the URL or try a different movie.`);
@@ -112,7 +112,7 @@ async (conn, mek, m, { from, q, reply }) => {
 
 // Command to get recently added movies without buttons
 cmd({
-    pattern: "serchmovies",
+    pattern: "searchmovies",
     alias: ["smv"],
     desc: "Get recently added movies.",
     category: "movie",
@@ -130,7 +130,7 @@ async (conn, mek, m, { from, reply }) => {
             message += `${index + 1}. ${item.title}\nLink: ${item.link}\n\n`;
         });
 
-        message += "*ᴍᴇᴅᴢ-ᴍᴅ ʙʏ ɴᴇᴛʜᴍɪᴋᴀᴛᴇᴄʜ*";
+        message += "> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®";
 
         await conn.sendMessage(from, { text: message }, { quoted: mek });
     } catch (e) {
