@@ -50,11 +50,15 @@ async (conn, mek, m, { from, q, reply }) => {
         const movie = result.result;
         let msg = `*${movie.title}*\n\n`;
         msg += `Release Date: ${movie.release_date}\n`;
+        msg += `Country: ${movie.country}\n\n`;
+        msg += `Duration: ${movie.duration}\n\n`;
+        msg += `Genres: ${movie.genres}\n\n`;
         msg += `IMDb Rating: ${movie.IMDb_Rating}\n`;
         msg += `Director: ${movie.director.name}\n\n`;
-        msg += `ᴅᴇɴᴇᴛʜ-ᴍᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ\n\n`;
-        msg += "Available formats:\n 🔰 𝗦𝗗 𝟰𝟴𝟬\n 🔰 𝗛𝗗 𝟳𝟮𝟬\n 🔰 𝗙𝗛𝗗 𝟭𝟬𝟴𝟬\n\n";
-        msg += "Use `.mv <quality> <movie_link>` to download.";
+        msg += `Select The Number For Download Movie\n\n`;
+        msg += "Available formats:\n 1. 𝗦𝗗 𝟰𝟴𝟬\n 2. 𝗛𝗗 𝟳𝟮𝟬\n 3. 𝗙𝗛𝗗 𝟭𝟬𝟴𝟬\n\n";
+        msg += "Use `.mv <quality> <movie_link>` to download.\n\n";
+        msg += `> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`;
 
          const imageUrl = movie.images && movie.images.length > 0 ? movie.images[0] : null;
 
