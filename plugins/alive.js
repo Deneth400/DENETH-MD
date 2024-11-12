@@ -30,12 +30,10 @@ return await conn.sendMessage(
                 from,
                 {
                     image: {url: `https://github.com/Deneth400/DENETH-MD-HARD/blob/main/Images/Connect.jpg?raw=true`},
-                    text: desc,
-                    contextInfo: {
+                    captiop: desc,
                         forwardingScore: 999,
                         isForwarded: true,
-                        },
-                   },            
+                        },           
                 { quoted: mek },
             );
 }catch(e){
