@@ -14,6 +14,8 @@
     "pino": "^7.0.5",
     "api-dylux": "latest",
     "cheerio": "^1.0.0-rc.12",
+    "@sl-code-lords/movie-api":"1.0.0",
+    "pixaldrain-sinhalasub": "git+https://github.com/DarkMakerofc/pixaldrain-sinhalasub.git"
     "pm2": "^5.2.0",
     "util": "^0.12.4",
     "os":"0.1.2",
