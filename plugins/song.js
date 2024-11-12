@@ -41,7 +41,7 @@ cmd({
       contextInfo: {
         forwardingScore: 100,
         isForwarded: true,
-    });
+    }});
 
     // Wait for the user to select download option
     _0xeaf511.ev.on('message', async (msg) => {
