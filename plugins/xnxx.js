@@ -1,6 +1,6 @@
 const { cmd, commands } = require('../command');
 const xnxx = require('../lib/functions');
-const { fetchJson, getBuffer } = require('../DATABASE/functions');
+const { fetchJson, getBuffer } = require('../lib/functions');
 
 cmd({
   pattern: 'xnxx-dl',
