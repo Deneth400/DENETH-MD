@@ -26,13 +26,14 @@ let desc = `👋 Hey ${pushname}, I Aᴍ Aʟɪᴠᴇ Nᴏᴡ
 
 > ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`
     
-        let opts = {
-            image: `https://8030.us.kg/file/mKXIMtf1PF1i.jpg`,
-            header: '',
-            body: desc
-        }
-
-return await conn.sendButtonMessage(from, opts)
+const sentMsg = await conn.sendMessage(from, {
+            image: { url: `https://github.com/Deneth400/DENETH-MD-HARD/blob/main/Images/DENETH-MD.jpg?raw=true`},  // Add the image URL here
+            caption: desc,  // Send the description as the caption
+            contextInfo: {
+                forwardingScore: 999,
+                isForwarded: true,
+            }
+        }, { quoted: mek });
 }catch(e){
 console.log(e)
 reply(`${e}`)
