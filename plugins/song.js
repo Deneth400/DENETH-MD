@@ -52,10 +52,10 @@ async (conn, mek, m, { from, q, reply }) => {
         if (!q) return await reply('❌ Please provide a YouTube URL!');
         
         // Call external API to fetch the audio URL
-        const prog = await fetchJson(`https://api-pink-venom.vercel.app/api/ytmp3?url=${q}`);
+        const prog = await fetchJson(`https://api-pink-venom.vercel.app/api/ytmp3?url=${result.url}`);
         
         if (prog && prog.result && prog.result.download_url) {
-            const audioUrl = ${result.url}; // Get the audio download URL
+            const audioUrl = prog.result.download_url; // Get the audio download URL
             await conn.sendMessage(from, { audio: { url: audioUrl }, mimetype: 'audio/mpeg' }, { quoted: mek });
             reply('🎶 Audio download started.');
         } else {
