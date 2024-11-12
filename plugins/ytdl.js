@@ -1,3 +1,4 @@
+const yts = require('yt-search');
 const axios = require('axios');
 const { cmd, commands } = require('../command');
 
@@ -14,16 +15,14 @@ async (conn, mek, m, { from, q, reply }) => {
         const searchQuery = q.trim();
         if (!searchQuery) return reply("Please provide a video title to search for.");
 
-        // Search for videos using the provided API with the title as a query
-        const apiEndpoint = `https://prabath-md-youtube-dl.vercel.app/api/ytdlnew?q=${encodeURIComponent(searchQuery)}`;
-        const response = await axios.get(apiEndpoint);
-        const data = response.data;
+        // Search YouTube using yt-search by title
+        const searchResults = await yts(searchQuery);
 
         // Check if results are returned
-        if (data && data.results && data.results.length > 0) {
+        if (searchResults && searchResults.videos.length > 0) {
             let msg = `*YouTube Search Results for:* "${searchQuery}"\n\n`;
-            data.results.slice(0, 5).forEach((video, index) => {
-                msg += `${index + 1}. *${video.title}*\nDuration: ${video.duration}\nLink: ${video.url}\n\n`;
+            searchResults.videos.slice(0, 5).forEach((video, index) => {
+                msg += `${index + 1}. *${video.title}*\nDuration: ${video.timestamp}\nLink: ${video.url}\n\n`;
             });
             msg += "*Reply with a number (1-5) to select a video for download.*";
 
@@ -38,7 +37,7 @@ async (conn, mek, m, { from, q, reply }) => {
                 }
 
                 // Get the selected video’s details
-                const selectedVideo = data.results[selection - 1];
+                const selectedVideo = searchResults.videos[selection - 1];
                 const selectedUrl = selectedVideo.url;
 
                 // Message prompting for quality selection
