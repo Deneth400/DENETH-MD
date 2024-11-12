@@ -199,10 +199,6 @@ conn.sendButtonMessage = async (jid, buttons, quoted, opts = {}) => {
                                     hasMediaAttachment: true,
                                     documentMessage,
                                 },
-                                nativeFlowMessage: {
-                                    buttons: buttons,
-                                    messageParamsJson: ''
-                                },
                             contextInfo: {
                               forwardingScore: 999,
                               isForwarded: true,
@@ -219,8 +215,6 @@ conn.sendButtonMessage = async (jid, buttons, quoted, opts = {}) => {
                 conn.relayMessage(jid, message["message"], {
                     messageId: message.key.id
                 })
-            }
-
 const events = require('./command')
 const cmdName = isCmd ? body.slice(1).trim().split(" ")[0].toLowerCase() : false;
 if (isCmd) {
