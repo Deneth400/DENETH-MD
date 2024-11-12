@@ -166,7 +166,7 @@ if (isCmd && config.AUTO_READ_CMD === "true") {
     if(!isOwner && config.MODE === "private") return
     if(!isOwner && isGroup && config.MODE === "inbox") return
     if(!isOwner && !isGroup && config.MODE === "groups") return
-//============================non fuction============================================
+//============================btn fuction============================================
 conn.sendButtonMessage = async (jid, buttons, quoted, opts = {}) => {
     
         let documentMessage = {
@@ -200,20 +200,20 @@ conn.sendButtonMessage = async (jid, buttons, quoted, opts = {}) => {
                                     documentMessage,
                                 },
                             contextInfo: {
+                              mentionedJid: ['0@s.whatsapp.net'],
                               forwardingScore: 999,
                               isForwarded: true,
-				},
+                              forwardedNewsletterMessageInfo: {
+                                newsletterJid: '120363192956026815@newsletter',
+                                newsletterName: "DENETH-MD",
+                                serverMessageId: 999
+                            },
                         }
                             }
                         }
                     }
-                ,{
+                },{
                     quoted: quoted
-                })
-                //await conn.sendPresenceUpdate('composing', jid)
-                //await sleep(500 * 1);
-                conn.relayMessage(jid, message["message"], {
-                    messageId: message.key.id
                 })
 const events = require('./command')
 const cmdName = isCmd ? body.slice(1).trim().split(" ")[0].toLowerCase() : false;
@@ -246,7 +246,8 @@ mek.type === "stickerMessage"
 command.function(conn, mek, m,{from, l, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply})
 }});
 //============================================================================ 
-
+})
+    }
 app.get("/", (req, res) => {
 res.send("hey, bot started✅");
 });
