@@ -3,27 +3,27 @@ const { cmd, commands } = require('../command');
 
 cmd({
     pattern: 'tvshow',
-    desc: 'Get TV Show information and episode links',
+    desc: 'Search for TV Show info by title',
     category: 'movie',
     react: '📺',
     filename: __filename
 },
 async (conn, mek, m, { from, q, reply }) => {
     try {
-        const url = q.trim();
-        if (!url) return reply("Please provide a valid TV Show URL.");
+        const title = q.trim();
+        if (!title) return reply("Please provide a TV show title to search.");
 
-        // API request to get TV show data
-        const response = await axios.get(`https://dark-yasiya-api-new.vercel.app/movie/sinhalasub/tvshow`, {
-            params: { url: url }
+        // API request to search for TV show info by title
+        const response = await axios.get(`https://dark-yasiya-api-new.vercel.app/movie/sinhalasub/tvshow/search`, {
+            params: { text: title }
         });
 
-        // Check if the response is valid
-        if (!response.data || !response.data.result) {
-            return reply("Sorry, I couldn't fetch the TV show data. Please try again.");
+        // Check if the response is valid and contains results
+        if (!response.data || !response.data.result || response.data.result.length === 0) {
+            return reply("Sorry, I couldn't find any TV show matching that title. Please try again.");
         }
 
-        const tvShow = response.data.result;
+        const tvShow = response.data.result[0]; // Get the first matching result
         let message = `*TV Show Info:*\n\n`;
         message += `Title: ${tvShow.title}\n`;
         message += `Release Date: ${tvShow.release_date}\n`;
