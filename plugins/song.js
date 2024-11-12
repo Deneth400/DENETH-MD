@@ -1,104 +1,73 @@
-const config = require('../config');
-const fs = require('fs');
-const { getBuffer, getGroupAdmins, getRandom, getsize, h2k, isUrl, Json, runtime, sleep, fetchJson } = require('../lib/functions');
-const { cmd, commands } = require('../command');
-const yts = require('yt-search'); // Use yt-search for searching YouTube videos
+const {cmd} = require('../command');  // Importing the command handler
+const {fetchJson} = require('../lib/functions');  // Importing the function to fetch JSON data from an API
 
-let wm = config.FOOTER;
+// The API link to fetch song data
+const apilink = "https://dark-yasiya-api-new.vercel.app";
 
-let resultsList = []; // Array to store search results for later use
-
+// Define the command pattern (e.g., "song") and its description
 cmd({
-    pattern: 'song',
-    alias: ['ytmp3', 'play'],
-    use: '.song lelena',
-    react: '🎧',
-    desc: 'Download audios from youtube',
-    category: 'download',
-    filename: __filename
-}, 
+  pattern: 'song',  // Command to search for a song
+  desc: 'Download songs',  // Description of the command
+  category: 'media',  // Category of the command
+  react: '🎧',  // Emoji that the bot will react with
+  filename: __filename  // Filename of the script
+}, async (_0xeaf511, _0x573124, _0x2c135b, { from: _0x5e067c, reply: _0x51b22b, q: _0x28e446 }) => {
+  try {
+    // If no song name is provided, reply with an error message
+    if (!_0x28e446) return _0x51b22b("Give me song name or URL!");
 
-async (conn, m, mek, { from, q, reply }) => {
-    try {
-        if (!q) return await reply('❌ Please enter a query or a URL!');
-        const url = q.replace(/\?si=[^&]*/, ''); // Remove any additional parameters from URL
-        var results = await yts(url); // Use yt-search to search for the video
-        resultsList = results.videos.slice(0, 5); // Limit to the first 5 search results
+    // Fetch the search result for the song
+    const songData = await fetchJson(apilink + '/search/yt?q=' + _0x28e446);
+    const song = songData.result[0];  // Get the first song result
+    const songDetails = song.url;  // Get the URL of the song
 
-        let caption = `🪔 Y T - S O N G Search Results:\n\n`;
-        resultsList.forEach((result, index) => {
-            caption += `${index + 1}. *${result.title}*\n`;
-            caption += `  • Views: ${result.views}\n`;
-            caption += `  • Duration: ${result.duration}\n`;
-            caption += `  • URL: ${result.url}\n\n`;
+    // Fetch additional data for the song (e.g., download link)
+    const downloadData = await fetchJson(apilink + '/download/ytmp3?url=' + song.url);
+
+    // Prepare the song information to display to the user
+    let message = `
+      *🎬 Channel*: ${song.channel}
+      *🚀 Views*: ${song.views}
+      *⏰ Duration*: ${song.duration}
+      *📆 Uploaded On*: ${song.uploaded}
+      *📃 Description*: ${song.description}
+      *🖇️ URL*: ${songDetails}
+    
+    > ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`;
+    
+    // Send the message with song information and a prompt for downloading
+    const response = await _0xeaf511.sendMessage(_0x5e067c, {
+      text: message,
+      contextInfo: {
+        forwardingScore: 100,
+        isForwarded: true,
+    });
+
+    // Wait for the user to select download option
+    _0xeaf511.ev.on('message', async (msg) => {
+      const userChoice = msg.text;
+      if (userChoice === '1') {
+        // Send the audio file (MP3)
+        await _0xeaf511.sendMessage(_0x5e067c, { 
+          audio: { url: downloadData.result.audio_url }, 
+          mimetype: 'audio/mpeg'
         });
-        caption += `\nReply with the number of the song you want to download (e.g., 1, 2, etc.)`;
-
-        // Send search result and instructions
-        await reply(caption);
-    } catch (e) {
-        console.log(e);
-        reply('❌ Error occurred while fetching the song.');
-    }
+      } else if (userChoice === '2') {
+        // Send the song as a document (likely MP3 file as document)
+        await _0xeaf511.sendMessage(_0x5e067c, {
+          document: { url: downloadData.result.document_url },
+          mimetype: 'audio/mpeg',
+          fileName: song.title + '.mp3',
+          caption: song.description
+        });
+      } else {
+        // Invalid option
+        _0x51b22b("Invalid option. Please select a valid option🔴");
+      }
+    });
+  } catch (error) {
+    console.error(error);  // Log the error
+    _0xeaf511.sendMessage(_0x5e067c, { react: { text: '❌', key: _0x573124.key } });  // React with error emoji
+    _0x51b22b("An error occurred while processing your request.");
+  }
 });
-
-// Listen for a user's reply to download the song automatically after selecting a number
-cmd({
-    pattern: '^[1-5]$', // Match numbers 1 to 5
-    react: '📥',
-    dontAddCommandList: true,
-    filename: __filename
-},
-
-async (conn, mek, m, { from, q, reply }) => {
-    try {
-        const songIndex = parseInt(q) - 1; // Convert the user input to an index (1 becomes 0, 2 becomes 1, etc.)
-        if (songIndex < 0 || songIndex >= 5) return await reply('❌ Invalid selection. Please choose a valid number from the list.');
-
-        const video = resultsList[songIndex]; // Get the selected video
-        const videoUrl = video.url; // Get the YouTube URL
-
-        let caption = `🎶 You have selected: *${video.title}*\n\nReply with:\n1. *audio* to download as audio\n2. *document* to download as document`;
-
-        // Ask user to choose download format
-        await reply(caption);
-
-        // Wait for the user to reply with "audio" or "document"
-        const response = await conn.waitForMessage(from, '^[audio|document]$', 10000); // 10 seconds timeout
-
-        if (!response) return await reply('❌ No valid response. Please try again.');
-
-        if (response.text === 'audio') {
-            // Fetch audio URL
-            const prog = await fetchJson(`https://api-pink-venom.vercel.app/api/ytmp3?url=${videoUrl}`);
-            if (prog && prog.result && prog.result.download_url) {
-                const audioUrl = prog.result.download_url; // Get the audio download URL
-                await conn.sendMessage(from, { audio: { url: audioUrl }, mimetype: 'audio/mpeg' }, { quoted: mek });
-                reply(`🎶 Audio download started for *${video.title}*.`);
-            } else {
-                await reply('❌ Error: Could not fetch the audio URL.');
-            }
-        } else if (response.text === 'document') {
-            // Fetch audio as document
-            const prog = await fetchJson(`https://api-pink-venom.vercel.app/api/ytmp3?url=${videoUrl}`);
-            if (prog && prog.result && prog.result.download_url) {
-                const audioUrl = prog.result.download_url; // Get the audio download URL
-                await conn.sendMessage(from, {
-                    document: { url: audioUrl },
-                    mimetype: 'audio/mpeg',
-                    caption: wm,
-                    fileName: `${video.title}.mp3`
-                }, { quoted: mek });
-                reply(`📄 Document download started for *${video.title}*.`);
-            } else {
-                await reply('❌ Error: Could not fetch the audio document.');
-            }
-        } else {
-            await reply('❌ Invalid option. Please choose either *audio* or *document*.');
-        }
-    } catch (e) {
-        console.log(e);
-        reply('❌ Error occurred while processing the download.');
-    }
-});
-
