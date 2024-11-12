@@ -58,7 +58,7 @@ async (conn, mek, m, { from, q, reply }) => {
 
          const imageUrl = movie.images && movie.images.length > 0 ? movie.images[0] : null;
 
-        await conn.sendMessage(from, {image: {url: imageUrl},{ text: msg }, { quoted: mek });
+        await conn.sendMessage(from, {image: {url: imageUrl}, text: msg }, { quoted: mek });
     } catch (e) {
         console.log(e);
         reply('*Error !!*');
