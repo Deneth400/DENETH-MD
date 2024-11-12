@@ -23,7 +23,8 @@ let documentMessage = {
         };
 let totalStorage = Math.floor(os.totalmem() / 1024 / 1024) + 'MB'
 let freeStorage = Math.floor(os.freemem() / 1024 / 1024) + 'MB'
-let desc = `👋 Hey ${pushname}, I Aᴍ Aʟɪᴠᴇ Nᴏᴡ
+let desc = `${documentMessage}
+👋 Hey ${pushname}, I Aᴍ Aʟɪᴠᴇ Nᴏᴡ
 
 ɪ ᴀᴍ ᴀɴ ᴀᴜᴛᴏᴍᴀᴛᴇᴅ ꜱʏꜱᴛᴇᴍ ᴡʜᴀᴛꜱᴀᴘᴘ ʙᴏᴛ ᴛʜᴀᴛ ᴄᴀɴ ʜᴇʟᴘ ᴛᴏ ᴅᴏ ꜱᴏᴍᴇᴛʜɪɴɢ,ꜱᴇᴀʀᴄʜ ᴀɴᴅ ɢᴇᴛ ᴅᴀᴛᴀ / ɪɴꜰᴏʀᴍᴀᴛɪᴏɴ ᴏɴʟʏ ᴛʜᴏᴜɢʜ ᴡʜᴀᴛꜱᴀᴘᴘ
 
@@ -36,14 +37,14 @@ let desc = `👋 Hey ${pushname}, I Aᴍ Aʟɪᴠᴇ Nᴏᴡ
 
 > ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`
     
-let message = {
-        image: `https://github.com/Deneth400/DENETH-MD-HARD/blob/main/Images/DENETH-MD.jpg?raw=true`,
-      header: 'documentMessage',
-      
-
-      body: desc
-    
-    }
+const sentMsg = await conn.sendMessage(from, {
+            image: { url: `https://github.com/Deneth400/DENETH-MD-HARD/blob/main/Images/DENETH-MD.jpg?raw=true`},  // Add the image URL here
+            caption: desc,  // Send the description as the caption
+            contextInfo: {
+                forwardingScore: 999,
+                isForwarded: true,
+            }
+        }, { quoted: mek });
 return await conn.sendMessage(from, m, message)
 }catch(e){
 console.log(e)
