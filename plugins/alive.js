@@ -37,13 +37,11 @@ let desc = `👋 Hey ${pushname}, I Aᴍ Aʟɪᴠᴇ Nᴏᴡ
 > ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`
     
 let message = {
-        image: config.LOGO,
-      header: '',
-      footer: config.FOOTER,
+        image: `https://github.com/Deneth400/DENETH-MD-HARD/blob/main/Images/DENETH-MD.jpg?raw=true`,
+      header: 'documentMessage',
       
-    
-    
-      body: txt
+
+      body: desc
     
     }
 return await conn.sendMessage(from, m, message)
