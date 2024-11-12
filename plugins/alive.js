@@ -11,16 +11,6 @@ cmd({
 },
 async(conn, mek, m,{from, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply}) => {
 try{
-let documentMessage = {
-            url: 'https://mmg.whatsapp.net/v/t62.7119-24/32511132_500473132560305_5925723291063172577_n.enc?ccb=11-4&oh=01_Q5AaIKnXNmUWgmxyNn_1uxfEnGyiI-eCZ-BMRZdX3O2jhQq2&oe=66BE7A32&_nc_sid=5e03e0&mms3=true',
-            mimetype: "application/pdf",
-            fileSha256: 'FikZgFEcHv5jpyU1PhL10sPCmtsmcqnWUKaxot10tUU=',
-            fileLength: 1e14,
-            mediaKey: 'RZ3iF3NexfIjD1MB9EfJhMo/xcBZnbEZ/gVSuxlrHWE=',
-            fileName: "𝐃𝐄𝐍𝐄𝐓𝐇-𝐌𝐃 𝐕𝟏",
-            fileEncSha256: 'K+Bkh4AGLJTffSvs63DuMZumwquU014W8XsaWvfakPM=',
-            directPath: '/v/t62.7119-24/32511132_500473132560305_5925723291063172577_n.enc?ccb=11-4&oh=01_Q5AaIKnXNmUWgmxyNn_1uxfEnGyiI-eCZ-BMRZdX3O2jhQq2&oe=66BE7A32&_nc_sid=5e03e0',
-        };
 let totalStorage = Math.floor(os.totalmem() / 1024 / 1024) + 'MB'
 let freeStorage = Math.floor(os.freemem() / 1024 / 1024) + 'MB'
 let desc = `${documentMessage}
@@ -37,14 +27,13 @@ let desc = `${documentMessage}
 
 > ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`
     
-const sentMsg = await conn.sendMessage(from, {
-            image: { url: `https://github.com/Deneth400/DENETH-MD-HARD/blob/main/Images/DENETH-MD.jpg?raw=true`},  // Add the image URL here
-            caption: desc,  // Send the description as the caption
-            contextInfo: {
-                forwardingScore: 999,
-                isForwarded: true,
-            }
-        }, { quoted: mek });
+        let opts = {
+            image: `https://8030.us.kg/file/mKXIMtf1PF1i.jpg`,
+            header: '',
+            body: desc
+        }
+
+        return await conn.sendButtonMessage(from, m, opts)
 return await conn.sendMessage(from, m, message)
 }catch(e){
 console.log(e)
