@@ -26,7 +26,7 @@ let desc = `👋 Hey ${pushname}, I Aᴍ Aʟɪᴠᴇ Nᴏᴡ
 
 > ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`
     
-return await conn.sendMessage(from,{image: {url: `https://github.com/Deneth400/DENETH-MD-HARD/blob/main/Images/Connect.jpg?raw=true`,caption: desc},{quoted: mek})
+return await conn.sendMessage(from,{image: {url: `https://github.com/Deneth400/DENETH-MD-HARD/blob/main/Images/Connect.jpg?raw=true`},caption: desc},{quoted: mek})
 }catch(e){
 console.log(e)
 reply(`${e}`)
