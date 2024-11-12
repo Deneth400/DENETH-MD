@@ -56,9 +56,9 @@ async (conn, mek, m, { from, q, reply }) => {
         msg += "Available formats:\n 🔰 𝗦𝗗 𝟰𝟴𝟬\n 🔰 𝗛𝗗 𝟳𝟮𝟬\n 🔰 𝗙𝗛𝗗 𝟭𝟬𝟴𝟬\n\n";
         msg += "Use `.mv <quality> <movie_link>` to download.";
 
-         const imageUrl = movie.images && movie.images.length > 0 ? movie.images[0] : null;
+         const imageUrl = `movie.images && movie.images.length > 0 ? movie.images[0] : null`;
 
-        await conn.sendMessage(from, {image: {url: imageUrl}, text: msg }, { quoted: mek });
+        await conn.sendMessage(from, {image: {url: imageUrl},caption: msg }, { quoted: mek });
     } catch (e) {
         console.log(e);
         reply('*Error !!*');
