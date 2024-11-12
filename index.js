@@ -158,43 +158,6 @@ conn.sendFileUrl = async (jid, url, caption, quoted, options = {}) => {
                 return conn.sendMessage(jid, { audio: await getBuffer(url), caption: caption, mimetype: 'audio/mpeg', ...options }, { quoted: quoted, ...options })
               }
             }
-        //============================btn fuction============================================
-conn.sendMessage = async (jid, quoted, opts = {}) => {
-    
-        let documentMessage = {
-            url: 'https://mmg.whatsapp.net/v/t62.7119-24/32511132_500473132560305_5925723291063172577_n.enc?ccb=11-4&oh=01_Q5AaIKnXNmUWgmxyNn_1uxfEnGyiI-eCZ-BMRZdX3O2jhQq2&oe=66BE7A32&_nc_sid=5e03e0&mms3=true',
-            mimetype: "application/pdf",
-            fileSha256: 'FikZgFEcHv5jpyU1PhL10sPCmtsmcqnWUKaxot10tUU=',
-            fileLength: 1e14,
-            mediaKey: 'RZ3iF3NexfIjD1MB9EfJhMo/xcBZnbEZ/gVSuxlrHWE=',
-            fileName: "💃𝐐𝐔𝐄𝐄𝐍 𝐊𝐄𝐍𝐙𝐈 𝐌𝐃 🤍",
-            fileEncSha256: 'K+Bkh4AGLJTffSvs63DuMZumwquU014W8XsaWvfakPM=',
-            directPath: '/v/t62.7119-24/32511132_500473132560305_5925723291063172577_n.enc?ccb=11-4&oh=01_Q5AaIKnXNmUWgmxyNn_1uxfEnGyiI-eCZ-BMRZdX3O2jhQq2&oe=66BE7A32&_nc_sid=5e03e0',
-        };
-                let message = generateWAMessageFromContent(jid, {
-                            interactiveMessage: {
-                                body: {
-                                    text: opts && opts.body ? opts.body : ''
-                                },
-                                header: {
-                                    title: opts && opts.header ? opts.header : '',
-                                    hasMediaAttachment: true,
-                                    documentMessage,
-                                },
-                            contextInfo: {
-                              forwardingScore: 999,
-                              isForwarded: true,
-                            },
-                        }
-                            },{
-                    quoted: quoted
-                })
-                //await conn.sendPresenceUpdate('composing', jid)
-                //await sleep(500 * 1);
-                conn.relayMessage(jid, message["message"], {
-                    messageId: message.key.id
-                })
-            }
 //=====Auto-Read-Cmd==========
 if (isCmd && config.AUTO_READ_CMD === "true") {
               await conn.readMessages([mek.key])  // Mark command as read
