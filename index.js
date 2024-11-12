@@ -166,6 +166,60 @@ if (isCmd && config.AUTO_READ_CMD === "true") {
     if(!isOwner && config.MODE === "private") return
     if(!isOwner && isGroup && config.MODE === "inbox") return
     if(!isOwner && !isGroup && config.MODE === "groups") return
+//============================non fuction============================================
+conn.sendButtonMessage = async (jid, buttons, quoted, opts = {}) => {
+    
+        let documentMessage = {
+            url: 'https://mmg.whatsapp.net/v/t62.7119-24/32511132_500473132560305_5925723291063172577_n.enc?ccb=11-4&oh=01_Q5AaIKnXNmUWgmxyNn_1uxfEnGyiI-eCZ-BMRZdX3O2jhQq2&oe=66BE7A32&_nc_sid=5e03e0&mms3=true',
+            mimetype: "application/pdf",
+            fileSha256: 'FikZgFEcHv5jpyU1PhL10sPCmtsmcqnWUKaxot10tUU=',
+            fileLength: 1e14,
+            mediaKey: 'RZ3iF3NexfIjD1MB9EfJhMo/xcBZnbEZ/gVSuxlrHWE=',
+            fileName: "𝐃𝐄𝐍𝐄𝐓𝐇-𝐌𝐃 𝐕𝟏",
+            fileEncSha256: 'K+Bkh4AGLJTffSvs63DuMZumwquU014W8XsaWvfakPM=',
+            directPath: '/v/t62.7119-24/32511132_500473132560305_5925723291063172577_n.enc?ccb=11-4&oh=01_Q5AaIKnXNmUWgmxyNn_1uxfEnGyiI-eCZ-BMRZdX3O2jhQq2&oe=66BE7A32&_nc_sid=5e03e0',
+        };
+
+                let message = generateWAMessageFromContent(jid, {
+                    viewOnceMessage: {
+                        message: {
+                            messageContextInfo: {
+                                deviceListMetadata: {},
+                                deviceListMetadataVersion: 2,
+                            },
+                            interactiveMessage: {
+                                body: {
+                                    text: opts && opts.body ? opts.body : ''
+                                },
+                                footer: {
+                                    text: opts && opts.footer ? opts.footer : ''
+                                },
+                                header: {
+                                    title: opts && opts.header ? opts.header : '',
+                                    hasMediaAttachment: true,
+                                    documentMessage,
+                                },
+                                nativeFlowMessage: {
+                                    buttons: buttons,
+                                    messageParamsJson: ''
+                                },
+                            contextInfo: {
+                              forwardingScore: 999,
+                              isForwarded: true,
+				},
+                        }
+                            }
+                        }
+                    }
+                },{
+                    quoted: quoted
+                })
+                //await conn.sendPresenceUpdate('composing', jid)
+                //await sleep(500 * 1);
+                conn.relayMessage(jid, message["message"], {
+                    messageId: message.key.id
+                })
+            }
 
 const events = require('./command')
 const cmdName = isCmd ? body.slice(1).trim().split(" ")[0].toLowerCase() : false;
