@@ -1,9 +1,8 @@
 const config = require('../config');
 const { cmd, commands } = require('../command');
 const { fetchJson, getBuffer } = require('../lib/functions');
-let ayo = `© 𝖰𝗎𝖾𝗇 𝗄𝖾𝗇𝗓𝗂 𝗆𝖽 v${require("../package.json").version} (Test)\nsɪᴍᴘʟᴇ ᴡᴀʙᴏᴛ ᴍᴀᴅᴇ ʙʏ ᴅᴀɴᴜxᴢᴢ 🅥`;
+let ayo = `© 𝖰𝗎𝖾𝗂𝗇 𝗄𝖾𝗇𝗓𝗂 𝗆𝖽 v${require("../package.json").version} (Test)\nsɪᴍᴘʟᴇ ᴡᴀʙᴏᴛ ᴍᴀᴅᴇ ʙʏ ᴅᴀɴᴜxᴢᴢ 🅥`;
 
-// Spotify Search Command with Numbered Menu
 cmd({
   pattern: "spotify",
   alias: ["spot"],
@@ -16,7 +15,7 @@ cmd({
   try {
     if (!q) return reply('🚩 *Please provide search terms.*');
     const res = await fetchJson(`https://manaxu-seven.vercel.app/api/internet/spotify?query=${q}`);
-    const wm = `© 𝖰𝗎𝖾𝗇 𝗄𝖾𝗇𝗓𝗂 𝗆𝖽 v${require("../package.json").version} (Test)\nsɪᴍᴘʟᴇ ᴡᴀʙᴏᴛ ᴍᴀᴅᴇ ʙʏ ᴅᴀɴᴜxᴢᴢ 🅥`;
+    const wm = `© 𝖰𝗎𝖾𝗂𝗇 𝗄𝖾𝗇𝗓𝗂 𝗆𝖽 v${require("../package.json").version} (Test)\nsɪᴍᴘʟᴇ ᴡᴀʙᴏᴛ ᴍᴀᴅᴇ ʙʏ ᴅᴀɴᴜxᴢᴢ 🅥`;
 
     if (!res.result || res.result.length < 1) {
       return await conn.sendMessage(from, { text: "🚩 *No results found.*" }, { quoted: mek });
@@ -31,11 +30,11 @@ cmd({
 
     const sentMessage = await conn.sendMessage(from, { text: msg }, { quoted: mek });
 
-    // Listen for response with song selection
-    conn.ev.once("messages.upsert", async (update) => {
+    // Wait for user response (using simple message handler)
+    conn.on('messages.upsert', async (update) => {
       const message = update.messages[0];
+      if (message.key.remoteJid !== from) return; // Ensure it's from the correct chat
       if (!message.message || !message.message.conversation) return;
-      if (message.message.extendedTextMessage.contextInfo.stanzaId !== sentMessage.key.id) return;
 
       const choice = parseInt(message.message.conversation.trim()) - 1;
       if (isNaN(choice) || choice < 0 || choice >= res.result.length) {
@@ -49,11 +48,11 @@ cmd({
       const downloadMenu = `Select the format:\n1. Document\n2. Audio\n\n${wm}`;
       const formatMessage = await conn.sendMessage(from, { text: downloadMenu }, { quoted: mek });
 
-      // Listen for format selection
-      conn.ev.once("messages.upsert", async (formatUpdate) => {
+      // Wait for user format selection
+      conn.on('messages.upsert', async (formatUpdate) => {
         const formatMessage = formatUpdate.messages[0];
+        if (formatMessage.key.remoteJid !== from) return; // Ensure it's from the correct chat
         if (!formatMessage.message || !formatMessage.message.conversation) return;
-        if (formatMessage.message.extendedTextMessage.contextInfo.stanzaId !== sentMessage.key.id) return;
 
         const formatChoice = parseInt(formatMessage.message.conversation.trim());
         const fileBuffer = await getBuffer(selectedSong.link);
