@@ -1,8 +1,12 @@
 const config = require('../config');
 const { cmd, commands } = require('../command');
 const { fetchJson, getBuffer } = require('../lib/functions');
-let ayo = `© 𝖰𝗎𝖾𝗂𝗇 𝗄𝖾𝗇𝗓𝗂 𝗆𝖽 v${require("../package.json").version} (Test)\nsɪᴍᴘʟᴇ ᴡᴀʙᴏᴛ ᴍᴀᴅᴇ ʙʏ ᴅᴀɴᴜxᴢᴢ 🅥`;
+const axios = require('axios');
+const cheerio = require('cheerio');
+const fetch = require('node-fetch');
+let ayo = `© 𝖰𝗎𝖾𝖾𝗇 𝗄𝖾𝗇𝗓𝗂 𝗆𝖽 v${require("../package.json").version} (Test)\nsɪᴍᴘʟᴇ ᴡᴀʙᴏᴛ ᴍᴀᴅᴇ ʙʏ ᴅᴀɴᴜxᴢᴢ 🅥`;
 
+// Spotify Search Command with Numbered Menu
 cmd({
   pattern: "spotify",
   alias: ["spot"],
@@ -15,7 +19,7 @@ cmd({
   try {
     if (!q) return reply('🚩 *Please provide search terms.*');
     const res = await fetchJson(`https://manaxu-seven.vercel.app/api/internet/spotify?query=${q}`);
-    const wm = `© 𝖰𝗎𝖾𝗂𝗇 𝗄𝖾𝗇𝗓𝗂 𝗆𝖽 v${require("../package.json").version} (Test)\nsɪᴍᴘʟᴇ ᴡᴀʙᴏᴛ ᴍᴀᴅᴇ ʙʏ ᴅᴀɴᴜxᴢᴢ 🅥`;
+    const wm = `© 𝖰𝗎𝖾𝗇 𝗄𝖾𝗇𝗓𝗂 𝗆𝖽 v${require("../package.json").version} (Test)\nsɪᴍᴘʟᴇ ᴡᴀʙᴏᴛ ᴍᴀᴅᴇ ʙʏ ᴅᴀɴᴜxᴢᴢ 🅥`;
 
     if (!res.result || res.result.length < 1) {
       return await conn.sendMessage(from, { text: "🚩 *No results found.*" }, { quoted: mek });
@@ -30,13 +34,13 @@ cmd({
 
     const sentMessage = await conn.sendMessage(from, { text: msg }, { quoted: mek });
 
-    // Wait for user response (using simple message handler)
-    conn.on('messages.upsert', async (update) => {
+    // Listen for response with song selection
+    conn.ev.on("messages.upsert", async (update) => {
       const message = update.messages[0];
-      if (message.key.remoteJid !== from) return; // Ensure it's from the correct chat
-      if (!message.message || !message.message.conversation) return;
+      if (!message.message || !message.message.extendedTextMessage) return;
+      if (message.message.extendedTextMessage.contextInfo.stanzaId !== sentMessage.key.id) return;
 
-      const choice = parseInt(message.message.conversation.trim()) - 1;
+      const choice = parseInt(message.message.extendedTextMessage.text.trim()) - 1;
       if (isNaN(choice) || choice < 0 || choice >= res.result.length) {
         return reply("Invalid choice. Please reply with a valid number.");
       }
@@ -48,19 +52,17 @@ cmd({
       const downloadMenu = `Select the format:\n1. Document\n2. Audio\n\n${wm}`;
       const formatMessage = await conn.sendMessage(from, { text: downloadMenu }, { quoted: mek });
 
-      // Wait for user format selection
-      conn.on('messages.upsert', async (formatUpdate) => {
+      // Listen for format selection
+      conn.ev.on("messages.upsert", async (formatUpdate) => {
         const formatMessage = formatUpdate.messages[0];
-        if (formatMessage.key.remoteJid !== from) return; // Ensure it's from the correct chat
-        if (!formatMessage.message || !formatMessage.message.conversation) return;
+        if (!formatMessage.message || !formatMessage.message.extendedTextMessage) return;
+        if (formatMessage.message.extendedTextMessage.contextInfo.stanzaId !== sentMessage.key.id) return;
 
-        const formatChoice = parseInt(formatMessage.message.conversation.trim());
-        const fileBuffer = await getBuffer(selectedSong.link);
-
+        const formatChoice = parseInt(formatMessage.message.extendedTextMessage.text.trim());
         if (formatChoice === 1) {
-          await conn.sendMessage(from, { document: fileBuffer, mimetype: 'audio/mpeg', fileName: selectedSong.name + '.mp3', caption: ayo }, { quoted: mek });
+          await conn.sendMessage(from, { document: await getBuffer(selectedSong.link), mimetype: 'audio/mpeg', fileName: selectedSong.name + '.mp3', caption: ayo }, { quoted: mek });
         } else if (formatChoice === 2) {
-          await conn.sendMessage(from, { audio: fileBuffer, mimetype: 'audio/mpeg' }, { quoted: mek });
+          await conn.sendMessage(from, { audio: await getBuffer(selectedSong.link), mimetype: 'audio/mpeg' }, { quoted: mek });
         } else {
           reply("Invalid format choice. Please reply with 1 or 2.");
         }
