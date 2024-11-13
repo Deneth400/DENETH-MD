@@ -1,6 +1,7 @@
 const config = require('../config');
 const { cmd, commands } = require('../command');
 const yts = require('yt-search');  // Import yt-search for YouTube search
+const fetchJson = require('fetch-json');
 
 cmd({
   pattern: "song",
