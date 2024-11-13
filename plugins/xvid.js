@@ -27,16 +27,14 @@ cmd({
 
         await conn.sendMessage(from, { text: msg }, { quoted: mek });
 
-        // Wait for the user to select a video by typing the number.
-        const filter = (m) => m.key.remoteJid === from && m.message && m.message.conversation;
-        const messages = await conn.waitForMessages({ filter, timeout: 60000 });
+        // Now wait for user input for video selection
+        conn.once('message', async (message) => {
+            if (message.key.remoteJid !== from || !message.message || !message.message.conversation) return;
 
-        if (messages.length > 0) {
-            const message = messages[0];
             const choice = parseInt(message.message.conversation.trim()) - 1;
 
             if (isNaN(choice) || choice < 0 || choice >= data.length) {
-                return reply("🚩 Invalid choice. Please reply with a valid number.");
+                return await reply("🚩 Invalid choice. Please reply with a valid number.");
             }
 
             const selectedVideo = data[choice];
@@ -49,9 +47,7 @@ cmd({
             const downloadUrl = downloadRes.url;
 
             await conn.sendMessage(from, { video: { url: downloadUrl }, caption: wm }, { quoted: mek });
-        } else {
-            await reply("🚩 No response received. Please try again.");
-        }
+        });
     } catch (e) {
         console.log(e);
         await conn.sendMessage(from, { text: '🚩 *Error!*' }, { quoted: mek });
