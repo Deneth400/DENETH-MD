@@ -28,9 +28,14 @@ cmd({
       return reply("No video data found.");
     }
 
+    console.log('Video Data:', videoData); // Log video data for debugging
+
     // Fetch download link for the video
-    const downloadLinkResult = await fetchJson(`https://dark-yasiya-api-new.vercel.app/download/ytmp4?url=${videoData.url}&quality=480p`);
-    
+    const downloadLinkResult = await fetchJson(`https://dark-yasiya-api-new.vercel.app/download/ytmp4?url=${encodeURIComponent(videoData.url)}&quality=480p`);
+
+    // Log the API response to check its contents
+    console.log('API Response:', downloadLinkResult);
+
     if (!downloadLinkResult || !downloadLinkResult.result || !downloadLinkResult.result.dl_link) {
       return reply("Failed to fetch the download link.");
     }
