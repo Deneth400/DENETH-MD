@@ -22,7 +22,7 @@ async (conn, mek, m, { from, q, reply }) => {
             message += `${index + 1}. ${item.title}\nType: ${item.type}\nLink: ${item.link}\n\n`;
         });
         const sentMsg = await conn.sendMessage(from, {
-            image: { url: `https://github.com/Deneth400/DENETH-MD-HARD/blob/main/Images/DENETH-MD.jpg?raw=true`},
+            image: { url: `https://github.com/Deneth400/DENETH-MD-HARD/blob/main/Images/SinhalaSub.jpg?raw=true`},
             caption: message,  // Send the description as the caption
             contextInfo: {
                 forwardingScore: 999,
