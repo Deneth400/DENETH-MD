@@ -1,73 +1,86 @@
-const {cmd} = require('../command');  // Importing the command handler
-const {fetchJson} = require('../lib/functions');  // Importing the function to fetch JSON data from an API
-
-// The API link to fetch song data
-const apilink = "https://dark-yasiya-api-new.vercel.app";
-
-// Define the command pattern (e.g., "song") and its description
+const {
+  cmd
+} = require('../command');
+const {
+  fetchJson
+} = require('../DATABASE/functions');
 cmd({
-  pattern: 'song',  // Command to search for a song
-  desc: 'Download songs',  // Description of the command
-  category: 'media',  // Category of the command
-  react: '🎧',  // Emoji that the bot will react with
-  filename: __filename  // Filename of the script
-}, async (_0xeaf511, _0x573124, _0x2c135b, { from: _0x5e067c, reply: _0x51b22b, q: _0x28e446 }) => {
+  'pattern': "song",
+  'desc': "download songs.",
+  'category': "download",
+  'react': '🎧',
+  'filename': __filename
+}, async (_0xeaf511, _0x573124, _0x2c135b, {
+  from: _0x5e067c,
+  reply: _0x51b22b,
+  q: _0x28e446
+}) => {
   try {
-    // If no song name is provided, reply with an error message
-    if (!_0x28e446) return _0x51b22b("Give me song name or URL!");
-
-    // Fetch the search result for the song
-    const songData = await fetchJson(apilink + '/search/yt?q=' + _0x28e446);
-    const song = songData.result[0];  // Get the first song result
-    const songDetails = song.url;  // Get the URL of the song
-
-    // Fetch additional data for the song (e.g., download link)
-    const downloadData = await fetchJson(apilink + '/download/ytmp3?url=' + song.url);
-
-    // Prepare the song information to display to the user
-    let message = `
-      *🎬 Channel*: ${song.channel}
-      *🚀 Views*: ${song.views}
-      *⏰ Duration*: ${song.duration}
-      *📆 Uploaded On*: ${song.uploaded}
-      *📃 Description*: ${song.description}
-      *🖇️ URL*: ${songDetails}
-    
-    > ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`;
-    
-    // Send the message with song information and a prompt for downloading
-    const response = await _0xeaf511.sendMessage(_0x5e067c, {
-      text: message,
-      contextInfo: {
-        forwardingScore: 100,
-        isForwarded: true,
-    }});
-
-    // Wait for the user to select download option
-    _0xeaf511.ev.on('message', async (msg) => {
-      const userChoice = msg.text;
-      if (userChoice === '1') {
-        // Send the audio file (MP3)
-        await _0xeaf511.sendMessage(_0x5e067c, { 
-          audio: { url: downloadData.result.audio_url }, 
-          mimetype: 'audio/mpeg'
-        });
-      } else if (userChoice === '2') {
-        // Send the song as a document (likely MP3 file as document)
-        await _0xeaf511.sendMessage(_0x5e067c, {
-          document: { url: downloadData.result.document_url },
-          mimetype: 'audio/mpeg',
-          fileName: song.title + '.mp3',
-          caption: song.description
-        });
-      } else {
-        // Invalid option
-        _0x51b22b("Invalid option. Please select a valid option🔴");
+    if (!_0x28e446) {
+      return _0x51b22b("Give me song name or url !");
+    }
+    const _0x4c953e = await fetchJson("https://dark-yasiya-api-new.vercel.app/search/yt?q=" + _0x28e446);
+    const _0x4267b3 = _0x4c953e.result.data[0x0];
+    const _0x4ea786 = await fetchJson("https://dark-yasiya-api-new.vercel.app/download/ytmp3?url=" + _0x4267b3.url);
+    let _0x21bf98 = "‎‎*DENETH-MD AUDIO DOWNLOADER*\n\n*⚙️ 𝖳𝗂𝗍𝗅𝖾* : " + _0x4267b3.title + "\n*📃 𝖣𝖾𝗌𝖼𝗋𝗂𝗉𝗍𝗂𝗈𝗇* : " + _0x4267b3.description + "\n*🚀 𝖵𝗂𝖾𝗐𝗌* : " + _0x4267b3.views + "\n*⏰ 𝖣𝗎𝗋𝖺𝗍𝗂𝗈𝗇* : " + _0x4267b3.timestamp + "\n*📆 𝖴𝗉𝗅𝗈𝖺𝖽𝖾𝖽 𝖮𝗇* : " + _0x4267b3.ago + "\n*🎬 𝖢𝗁𝖺𝗇𝗇𝖾𝗅* : " + _0x4267b3.author.name + "\n*🖇️ 𝖴𝗋𝗅* : " + _0x4267b3.url + "\n\n*乂 REPLY THE DOWNLOAD OPTION*  \n\n*1️⃣  𝖣𝗈𝗐𝗇𝗅𝗈𝖺𝖽 : 𝖠𝗎𝖽𝗂𝗈 𝖳𝗒𝗉𝖾*\n*2️⃣  𝖣𝗈𝗐𝗇𝗅𝗈𝖺𝖽 : 𝖣𝗈𝖼𝗎𝗆𝖾𝗇𝗍 𝖳𝗒𝗉𝖾*\n\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®";
+    const _0x493454 = await _0xeaf511.sendMessage(_0x5e067c, {
+      'text': _0x21bf98,
+      'contextInfo': {
+        'forwardingScore': 0x3e7,
+        'isForwarded': true,
+        },
+    }, {
+      'quoted': _0x573124
+    });
+    _0xeaf511.ev.on("messages.upsert", async _0x49e43f => {
+      const _0xfc5b33 = _0x49e43f.messages[0x0];
+      if (!_0xfc5b33.message || !_0xfc5b33.message.extendedTextMessage) {
+        return;
+      }
+      const _0x2a874d = _0xfc5b33.message.extendedTextMessage.text.trim();
+      if (_0xfc5b33.message.extendedTextMessage.contextInfo && _0xfc5b33.message.extendedTextMessage.contextInfo.stanzaId === _0x493454.key.id) {
+        switch (_0x2a874d) {
+          case '1':
+            await _0xeaf511.sendMessage(_0x5e067c, {
+              'audio': {
+                'url': _0x4ea786.result.dl_link
+              },
+              'mimetype': "audio/mpeg"
+            }, {
+              'quoted': _0x573124
+            });
+            break;
+          case '2':
+            await _0xeaf511.sendMessage(_0x5e067c, {
+              'document': {
+                'url': _0x4ea786.result.dl_link
+              },
+              'mimetype': 'audio/mpeg',
+              'fileName': _0x4267b3.title + ".mp3",
+              'caption': _0x4267b3.title + "\n\n> *©ᴘᴏᴡᴇʀᴇᴅ ʙʏ ꜱᴀʜᴀꜱ ᴛᴇᴄʜ*"
+            }, {
+              'quoted': _0x573124
+            });
+            await _0xeaf511.sendMessage(_0x5e067c, {
+              'react': {
+                'text': '✅',
+                'key': _0x573124.key
+              }
+            });
+            break;
+          default:
+            _0x51b22b("Invalid option. Please select a valid option🔴");
+        }
       }
     });
-  } catch (error) {
-    console.error(error);  // Log the error
-    _0xeaf511.sendMessage(_0x5e067c, { react: { text: '❌', key: _0x573124.key } });  // React with error emoji
+  } catch (_0x24e14d) {
+    console.error(_0x24e14d);
+    await _0xeaf511.sendMessage(_0x5e067c, {
+      'react': {
+        'text': '❌',
+        'key': _0x573124.key
+      }
+    });
     _0x51b22b("An error occurred while processing your request.");
   }
 });
