@@ -10,7 +10,7 @@ cmd({
     desc: "Search and DOWNLOAD VIDEOS from xvideos.",
     category: "search",
     filename: __filename
-}, async (conn, mek, m, { from, q, reply }) => {
+}, async (conn, mek, m, { from, q, reply, isGroup }) => {
     try {
         if (!q) return reply('🚩 *Please provide search terms.*');
         let res = await fetchJson('https://raganork-network.vercel.app/api/xvideos/search?query=' + q);
@@ -25,15 +25,16 @@ cmd({
         });
         msg += `\n\n${wm}`;
 
-        const sentMessage = await conn.sendMessage(from, { text: msg }, { quoted: mek });
+        await conn.sendMessage(from, { text: msg }, { quoted: mek });
 
-        // Wait for user response to select the video by number
-        conn.on('messages.upsert', async (update) => {
-            const message = update.messages[0];
-            if (message.key.remoteJid !== from) return; // Ensure it's from the correct chat
-            if (!message.message || !message.message.conversation) return;
+        // Wait for the user to select a video by typing the number.
+        const filter = (m) => m.key.remoteJid === from && m.message && m.message.conversation;
+        const messages = await conn.waitForMessages({ filter, timeout: 60000 });
 
+        if (messages.length > 0) {
+            const message = messages[0];
             const choice = parseInt(message.message.conversation.trim()) - 1;
+
             if (isNaN(choice) || choice < 0 || choice >= data.length) {
                 return reply("🚩 Invalid choice. Please reply with a valid number.");
             }
@@ -48,7 +49,9 @@ cmd({
             const downloadUrl = downloadRes.url;
 
             await conn.sendMessage(from, { video: { url: downloadUrl }, caption: wm }, { quoted: mek });
-        });
+        } else {
+            await reply("🚩 No response received. Please try again.");
+        }
     } catch (e) {
         console.log(e);
         await conn.sendMessage(from, { text: '🚩 *Error!*' }, { quoted: mek });
@@ -66,7 +69,7 @@ cmd({
     try {
         if (!q) return reply('*Please provide a valid video URL!*');
         let res = await fetchJson('https://raganork-network.vercel.app/api/xvideos/download?url=' + q);
-        const wm = `© 𝖰𝗎𝖾𝖾𝗇 𝗄𝖾𝗇𝗓𝗂 𝗆𝖽 v${require("../package.json").version} (Test)\nsɪᴍᴘʟᴇ ᴡᴀʙᴏᴛ ᴍᴀᴅᴇ ʙʏ ᴅᴀɴᴇxᴢᴢ 🅥`;
+        const wm = `© 𝖰𝗎𝖾𝖾𝗇 𝗄𝖾𝗇𝗓𝗂 𝗆𝖽 v${require("../package.json").version} (Test)\nsɪᴍᴘʟᴇ ᴡᴀʙᴏᴛ ᴍᴀᴅᴇ ʙʏ ᴅᴀɴᴜxᴢᴢ 🅥`;
 
         await conn.sendMessage(from, { video: { url: res.url }, caption: wm }, { quoted: mek });
     } catch (e) {
