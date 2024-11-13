@@ -1,5 +1,7 @@
 const config = require('../config');
 const { cmd, commands } = require('../command');
+const yts = require('yt-search');  // Import yt-search for YouTube search
+const fetchJson = require('fetch-json');  // Import fetch-json or any similar library for fetching JSON data
 
 cmd({
   pattern: "song",
@@ -24,7 +26,11 @@ cmd({
 
     // Fetch download link for the song
     const downloadLinkResult = await fetchJson(`https://dark-yasiya-api-new.vercel.app/download/ytmp3?url=${songData.url}`);
-    const downloadLink = downloadLinkResult.result.dl_link;
+    const downloadLink = downloadLinkResult.result?.dl_link;  // Ensure result exists
+
+    if (!downloadLink) {
+      return reply("Unable to fetch the download link. Please try again later.");
+    }
 
     // Prepare the message with song details
     let songDetailsMessage = `*MEDZ MD AUDIO DOWNLOADER*\n\n`;
@@ -36,11 +42,11 @@ cmd({
     songDetailsMessage += `*📽 ᴄʜᴀɴɴᴇʟ* : ${songData.author.name}\n`;
     songDetailsMessage += `*🖇️ ᴜʀʟ* : ${songData.url}\n\n`;
     songDetailsMessage += `> *Choose Your Download Format:*  \n\n`;
-    songDetailsMessage += `*1-𝖠𝗎𝖽𝗂𝗈 File🎶*\n`;
+    songDetailsMessage += `*1-𝖠𝗎𝖽𝗂𝗼 File🎶*\n`;
     songDetailsMessage += `*2-Document File📂*\n\n`;
     songDetailsMessage += `> *© ᴘᴏᴡᴇʀᴇᴅ ʙʏ ɴᴇᴛʜᴍɪᴋᴀ-ᴛᴇᴄʜ*`;
 
-    // Send the song details and options (you can also send a thumbnail or any other media)
+    // Send the song details and options
     const sentMessage = await messageHandler.sendMessage(from, {
       image: { url: songData.thumbnail },  // Assuming songData has a thumbnail property
       caption: songDetailsMessage,
