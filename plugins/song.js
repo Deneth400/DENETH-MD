@@ -3,7 +3,7 @@ const {
 } = require('../command');
 const {
   fetchJson
-} = require('../DATABASE/functions');
+} = require('../lib/functions');
 cmd({
   'pattern': "song",
   'desc': "download songs.",
