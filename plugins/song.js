@@ -1,79 +1,128 @@
 const config = require('../config');
-const dl = require('@bochilteam/scraper');
-const fs = require('fs');
 const { getBuffer, getGroupAdmins, getRandom, getsize, h2k, isUrl, Json, runtime, sleep, fetchJson } = require('../lib/functions');
 const { cmd, commands } = require('../command');
-const yts = require("yt-search");
 
-let wm = config.FOOTER;
-let newsize = config.MAX_SIZE * 1024 * 1024;
-let searchResults = {};  // Store search results to handle user selection
 
 cmd({
-    pattern: "song",
-    alias: ["ytmp3", "play"],
-    use: '.song <query>',
-    react: "🎧",
-    desc: 'Download audio from YouTube',
-    category: "download",
-    filename: __filename
-},
-
-async (conn, m, mek, { from, q, reply }) => {
-    try {
-        if (!q) return await reply('Please enter a query or a URL!');
-        const url = q.replace(/\?si=[^&]*/, '');
-        const results = await yts(url);
-        const result = results.videos[0];
-
-        let caption = `🪔 *Y T - S O N G*\n\n`;
-        caption += `• Title: ${result.title}\n`;
-        caption += `• Views: ${result.views}\n`;
-        caption += `• Duration: ${result.duration}\n`;
-        caption += `• URL: ${result.url}\n\n`;
-        caption += `Reply with:\n1️⃣ for Audio (Direct)\n2️⃣ for Document Format\n`;
-
-        // Store results for the user
-        searchResults[from] = result;
-
-        await conn.sendMessage(from, { text: caption });
-    } catch (e) {
-        console.log(e);
-        reply('Error!');
+  pattern: "song",
+  desc: "Download songs.",
+  category: "download",
+  react: '🎧',
+  filename: __filename
+}, async (messageHandler, context, quotedMessage, { from, reply, q }) => {
+  try {
+    // Ensure the user has provided a song name or URL
+    if (!q) {
+      return reply("Please provide a song name or URL!");
     }
-});
 
-// Handler for user replies to select download format
-cmd({
-    pattern: "1|2",
-    react: "📥",
-    dontAddCommandList: true,
-    filename: __filename
-},
-async (conn, mek, m, { from, q, reply }) => {
-    try {
-        const selection = q.trim();
-        const result = searchResults[from];  // Retrieve stored search result for the user
+    // Fetch search results using yt-search
+    const searchResults = await yts(q);
+    if (!searchResults || searchResults.videos.length === 0) {
+      return reply("No song found matching your query.");
+    }
 
-        if (!result) return await reply('Please search for a song first with `.song <query>`');
+    const songData = searchResults.videos[0]; // Get the first video from search results
 
-        // Fetch audio download link from API
-        const apiResponse = await fetchJson(`https://api-pink-venom.vercel.app/api/ytmp3?url=${result.url}`);
-        const downloadUrl = apiResponse?.result?.download_url;
+    // Fetch download link for the song
+    const downloadLinkResult = await fetchJson(https://dark-yasiya-api-new.vercel.app/download/ytmp3?url=${songData.url});
+    const downloadLink = downloadLinkResult.result.dl_link;
 
-        if (selection === '1') {
-            // Send as audio
-            await conn.sendMessage(from, { audio: { url: downloadUrl }, mimetype: 'audio/mpeg' }, { quoted: mek });
-        } else if (selection === '2') {
-            // Send as document
-            const title = result.title || 'Audio';
-            await conn.sendMessage(from, { document: { url: downloadUrl }, mimetype: 'audio/mpeg', caption: wm, fileName: `${title}.mp3` }, { quoted: mek });
+    // Prepare the message with song details
+    let songDetailsMessage = ‎‎*MEDZ MD AUDIO DOWNLOADER*\n\n;
+    songDetailsMessage += *⚜ ᴛɪᴛʟᴇ* : ${songData.title}\n;
+    songDetailsMessage += *📃 ᴅᴇꜱᴄʀɪᴘᴛɪᴏɴ* : ${songData.description}\n;
+    songDetailsMessage += *👀 ᴠɪᴇᴡꜱ* : ${songData.views}\n;
+    songDetailsMessage += *⏰ ᴅᴜʀᴀᴛɪᴏɴ* : ${songData.timestamp}\n;
+    songDetailsMessage += *📆 ᴜᴘʟᴏᴀᴅᴇᴅ ᴏɴ* : ${songData.ago}\n;
+    songDetailsMessage += *📽 ᴄʜᴀɴɴᴇʟ* : ${songData.author.name}\n;
+    songDetailsMessage += *🖇️ ᴜʀʟ* : ${songData.url}\n\n;
+    songDetailsMessage += > *Choose Your Download Format:*  \n\n;
+    songDetailsMessage += *1-𝖠𝗎𝖽𝗂𝗈 File🎶*\n;
+    songDetailsMessage += *2-Document File📂*\n\n;
+    songDetailsMessage += > *© ᴘᴏᴡᴇʀᴇᴅ ʙʏ ɴᴇᴛʜᴍɪᴋᴀ-ᴛᴇᴄʜ*;
+
+    // Send the song details and options (you can also send a thumbnail or any other media)
+    const sentMessage = await messageHandler.sendMessage(from, {
+      image: { url: songData.thumbnail },  // Assuming songData has a thumbnail property
+      caption: songDetailsMessage,
+      contextInfo: {
+        forwardingScore: 999,
+        isForwarded: true,
+      }
+    }, { quoted: quotedMessage });
+
+    // Listen for the user's reply to the download options
+    messageHandler.ev.on("messages.upsert", async (update) => {
+      const message = update.messages[0];
+
+      if (!message.message || !message.message.extendedTextMessage) return;
+
+      const userReply = message.message.extendedTextMessage.text.trim();
+
+      // If the reply matches the sent options, download the audio or document
+      if (message.message.extendedTextMessage.contextInfo.stanzaId === sentMessage.key.id) {
+        switch (userReply) {
+          case '1':
+            // Send audio download link
+            await messageHandler.sendMessage(from, {
+              audio: {
+                url: downloadLink
+              },
+              mimetype: "audio/mpeg"
+            }, { quoted: quotedMessage });
+
+            // React with a success emoji
+            await messageHandler.sendMessage(from, {
+              react: {
+                text: '✅',
+                key: quotedMessage.key
+              }
+            });
+            break;
+
+          case '2':
+            // Send document (mp3) download link
+            await messageHandler.sendMessage(from, {
+              document: {
+                url: downloadLink
+              },
+              mimetype: 'audio/mpeg',
+              fileName: ${songData.title}.mp3,
+              caption: ${songData.title}\n\n> *© ᴘᴏᴡᴇʀᴇᴅ ʙʏ ɴᴇᴛʜᴍɪᴋᴀ-ᴛᴇᴄʜ*
+            }, { quoted: quotedMessage });
+
+            // React with a success emoji
+            await messageHandler.sendMessage(from, {
+              react: {
+                text: '✅',
+                key: quotedMessage.key
+              }
+            });
+            break;
+
+          default:
+            // Invalid option handling
+            await messageHandler.sendMessage(from, {
+              react: {
+                text: '❌',
+                key: quotedMessage.key
+              }
+            });
+            reply("Invalid option. Please select a valid option🔴");
+            break;
         }
-
-        // Clear the search result for the user after they make a selection
-        delete searchResults[from];
-    } catch (e) {
-        console.log(e);
-        reply('Error while downloading!');
-    }
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    // Handle errors
+    await messageHandler.sendMessage(from, {
+      react: {
+        text: '❌',
+        key: quotedMessage.key
+      }
+    });
+    reply("An error occurred while processing your request.");
+  }
 });
