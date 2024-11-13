@@ -1,4 +1,6 @@
 const axios = require('axios');
+const {cmd} = require('../command');
+const {fetchJson} = require('../lib/functions');
 
 // Define the command
 cmd({
