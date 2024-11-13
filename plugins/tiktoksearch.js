@@ -33,25 +33,38 @@ async (messageHandler, context, quotedMessage, { from, q, reply }) => {
     // Send results with numbered options to download
     const sentMessage = await messageHandler.sendMessage(from, { text: response }, { quoted: quotedMessage });
 
-    // Listen for the user's reply to select a video
-    messageHandler.ev.on("messages.upsert", async (update) => {
+    // Define a listener function for handling the user's reply
+    const handleUserReply = async (update) => {
       const message = update.messages[0];
 
-      if (!message.message || !message.message.extendedTextMessage) return;
+      // Ensure this message is a reply to the original prompt
+      if (!message.message || !message.message.extendedTextMessage || 
+          message.message.extendedTextMessage.contextInfo.stanzaId !== sentMessage.key.id) {
+        return;
+      }
 
       const userReply = message.message.extendedTextMessage.text.trim();
       let videoIndex = parseInt(userReply) - 1; // Get the index from the user's response
 
-      if (isNaN(videoIndex)) return reply("🚩 *Please enter a valid number.*");
+      if (isNaN(videoIndex) || videoIndex < 0 || videoIndex >= data.length) {
+        return reply("🚩 *Please enter a valid number from the list.*");
+      }
 
       let selectedVideo = data[videoIndex];
-      if (!selectedVideo) return reply("🚩 *Video not found. Please check your input.*");
-
       let videoUrl = selectedVideo.nowm; // Direct video URL
 
       // Send the video to the user
-      await messageHandler.sendMessage(from, { video: { url: videoUrl }, caption: `> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-ᴍᴅ ᴠ1 ᴡʜᴀᴛꜱᴀᴘᴘ ʙᴏᴛ®` }, { quoted: quotedMessage });
-    });
+      await messageHandler.sendMessage(from, { 
+        video: { url: videoUrl }, 
+        caption: `> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-ᴍᴅ ᴠ1 ᴡʜᴀᴛꜱᴀᴘᴘ ʙᴏᴛ®` 
+      }, { quoted: quotedMessage });
+
+      // Remove this listener after processing
+      messageHandler.ev.off("messages.upsert", handleUserReply);
+    };
+
+    // Attach the listener function to the message update event
+    messageHandler.ev.on("messages.upsert", handleUserReply);
   } catch (error) {
     console.error(error);
     await messageHandler.sendMessage(from, { text: '🚩 *Error Occurred!*' }, { quoted: quotedMessage });
