@@ -63,6 +63,7 @@ try{
   downloadMenu += `2. Download With Watermark\n`;
   downloadMenu += `3. Download Audio (MP3)\n\n`;
   downloadMenu += `Reply with the number of your choice.`;
+  downloadMenu += `URL- ${url}`;
 
   // Send the download menu
   await conn.sendMessage(from, {
