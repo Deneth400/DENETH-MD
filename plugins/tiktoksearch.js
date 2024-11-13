@@ -38,7 +38,7 @@ async (messageHandler, context, quotedMessage, { from, q, reply }) => {
                 forwardingScore: 999,
                 isForwarded: true,
             }
-        }, { quoted: mek });
+        }, { quoted: quotedMessage });
 
     // Define a listener function for handling the user's reply
     const handleUserReply = async (update) => {
