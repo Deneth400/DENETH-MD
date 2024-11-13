@@ -1,7 +1,14 @@
 const config = require('../config');
 const { cmd, commands } = require('../command');
 const yts = require('yt-search');  // Import yt-search for YouTube search
-const fetchJson = require('fetch-json');
+
+// Use dynamic import for fetch-json
+let fetchJson;
+try {
+  fetchJson = (await import('fetch-json')).default;
+} catch (error) {
+  console.error('Error loading fetch-json module:', error);
+}
 
 cmd({
   pattern: "song",
