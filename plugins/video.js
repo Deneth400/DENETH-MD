@@ -25,6 +25,15 @@ cmd({
 
     // Fetch download link for the video using the new API
     const downloadLinkResult = await fetchJson(`https://api-pink-venom.vercel.app/api/ytmp4?url=${encodeURIComponent(videoData.url)}`);
+
+    // Log the response to ensure we get the expected result
+    console.log("API Response:", downloadLinkResult);
+
+    // Check if the download link is present in the response
+    if (!downloadLinkResult || !downloadLinkResult.link) {
+      return reply("Failed to retrieve the download link. Please try again.");
+    }
+
     const downloadLink = downloadLinkResult.link; // Assuming the response contains a `link` field
 
     // Prepare the message with video details
