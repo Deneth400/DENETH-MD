@@ -21,7 +21,7 @@ async (messageHandler, context, quotedMessage, { from, q, reply }) => {
 
     let message = `ＴＩＫＴＯＫ - S E A R C H \n\n*Results for:* ${q}\n\n`;
 
-    if (data.length < 1) return await messageHandler.sendMessage(from, {image: {url: `https://github.com/Deneth400/DENETH-MD-HARD/blob/main/Images/Tiktok.jpg?raw=true`}, text: "🚩 *I couldn't find anything :(*" }, { quoted: quotedMessage });
+    if (data.length < 1) return await messageHandler.sendMessage(from, {text: "🚩 *I couldn't find anything :(*" }, { quoted: quotedMessage });
 
     let response = message + 'Choose a number to download a video:\n';
     data.forEach((v, index) => {
@@ -31,7 +31,7 @@ async (messageHandler, context, quotedMessage, { from, q, reply }) => {
     response += '\n*Reply with the number of the video you want to download.*';
 
     // Send results with numbered options to download
-    const sentMessage = await messageHandler.sendMessage(from, { text: response }, { quoted: quotedMessage });
+    const sentMessage = await messageHandler.sendMessage(from, {image: {url: `https://github.com/Deneth400/DENETH-MD-HARD/blob/main/Images/Tiktok.jpg?raw=true`}, text: response }, { quoted: quotedMessage });
 
     // Define a listener function for handling the user's reply
     const handleUserReply = async (update) => {
