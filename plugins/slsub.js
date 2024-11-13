@@ -21,7 +21,14 @@ async (conn, mek, m, { from, q, reply }) => {
         result.results.forEach((item, index) => {
             message += `${index + 1}. ${item.title}\nType: ${item.type}\nLink: ${item.link}\n\n`;
         });
-        await conn.sendMessage(from,{image: {url: `https://github.com/Deneth400/DENETH-MD-HARD/blob/main/Images/DENETH-MD.jpg?raw=true`}, text: message }, { quoted: mek });
+        const sentMsg = await conn.sendMessage(from, {
+            image: { url: `https://github.com/Deneth400/DENETH-MD-HARD/blob/main/Images/DENETH-MD.jpg?raw=true`},
+            caption: message,  // Send the description as the caption
+            contextInfo: {
+                forwardingScore: 999,
+                isForwarded: true,
+            }
+        }, { quoted: mek });
     } catch (e) {
         console.log(e);
         await conn.sendMessage(from, { react: { text: '❌', key: mek.key } });
