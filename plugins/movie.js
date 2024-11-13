@@ -20,17 +20,16 @@ async (messageHandler, context, quotedMessage, { from, q, reply }) => {
 
     const movie = result.result;
     let message = `*${movie.title}*\n\n`;
-    message += `Release Date: ${movie.release_date}\n`;
-    message += `Country: ${movie.country}\n\n`;
-    message += `Duration: ${movie.duration}\n`;
-    message += `Genres: ${movie.genres}\n\n`;
-    message += `IMDb Rating: ${movie.IMDb_Rating}\n`;
-    message += `Director: ${movie.director.name}\n\n`;
-    message += `*Select the number for download movie*\n\n`;
-    message += `1. 𝗦𝗗 𝟰𝟴𝟬\n`;
-    message += `2. 𝗛𝗗 𝟳𝟮𝟬\n`;
-    message += `3. 𝗙𝗛𝗗 𝟭𝟬𝟴𝟬\n\n`;
-    message += `Use .mv <Quality Number> <movie_link> to download.\n\n`;
+    message += `📅 Rᴇʟᴇᴀꜱᴇ ᴅᴀᴛᴇ: ${movie.release_date}\n`;
+    message += `🗺 Cᴏᴜɴᴛʀʏ: ${movie.country}\n`;
+    message += `⏰ Dᴜʀᴀᴛɪᴏɴ: ${movie.duration}\n`;
+    message += `🎭 Gᴇɴʀᴇꜱ: ${movie.genres}\n`;
+    message += `⭐ Iᴍᴅʙ Rᴀᴛɪɴɢ: ${movie.IMDb_Rating}\n`;
+    message += `🎬 Dɪʀᴇᴄᴛᴏʀ: ${movie.director.name}\n\n`;
+    message += `🔢 𝗥𝗘𝗣𝗟𝗬 𝗧𝗛𝗘 𝗡𝗨𝗠𝗕𝗘𝗥 𝗕𝗘𝗟𝗢𝗪\n\n`;
+    message += `*1 | SD 480p - ${movie.quality.size}*\n`;
+    message += `*2 | HD 720p*\n`;
+    message += `*3 | FHD 1080p*\n\n`;
     message += `> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`;
 
     const imageUrl = movie.images && movie.images.length > 0 ? movie.images[0] : null;
