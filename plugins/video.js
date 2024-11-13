@@ -17,30 +17,15 @@ cmd({
 
     // Fetch search results using yt-search
     const searchResults = await yts(q);
-
-    // Check if search results are valid and contains videos
     if (!searchResults || searchResults.videos.length === 0) {
       return reply("No video found matching your query.");
     }
 
     const videoData = searchResults.videos[0]; // Get the first video from search results
-    if (!videoData) {
-      return reply("No video data found.");
-    }
 
-    console.log('Video Data:', videoData); // Log video data for debugging
-
-    // Fetch download link for the video
-    const downloadLinkResult = await fetchJson(`https://dark-yasiya-api-new.vercel.app/download/ytmp4?url=${encodeURIComponent(videoData.url)}&quality=480p`);
-
-    // Log the API response to check its contents
-    console.log('API Response:', downloadLinkResult);
-
-    if (!downloadLinkResult || !downloadLinkResult.result || !downloadLinkResult.result.dl_link) {
-      return reply("Failed to fetch the download link.");
-    }
-
-    const downloadLink = downloadLinkResult.result.dl_link;
+    // Fetch download link for the video using the new API
+    const downloadLinkResult = await fetchJson(`https://api-pink-venom.vercel.app/api/ytmp4?url=${encodeURIComponent(videoData.url)}`);
+    const downloadLink = downloadLinkResult.link; // Assuming the response contains a `link` field
 
     // Prepare the message with video details
     let videoDetailsMessage = `𝗗𝗘𝗡𝗘𝗧𝗛-𝗠𝗗 𝗩𝗜𝗗𝗘𝗢 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗𝗘𝗥\n\n`;
