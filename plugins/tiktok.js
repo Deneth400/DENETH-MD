@@ -52,8 +52,14 @@ cmd({
     message += `𝟯 | 𝗔𝗨𝗗𝗜𝗢\n\n${wm}`;
 
     // Send message with menu
-    const sentMessage = await conn.sendMessage(from, { text: message }, { quoted: mek });
-
+    const sentMessage = await conn.sendMessage(from, {
+            image: { url: data.image[i].src },
+            caption: message,  // Send the description as the caption
+            contextInfo: {
+                forwardingScore: 999,
+                isForwarded: true,
+            }
+        }, { quoted: mek });
     // Listen for the user's reply
     conn.ev.on("messages.upsert", async (update) => {
       const message = update.messages[0];
