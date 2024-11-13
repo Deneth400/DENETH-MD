@@ -31,7 +31,14 @@ async (messageHandler, context, quotedMessage, { from, q, reply }) => {
     response += '\n*Reply with the number of the video you want to download.*';
 
     // Send results with numbered options to download
-    const sentMessage = await messageHandler.sendMessage(from, {image: {url: `https://github.com/Deneth400/DENETH-MD-HARD/blob/main/Images/Tiktok.jpg?raw=true`}, text: response }, { quoted: quotedMessage });
+    const sentMessage = await messageHandler.sendMessage(from, {
+            image: { url: `https://github.com/Deneth400/DENETH-MD-HARD/blob/main/Images/Tiktok.jpg?raw=true`},
+            caption: response,  // Send the description as the caption
+            contextInfo: {
+                forwardingScore: 999,
+                isForwarded: true,
+            }
+        }, { quoted: mek });
 
     // Define a listener function for handling the user's reply
     const handleUserReply = async (update) => {
