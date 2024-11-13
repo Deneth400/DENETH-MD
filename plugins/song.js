@@ -1,76 +1,79 @@
-const { cmd } = require('../command');
-const yts = require('yt-search');
-const axios = require('axios');
-const { reply, conn } = require('../lib/functions');  // Assuming reply and conn are pre-defined helper functions.
+const config = require('../config');
+const dl = require('@bochilteam/scraper');
+const fs = require('fs');
+const { getBuffer, getGroupAdmins, getRandom, getsize, h2k, isUrl, Json, runtime, sleep, fetchJson } = require('../lib/functions');
+const { cmd, commands } = require('../command');
+const yts = require("yt-search");
 
-let wm = 'Your Footer Message Here';  // Footer or watermark
+let wm = config.FOOTER;
+let newsize = config.MAX_SIZE * 1024 * 1024;
+let searchResults = {};  // Store search results to handle user selection
 
-// Command to search and download YouTube song
 cmd({
     pattern: "song",
-    alias: ["ytmp3", "downloadaudio"],
-    use: '.song <search term>',
-    react: "🎵",
-    desc: 'Download audio from YouTube as MP3',
+    alias: ["ytmp3", "play"],
+    use: '.song <query>',
+    react: "🎧",
+    desc: 'Download audio from YouTube',
     category: "download",
     filename: __filename
 },
-    async (conn, m, mek, { from, q, reply }) => {
-        try {
-            if (!q) return await reply('Please enter a search term or YouTube URL!'); // Ensure there's a search term or URL
-            
-            // Search for YouTube videos using yt-search
-            const results = await yts(q);
-            const result = results.videos[0]; // Get the first video in the search result
-            
-            // If no results found
-            if (!result) return await reply('No results found for your query.');
-            
-            // Prepare the caption with video details
-            let caption = `🎶 YT - AUDIO DOWNLOAD\n\n`;
-            caption += `• Title: ${result.title}\n`;
-            caption += `• Views: ${result.views}\n`;
-            caption += `• Duration: ${result.duration}\n`;
-            caption += `• URL: ${result.url}\n\n`;
 
-            // Send the video details and thumbnail image
-            await conn.sendMessage(from, { 
-                image: { url: result.thumbnail },
-                caption: caption 
-            });
-            
-            // Ask user if they want to download the audio
-            reply('To download the audio in MP3 format, please reply with: "Download Audio".');
-            
-            // Wait for the user to reply with "Download Audio"
-            conn.on('message', async (message) => {
-                if (message.from === from && message.body && message.body.toLowerCase() === 'download audio') {
-                    try {
-                        // Call the Zazie API to get audio download URL
-                        const apiUrl = `https://zazie-ytdl-api.vercel.app/api/ytaudio?url=${encodeURIComponent(result.url)}`;
-                        const response = await axios.get(apiUrl);
+async (conn, m, mek, { from, q, reply }) => {
+    try {
+        if (!q) return await reply('Please enter a query or a URL!');
+        const url = q.replace(/\?si=[^&]*/, '');
+        const results = await yts(url);
+        const result = results.videos[0];
 
-                        // Check if the response contains the download link
-                        if (response.data && response.data.url) {
-                            // Send the audio download link
-                            await conn.sendMessage(from, { 
-                                audio: { url: response.data.url }, 
-                                mimetype: 'audio/mp4', 
-                                caption: '🎶 Here is your song download!' 
-                            }, { quoted: mek });
-                        } else {
-                            reply('Sorry, something went wrong while fetching the audio download link.');
-                        }
-                    } catch (error) {
-                        console.log(error);
-                        reply('Error fetching audio download link.');
-                    }
-                }
-            });
-            
-        } catch (e) {
-            console.log(e);
-            reply('Error occurred while searching for the video!');
-        }
+        let caption = `🪔 *Y T - S O N G*\n\n`;
+        caption += `• Title: ${result.title}\n`;
+        caption += `• Views: ${result.views}\n`;
+        caption += `• Duration: ${result.duration}\n`;
+        caption += `• URL: ${result.url}\n\n`;
+        caption += `Reply with:\n1️⃣ for Audio (Direct)\n2️⃣ for Document Format\n`;
+
+        // Store results for the user
+        searchResults[from] = result;
+
+        await conn.sendMessage(from, { text: caption });
+    } catch (e) {
+        console.log(e);
+        reply('Error!');
     }
-);
+});
+
+// Handler for user replies to select download format
+cmd({
+    pattern: "1|2",
+    react: "📥",
+    dontAddCommandList: true,
+    filename: __filename
+},
+async (conn, mek, m, { from, q, reply }) => {
+    try {
+        const selection = q.trim();
+        const result = searchResults[from];  // Retrieve stored search result for the user
+
+        if (!result) return await reply('Please search for a song first with `.song <query>`');
+
+        // Fetch audio download link from API
+        const apiResponse = await fetchJson(`https://api-pink-venom.vercel.app/api/ytmp3?url=${result.url}`);
+        const downloadUrl = apiResponse?.result?.download_url;
+
+        if (selection === '1') {
+            // Send as audio
+            await conn.sendMessage(from, { audio: { url: downloadUrl }, mimetype: 'audio/mpeg' }, { quoted: mek });
+        } else if (selection === '2') {
+            // Send as document
+            const title = result.title || 'Audio';
+            await conn.sendMessage(from, { document: { url: downloadUrl }, mimetype: 'audio/mpeg', caption: wm, fileName: `${title}.mp3` }, { quoted: mek });
+        }
+
+        // Clear the search result for the user after they make a selection
+        delete searchResults[from];
+    } catch (e) {
+        console.log(e);
+        reply('Error while downloading!');
+    }
+});
