@@ -12,6 +12,7 @@
     "@whiskeysockets/baileys": "6.6.0",
     "@adiwajshing/keyed-db": "^0.2.4",
     "pino": "^7.0.5",
+    "@bochilteam/scraper":"5.0.1",
     "api-dylux": "latest",
     "cheerio": "^1.0.0-rc.12",
     "yt-search":"2.12.1",
