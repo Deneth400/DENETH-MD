@@ -28,18 +28,18 @@ cmd({
     const downloadLink = downloadLinkResult.result.dl_link;
 
     // Prepare the message with song details
-    let songDetailsMessage = `*MEDZ MD AUDIO DOWNLOADER*\n\n`;
-    songDetailsMessage += `*⚜ ᴛɪᴛʟᴇ* : ${songData.title}\n`;
-    songDetailsMessage += `*📃 ᴅᴇꜱᴄʀɪᴘᴛɪᴏɴ* : ${songData.description}\n`;
-    songDetailsMessage += `*👀 ᴠɪᴇᴡꜱ* : ${songData.views}\n`;
-    songDetailsMessage += `*⏰ ᴅᴜʀᴀᴛɪᴏɴ* : ${songData.timestamp}\n`;
-    songDetailsMessage += `*📆 ᴜᴘʟᴏᴀᴅᴇᴅ ᴏɴ* : ${songData.ago}\n`;
-    songDetailsMessage += `*📽 ᴄʜᴀɴɴᴇʟ* : ${songData.author.name}\n`;
-    songDetailsMessage += `*🖇️ ᴜʀʟ* : ${songData.url}\n\n`;
-    songDetailsMessage += `> *Choose Your Download Format:*  \n\n`;
+    let songDetailsMessage = `𝗗𝗘𝗡𝗘𝗧𝗛-𝗠𝗗 𝗔𝗨𝗗𝗜𝗢 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗𝗘𝗥\n\n`;
+    songDetailsMessage += `✒ ᴛɪᴛʟᴇ : ${songData.title}\n`;
+    songDetailsMessage += `💭 ᴅᴇꜱᴄʀɪᴘᴛɪᴏɴ : ${songData.description}\n`;
+    songDetailsMessage += `👀 ᴠɪᴇᴡꜱ : ${songData.views}\n`;
+    songDetailsMessage += `⏰ ᴅᴜʀᴀᴛɪᴏɴ : ${songData.timestamp}\n`;
+    songDetailsMessage += `📆 ᴜᴘʟᴏᴀᴅᴇᴅ ᴏɴ : ${songData.ago}\n`;
+    songDetailsMessage += `🎬 ᴄʜᴀɴɴᴇʟ : ${songData.author.name}\n`;
+    songDetailsMessage += `🖇️ ᴜʀʟ : ${songData.url}\n\n`;
+    songDetailsMessage += `*REPLY THE DOWNLOAD OPTION* 🚀 \n\n`;
     songDetailsMessage += `*1-𝖠𝗎𝖽𝗂𝗈 File🎶*\n`;
     songDetailsMessage += `*2-Document File📂*\n\n`;
-    songDetailsMessage += `> *© ᴘᴏᴡᴇʀᴇᴅ ʙʏ ɴᴇᴛʜᴍɪᴋᴀ-ᴛᴇᴄʜ*`;
+    songDetailsMessage += `> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`;
 
     // Send the song details and options (you can also send a thumbnail or any other media)
     const sentMessage = await messageHandler.sendMessage(from, {
