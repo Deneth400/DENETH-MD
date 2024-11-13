@@ -28,18 +28,18 @@ cmd({
     const downloadLink = downloadLinkResult.result.dl_link;
 
     // Prepare the message with song details
-    let songDetailsMessage = ‎‎*MEDZ MD AUDIO DOWNLOADER*\n\n;
-    songDetailsMessage += *⚜ ᴛɪᴛʟᴇ* : ${songData.title}\n;
-    songDetailsMessage += *📃 ᴅᴇꜱᴄʀɪᴘᴛɪᴏɴ* : ${songData.description}\n;
-    songDetailsMessage += *👀 ᴠɪᴇᴡꜱ* : ${songData.views}\n;
-    songDetailsMessage += *⏰ ᴅᴜʀᴀᴛɪᴏɴ* : ${songData.timestamp}\n;
-    songDetailsMessage += *📆 ᴜᴘʟᴏᴀᴅᴇᴅ ᴏɴ* : ${songData.ago}\n;
-    songDetailsMessage += *📽 ᴄʜᴀɴɴᴇʟ* : ${songData.author.name}\n;
-    songDetailsMessage += *🖇️ ᴜʀʟ* : ${songData.url}\n\n;
-    songDetailsMessage += > *Choose Your Download Format:*  \n\n;
-    songDetailsMessage += *1-𝖠𝗎𝖽𝗂𝗈 File🎶*\n;
-    songDetailsMessage += *2-Document File📂*\n\n;
-    songDetailsMessage += > *© ᴘᴏᴡᴇʀᴇᴅ ʙʏ ɴᴇᴛʜᴍɪᴋᴀ-ᴛᴇᴄʜ*;
+    let songDetailsMessage = `*MEDZ MD AUDIO DOWNLOADER*\n\n`;
+    songDetailsMessage += `*⚜ ᴛɪᴛʟᴇ* : ${songData.title}\n`;
+    songDetailsMessage += `*📃 ᴅᴇꜱᴄʀɪᴘᴛɪᴏɴ* : ${songData.description}\n`;
+    songDetailsMessage += `*👀 ᴠɪᴇᴡꜱ* : ${songData.views}\n`;
+    songDetailsMessage += `*⏰ ᴅᴜʀᴀᴛɪᴏɴ* : ${songData.timestamp}\n`;
+    songDetailsMessage += `*📆 ᴜᴘʟᴏᴀᴅᴇᴅ ᴏɴ* : ${songData.ago}\n`;
+    songDetailsMessage += `*📽 ᴄʜᴀɴɴᴇʟ* : ${songData.author.name}\n`;
+    songDetailsMessage += `*🖇️ ᴜʀʟ* : ${songData.url}\n\n`;
+    songDetailsMessage += `> *Choose Your Download Format:*  \n\n`;
+    songDetailsMessage += `*1-𝖠𝗎𝖽𝗂𝗈 File🎶*\n`;
+    songDetailsMessage += `*2-Document File📂*\n\n`;
+    songDetailsMessage += `> *© ᴘᴏᴡᴇʀᴇᴅ ʙʏ ɴᴇᴛʜᴍɪᴋᴀ-ᴛᴇᴄʜ*`;
 
     // Send the song details and options (you can also send a thumbnail or any other media)
     const sentMessage = await messageHandler.sendMessage(from, {
@@ -87,8 +87,8 @@ cmd({
                 url: downloadLink
               },
               mimetype: 'audio/mpeg',
-              fileName: ${songData.title}.mp3,
-              caption: ${songData.title}\n\n> *© ᴘᴏᴡᴇʀᴇᴅ ʙʏ ɴᴇᴛʜᴍɪᴋᴀ-ᴛᴇᴄʜ*
+              fileName: `${songData.title}.mp3`,
+              caption: `${songData.title}\n\n> *© ᴘᴏᴡᴇʀᴇᴅ ʙʏ ɴᴇᴛʜᴍɪᴋᴀ-ᴛᴇᴄʜ*`
             }, { quoted: quotedMessage });
 
             // React with a success emoji
