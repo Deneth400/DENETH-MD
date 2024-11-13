@@ -1,7 +1,5 @@
 const config = require('../config');
-const { getBuffer, getGroupAdmins, getRandom, getsize, h2k, isUrl, Json, runtime, sleep, fetchJson } = require('../lib/functions');
 const { cmd, commands } = require('../command');
-
 
 cmd({
   pattern: "song",
@@ -29,7 +27,7 @@ cmd({
     const downloadLink = downloadLinkResult.result.dl_link;
 
     // Prepare the message with song details
-    let songDetailsMessage = ‎‎`*MEDZ MD AUDIO DOWNLOADER*\n\n`;
+    let songDetailsMessage = `*MEDZ MD AUDIO DOWNLOADER*\n\n`;
     songDetailsMessage += `*⚜ ᴛɪᴛʟᴇ* : ${songData.title}\n`;
     songDetailsMessage += `*📃 ᴅᴇꜱᴄʀɪᴘᴛɪᴏɴ* : ${songData.description}\n`;
     songDetailsMessage += `*👀 ᴠɪᴇᴡꜱ* : ${songData.views}\n`;
