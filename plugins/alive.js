@@ -26,8 +26,14 @@ let desc = `👋 Hey ${pushname}, I Aᴍ Aʟɪᴠᴇ Nᴏᴡ
 
 > ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`
     
-const sentMsg = await conn.sendMessage(from, {
-            image: { url: `https://github.com/Deneth400/DENETH-MD-HARD/blob/main/Images/DENETH-MD.jpg?raw=true`},  // Add the image URL here
+   // URL to your PDF (replace with the actual URL or local file)
+        const pdfUrl = 'https://example.com/yourfile.pdf';  // Replace this with your actual PDF URL
+
+        // Sending the text with the PDF file
+        const sentMsg = await conn.sendMessage(from, {
+            image: { url: `https://github.com/Deneth400/DENETH-MD-HARD/blob/main/Images/DENETH-MD.jpg?raw=true`},
+            document: { url: pdfUrl },  // URL to your PDF document
+            mimetype: 'application/pdf',
             caption: desc,  // Send the description as the caption
             contextInfo: {
                 forwardingScore: 999,
