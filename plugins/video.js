@@ -25,7 +25,7 @@ cmd({
 
     // Fetch download link for the video
     const downloadLinkResult = await fetchJson(`https://dark-yasiya-api-new.vercel.app/download/ytmp4?url=${videoData.url}&quality=480p`);
-    const downloadLink = downloadLinkResult.result.dl_link;
+    const downloadLink = downloadLinkResult.result.videoData;
 
     // Prepare the message with video details
     let videoDetailsMessage = `𝗗𝗘𝗡𝗘𝗧𝗛-𝗠𝗗 𝗩𝗜𝗗𝗘𝗢 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗𝗘𝗥\n\n`;
