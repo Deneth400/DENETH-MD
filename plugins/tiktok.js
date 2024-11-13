@@ -42,14 +42,14 @@ cmd({
     const res = await fetchJson('https://api.tiklydown.eu.org/api/download?url=' + q);
     if (!res || !res.video) return reply("Unable to fetch download options.");
 
-    const msg = `ＴＩＫＴＯＫ ＤＬ\n *• Title:* ${res.title}\n *• Date:* ${res.created_at}\n *• Duration:* ${res.video.duration}`;
-    const wm = `> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-ᴍᴅ ᴠ1 ᴡʜᴀᴛꜱᴀᴘᴘ ʙᴏᴛ®`;
+    const msg = `𝗗𝗘𝗡𝗘𝗧𝗛-𝗠𝗗 𝗧𝗜𝗞𝗧𝗢𝗞 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗𝗘𝗥\n✒ Tɪᴛʟᴇ: ${res.title}\n📅 Dᴀᴛᴇ: ${res.created_at}\n⏰ ᴅᴜʀᴀᴛɪᴏɴ: ${res.video.duration}`;
+    const wm = `> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`;
 
     // Construct numbered options menu
-    let message = `${msg}\n\nReply with the number of your choice:\n\n`;
-    message += `1. Without Watermark\n`;
-    message += `2. With Watermark\n`;
-    message += `3. Audio\n\n${wm}`;
+    let message = `${msg}\n\nREPLY THE DOWNLOAD OPTION\n\n`;
+    message += `𝟭 | 𝗪𝗜𝗧𝗛𝗢𝗨𝗧 𝗪𝗔𝗧𝗘𝗥𝗠𝗔𝗥𝗞\n`;
+    message += `𝟮 | 𝗪𝗜𝗧𝗛 𝗪𝗔𝗧𝗘𝗥𝗠𝗔𝗥𝗞\n`;
+    message += `𝟯 | 𝗔𝗨𝗗𝗜𝗢\n\n${wm}`;
 
     // Send message with menu
     const sentMessage = await conn.sendMessage(from, { text: message }, { quoted: mek });
