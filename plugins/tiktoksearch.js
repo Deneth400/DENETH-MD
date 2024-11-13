@@ -21,7 +21,7 @@ async (messageHandler, context, quotedMessage, { from, q, reply }) => {
 
     let message = `ＴＩＫＴＯＫ - S E A R C H \n\n*Results for:* ${q}\n\n`;
 
-    if (data.length < 1) return await messageHandler.sendMessage(from, { text: "🚩 *I couldn't find anything :(*" }, { quoted: quotedMessage });
+    if (data.length < 1) return await messageHandler.sendMessage(from, {image: {url: `https://github.com/Deneth400/DENETH-MD-HARD/blob/main/Images/Tiktok.jpg?raw=true`}, text: "🚩 *I couldn't find anything :(*" }, { quoted: quotedMessage });
 
     let response = message + 'Choose a number to download a video:\n';
     data.forEach((v, index) => {
