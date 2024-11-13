@@ -22,24 +22,13 @@ cmd({
     const _0x4c953e = await fetchJson("https://dark-yasiya-api-new.vercel.app/search/yt?q=" + _0x28e446);
     const _0x4267b3 = _0x4c953e.result.data[0x0];
     const _0x4ea786 = await fetchJson("https://dark-yasiya-api-new.vercel.app/download/ytmp3?url=" + _0x4267b3.url);
-    let _0x21bf98 = "‎‎*乂 SAHAS-MD SONG DOWNLOADER*\n\n*⚙️ 𝖳𝗂𝗍𝗅𝖾* : " + _0x4267b3.title + "\n*📃 𝖣𝖾𝗌𝖼𝗋𝗂𝗉𝗍𝗂𝗈𝗇* : " + _0x4267b3.description + "\n*🚀 𝖵𝗂𝖾𝗐𝗌* : " + _0x4267b3.views + "\n*⏰ 𝖣𝗎𝗋𝖺𝗍𝗂𝗈𝗇* : " + _0x4267b3.timestamp + "\n*📆 𝖴𝗉𝗅𝗈𝖺𝖽𝖾𝖽 𝖮𝗇* : " + _0x4267b3.ago + "\n*🎬 𝖢𝗁𝖺𝗇𝗇𝖾𝗅* : " + _0x4267b3.author.name + "\n*🖇️ 𝖴𝗋𝗅* : " + _0x4267b3.url + "\n\n*乂 REPLY THE DOWNLOAD OPTION*  \n\n*1️⃣  𝖣𝗈𝗐𝗇𝗅𝗈𝖺𝖽 : 𝖠𝗎𝖽𝗂𝗈 𝖳𝗒𝗉𝖾*\n*2️⃣  𝖣𝗈𝗐𝗇𝗅𝗈𝖺𝖽 : 𝖣𝗈𝖼𝗎𝗆𝖾𝗇𝗍 𝖳𝗒𝗉𝖾*\n\n> *©ᴘᴏᴡᴇʀᴇᴅ ʙʏ ꜱᴀʜᴀꜱ ᴛᴇᴄʜ*";
+    let _0x21bf98 = "‎‎𝗗𝗘𝗡𝗘𝗧𝗛-𝗠𝗗 𝗔𝗨𝗗𝗜𝗢 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗𝗘𝗥\n\n✒ ᴛɪᴛʟᴇ : " + _0x4267b3.title + "\n💭 ᴅᴇꜱᴄʀɪᴘᴛɪᴏɴ : " + _0x4267b3.description + "\n👀 ᴠɪᴇᴡꜱ : " + _0x4267b3.views + "\n⏳ ᴅᴜʀᴀᴛɪᴏɴ : " + _0x4267b3.timestamp + "\n📅 ᴜᴘʟᴏᴀᴅᴇᴅ ᴏɴ : " + _0x4267b3.ago + "\n🎬 ᴄʜᴀɴɴᴇʟ : " + _0x4267b3.author.name + "\n📎 ᴜʀʟ : " + _0x4267b3.url + "\n\n*👉 REPLY THE DOWNLOAD OPTION*  \n\n*1️⃣  𝖣𝗈𝗐𝗇𝗅𝗈𝖺𝖽 : 𝖠𝗎𝖽𝗂𝗈 𝖳𝗒𝗉𝖾*\n*2️⃣  𝖣𝗈𝗐𝗇𝗅𝗈𝖺𝖽 : 𝖣𝗈𝖼𝗎𝗆𝖾𝗇𝗍 𝖳𝗒𝗉𝖾*\n\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®";
     const _0x493454 = await _0xeaf511.sendMessage(_0x5e067c, {
+      'image': { url: songData.thumbnail},
       'text': _0x21bf98,
       'contextInfo': {
         'forwardingScore': 0x3e7,
         'isForwarded': true,
-        'forwardedNewsletterMessageInfo': {
-          'newsletterName': "👾 ＳＡＨＡＳ  |   𝚃𝙴𝙲𝙷 ジ",
-          'newsletterJid': "120363296605464049@newsletter"
-        },
-        'externalAdReply': {
-          'title': "SAHAS-MD Song Downloader",
-          'body': _0x4267b3.title + " : Powered By SAHAS-MD Song Information Search Engine",
-          'thumbnailUrl': _0x4267b3.thumbnail,
-          'sourceUrl': '',
-          'mediaType': 0x1,
-          'renderLargerThumbnail': true
-        }
       }
     }, {
       'quoted': _0x573124
