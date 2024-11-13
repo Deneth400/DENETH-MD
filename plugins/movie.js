@@ -3,6 +3,32 @@ const { SinhalaSub } = require('@sl-code-lords/movie-api');
 const { PixaldrainDL } = require("pixaldrain-sinhalasub");
 
 cmd({
+    pattern: "movie",
+    desc: "Search for a movie",
+    category: "movie",
+    react: "🔍",
+    filename: __filename
+},
+async (conn, mek, m, { from, q, reply }) => {
+    try {
+        const input = q.trim();
+        if (!input) return reply("Please provide a movie or TV show name to search.");
+        
+        const result = await SinhalaSub.get_list.by_search(input);
+        if (!result.status || result.results.length === 0) return reply("No results found.");
+
+        let message = "*Search Results:*\n\n";
+        result.results.forEach((item, index) => {
+            message += `${index + 1}. ${item.title}\nType: ${item.type}\nLink: ${item.link}\n\n`;
+        });
+        await conn.sendMessage(from, { text: message }, { quoted: mek });
+    } catch (e) {
+        console.log(e);
+        await conn.sendMessage(from, { react: { text: '❌', key: mek.key } });
+        return reply(`Error: ${e.message}`);
+    }
+});
+cmd({
   pattern: "slsub",
   desc: "Get movie details and download options.",
   category: "movie",
