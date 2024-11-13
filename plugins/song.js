@@ -10,14 +10,32 @@ cmd({
   filename: __filename
 }, async (messageHandler, context, quotedMessage, { from, reply, q }) => {
   try {
+    // Check if the user provided a query
     if (!q) return reply("Please provide a song name or URL!");
 
-    // Search for the song using the provided query
+    // Fetch song search results from the API
     const searchResult = await fetchJson(apiLink + '/search/yt?q=' + q);
+    
+    // Ensure that search results contain the necessary data
+    if (!searchResult || !searchResult.result || searchResult.result.length === 0) {
+      return reply("No results found for the given query.");
+    }
+
     const songData = searchResult.result[0];
 
-    // Fetch the download link for the song
+    // Ensure that songData contains a valid URL
+    if (!songData || !songData.url) {
+      return reply("Failed to retrieve the song URL.");
+    }
+
+    // Fetch download link for the song
     const downloadData = await fetchJson(apiLink + '/download/ytmp3?url=' + songData.url);
+
+    // Ensure that downloadData contains a valid download link
+    if (!downloadData || !downloadData.result || !downloadData.result.dl_link) {
+      return reply("Failed to retrieve the download link.");
+    }
+
     const downloadLink = downloadData.result.dl_link;
 
     // Prepare the message with song details
@@ -33,7 +51,7 @@ cmd({
     songMessage += `*1️⃣ Download: Audio Type*\n*2️⃣ Download: Document Type*\n\n`;
     songMessage += `> *© Powered by SAHAS-MD Song Information Search Engine*`;
 
-    // Send the song details
+    // Send the song details message
     const sentMessage = await messageHandler.sendMessage(from, {
       text: songMessage,
       contextInfo: {
@@ -81,3 +99,4 @@ cmd({
     reply("An error occurred while processing your request.");
   }
 });
+
