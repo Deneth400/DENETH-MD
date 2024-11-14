@@ -1,44 +1,16 @@
-const config = require('../config');
-const { cmd, commands } = require('../command');
-const { getBuffer, getGroupAdmins, getRandom, h2k, isUrl, Json, runtime, sleep, fetchJson } = require('../lib/functions');
-const axios = require('axios');
-const cheerio = require('cheerio');
-const fetch = require('node-fetch');
-
-async function xnxxs(query) {
-  return new Promise((resolve, reject) => {
-    const baseurl = 'https://www.xnxx.com';
-    fetch(`${baseurl}/search/${query}/${Math.floor(Math.random() * 3) + 1}`, { method: 'get' })
-      .then((res) => res.text())
-      .then((res) => {
-        const $ = cheerio.load(res, { xmlMode: false });
-        const title = [];
-        const url = [];
-        const desc = [];
-        const results = [];
-        $('div.mozaique').each(function(a, b) {
-          $(b).find('div.thumb').each(function(c, d) {
-            url.push(baseurl + $(d).find('a').attr('href').replace('/THUMBNUM/', '/'));
-          });
-        });
-        $('div.mozaique').each(function(a, b) {
-          $(b).find('div.thumb-under').each(function(c, d) {
-            desc.push($(d).find('p.metadata').text());
-            $(d).find('a').each(function(e, f) {
-              title.push($(f).attr('title'));
-            });
-          });
-        });
-        for (let i = 0; i < title.length; i++) {
-          results.push({ title: title[i], info: desc[i], link: url[i] });
-        }
-        resolve({ status: true, result: results });
-      })
-      .catch((err) => reject({ status: false, result: err }));
-  });
+// Function to handle rate limit error (exponential backoff)
+async function handleRateLimitError() {
+  const retryAfter = 60 * 1000;  // Retry after 1 minute (adjust if necessary)
+  console.log(`Rate limit exceeded. Retrying after ${retryAfter / 1000} seconds.`);
+  await sleep(retryAfter);
 }
 
-// Command to search and download videos
+// Sleep function (delay in milliseconds)
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Example retry logic in your command handler
 cmd({
   pattern: "xnxx",
   alias: ["xnxxs"],
@@ -63,10 +35,9 @@ async (conn, mek, m, { from, q, reply }) => {
     });
 
     response += '\n*Reply with the number of the video you want to download.*';
-
     await conn.sendMessage(from, { text: response }, { quoted: mek });
 
-    // Listen for the user's reply (this part is fixed)
+    // Listen for the user's reply
     conn.ev.on("messages.upsert", async (update) => {
       const message = update.messages[0];
       if (!message.message || !message.message.extendedTextMessage) return;
@@ -81,11 +52,16 @@ async (conn, mek, m, { from, q, reply }) => {
       const selectedVideo = data[videoIndex];
       let videoUrl = selectedVideo.link; 
 
-      // Download and send the selected video
-      let videoRes = await xdl(videoUrl);
-      let title = videoRes.result.title;
+      try {
+        // Download and send the selected video
+        let videoRes = await xdl(videoUrl);
+        let title = videoRes.result.title;
 
-      await conn.sendMessage(from, { video: { url: videoRes.result.files.high }, caption: title }, { quoted: mek });
+        await conn.sendMessage(from, { video: { url: videoRes.result.files.high }, caption: title }, { quoted: mek });
+      } catch (e) {
+        console.log(e);
+        await reply('🚩 *Error occurred while fetching the video!*');
+      }
     });
 
   } catch (e) {
@@ -93,24 +69,3 @@ async (conn, mek, m, { from, q, reply }) => {
     await conn.sendMessage(from, { text: '🚩 *Error occurred while fetching videos!*' }, { quoted: mek });
   }
 });
-
-// Function to fetch the download link from the video page
-async function xdl(URL) {
-  return new Promise((resolve, reject) => {
-    fetch(`${URL}`, { method: 'get' })
-      .then((res) => res.text())
-      .then((res) => {
-        const $ = cheerio.load(res, { xmlMode: false });
-        const title = $('meta[property="og:title"]').attr('content');
-        const videoScript = $('#video-player-bg > script:nth-child(6)').html();
-        const videoUrl = videoScript.match(/html5player.setVideoUrlHigh\('([^']+)'\)/);
-
-        if (!videoUrl) {
-          return reject({ status: false, result: 'Failed to extract video URL' });
-        }
-
-        resolve({ status: true, result: { title, files: { high: videoUrl[1] } } });
-      })
-      .catch((err) => reject({ status: false, result: err }));
-  });
-}
