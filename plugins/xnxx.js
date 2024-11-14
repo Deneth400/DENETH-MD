@@ -59,12 +59,10 @@ cmd({
         // Fetch search results for XNXX
         let res = await xnxxs(q);
 
-        const msg = `𝗗𝗘𝗡𝗘𝗧𝗛-𝗠𝗗 𝗫𝗡𝗫𝗫 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗𝗘𝗥`;
-
         const data = res.result;
         if (data.length < 1) return await messageHandler.sendMessage(from, { text: "⭕ *I Couldn't Find Anything 🙄*" }, { quoted: quotedMessage });
 
-        let message = `_Search Results For_ "${q}":\n\n`;
+        let message = `𝗗𝗘𝗡𝗘𝗧𝗛-𝗠𝗗 𝗫𝗡𝗫𝗫 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗𝗘𝗥\n\n_Search Results For_ "${q}":\n\n`;
         let options = '';
 
         // Create list of video options for user
@@ -129,7 +127,7 @@ cmd({
                     // Send the video to the user
                     await messageHandler.sendMessage(from, {
                         video: { url: videoUrl },
-                        caption: `${selectedVideo.title}\n\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`,
+                        caption: `*${selectedVideo.title}*\n\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`,
                     }, { quoted: quotedMessage });
 
                 } catch (err) {
