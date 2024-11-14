@@ -3,6 +3,9 @@ const { fetchJson } = require('../lib/functions');
 const axios = require('axios');
 const cheerio = require('cheerio');
 
+// Store session information for ongoing interactions
+let session = {};
+
 cmd({
     pattern: "xvid",
     alias: ["xvideo"],
@@ -38,6 +41,12 @@ cmd({
 
         // Send the list of search results to the user
         const sentMessage = await messageHandler.sendMessage(from, { text: message, image: { url: `https://logohistory.net/wp-content/uploads/2023/06/XVideos-Logo-2007-1024x576.png` } }, { quoted: quotedMessage });
+
+        // Store session for the user in session object
+        session[from] = {
+            searchResults: data,
+            messageId: sentMessage.key.id,  // Store message ID for future reference
+        };
 
         // Function to handle the user reply
         const handleUserReply = async (update) => {
@@ -84,8 +93,9 @@ cmd({
                 }
             }
 
-            // Stop listening for further replies
-            messageHandler.ev.off("messages.upsert", handleUserReply);
+            // After a selection, prompt for a new search again
+            delete session[from]; // Clear the session after video selection
+            reply("🚩 *You can now search for new videos.* Please type '.xvid <query>' again.");
         };
 
         // Attach the listener for user replies
