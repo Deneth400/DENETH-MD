@@ -76,7 +76,9 @@ cmd({
         try {
           // Fetch download link for the selected quality
           const apiUrl = `https://www.dark-yasiya-api.site/download/ytmp4?url=${encodeURIComponent(videoData.url)}&quality=${quality}`;
+          console.log(`Fetching download link from API URL: ${apiUrl}`);
           const downloadLinkResult = await fetchJson(apiUrl);
+          console.log("API Response:", downloadLinkResult);
 
           if (downloadLinkResult && downloadLinkResult.result && downloadLinkResult.result.dl_link) {
             const downloadLink = downloadLinkResult.result.dl_link;
