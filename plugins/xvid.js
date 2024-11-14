@@ -10,37 +10,42 @@ cmd({
     pattern: "xvid",
     alias: ["xvideo"],
     use: '.xvid <query>',
-    react: "🍟",
+    react: "🔞",
     desc: "Search and DOWNLOAD VIDEOS from xvideos.",
     category: "search",
     filename: __filename
 }, async (messageHandler, context, quotedMessage, { from, q, reply }) => {
     try {
-        if (!q) return reply('🚩 *Please provide search terms.*');
+        if (!q) return reply('⭕ *Please Provide Search Terms.*');
 
         // Fetch xvideos search results from the API
         let res = await fetchJson(`https://raganork-network.vercel.app/api/xvideos/search?query=${q}`);
-        let wm = `© 𝖰𝗎𝖾𝖾𝗇 𝗄𝖾𝗇𝗓𝗂 𝗆𝖽 v${require("../package.json").version} (Test)\nsɪᴍᴘʟᴇ ᴡᴀʙᴏᴛ ᴍᴀᴅᴇ ʙʏ ᴅᴀɴᴜxᴢᴢ 🅥`;
-
-        const msg = `乂 X V I D - D O W N L O A D E R`;
 
         // Get the search results
         const data = res.result;
-        if (data.length < 1) return await messageHandler.sendMessage(from, { text: "🚩 *I couldn't find anything :(*" }, { quoted: quotedMessage });
+        if (data.length < 1) return await messageHandler.sendMessage(from, { text: "⭕ *I Couldn't Find Anything 🙄*" }, { quoted: quotedMessage });
 
-        let message = `Search Results for "${q}":\n\n`;
+        let message = `𝗗𝗘𝗡𝗘𝗧𝗛-𝗠𝗗 𝗫-𝗩𝗜𝗗𝗘𝗢𝗦 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗𝗘𝗥\n\n_Search Results For_ "${q}":\n\n`;
         let options = '';
 
         // Create a list of video results
         data.forEach((v, index) => {
-            options += `${index + 1}. ${v.title} (Duration: ${v.duration})\n`;
+            options += `${index + 1}. ${v.title}\n`;
         });
 
         message += options;
-        message += `\nPlease reply with the number(s) of the video(s) you want to download, separated by commas (e.g., 1, 3, 5).`;
-
+        message += `\n❗ *You Can Reply To A Single Number From This Command And Take The Video You Want.(Example:1)*`;
+        message += `\n\n❗ *You Can Reply A Few Numbers From This Command And Take The Videos You Want.(Example:1,2,3)*`; 
+        message += `\n\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`;
         // Send the list of search results to the user
-        const sentMessage = await messageHandler.sendMessage(from, { text: message, image: { url: `https://logohistory.net/wp-content/uploads/2023/06/XVideos-Logo-2007-1024x576.png` } }, { quoted: quotedMessage });
+        const sentMessage = await messageHandler.sendMessage(from, {
+      image: { url: `https://github.com/Deneth400/DENETH-MD-HARD/blob/main/Images/X-Videos.jpg?raw=true`},  // Assuming the movie has a poster or thumbnail
+      caption: message,
+      contextInfo: {
+        forwardingScore: 999,
+        isForwarded: true,
+      }
+    }, { quoted: quotedMessage });
 
         // Store session for the user in session object
         session[from] = {
@@ -64,7 +69,7 @@ cmd({
             // Check if all selected indexes are valid
             for (let index of videoIndexes) {
                 if (isNaN(index) || index < 0 || index >= data.length) {
-                    return reply("🚩 *Please enter valid numbers from the list.*");
+                    return reply("⭕ *Please Enter Valid Numbers From The List.*");
                 }
             }
 
@@ -78,18 +83,18 @@ cmd({
                     let videoUrl = downloadRes.url;
 
                     if (!videoUrl) {
-                        return reply(`🚩 *Failed to fetch video* for "${selectedVideo.title}".`);
+                        return reply(`⭕ *Failed To Fetch Video* for "${selectedVideo.title}".`);
                     }
 
                     // Send the selected video to the user
                     await messageHandler.sendMessage(from, {
                         video: { url: videoUrl },
-                        caption: `> Downloaded via DENETH-MD Bot\n${selectedVideo.title}\nDuration: ${selectedVideo.duration}`,
+                        caption: `${selectedVideo.title}\nDuration: ${selectedVideo.duration}\n\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`,
                     }, { quoted: quotedMessage });
 
                 } catch (err) {
                     console.error(err);
-                    return reply(`🚩 *An error occurred while downloading "${selectedVideo.title}".*`);
+                    return reply(`⭕ *An Error Occurred While Downloading "${selectedVideo.title}".*`);
                 }
             }
 
@@ -102,33 +107,6 @@ cmd({
 
     } catch (error) {
         console.error(error);
-        await messageHandler.sendMessage(from, { text: '🚩 *Error occurred during the process!*' }, { quoted: quotedMessage });
-    }
-});
-
-// Download video command
-cmd({
-    pattern: "xvideodown",
-    alias: ["xviddl", "xvideodl"],
-    react: '🍟',
-    dontAddCommandList: true,
-    filename: __filename
-}, async (messageHandler, context, quotedMessage, { from, q, reply }) => {
-    try {
-        if (!q) return reply('*Please provide a video URL!*');
-        
-        // Fetch the download link for the provided URL
-        let res = await fetchJson(`https://raganork-network.vercel.app/api/xvideos/download?url=${q}`);
-        let wm = `© 𝖰𝗎𝖾𝖾𝗇 𝗄𝖾𝗇𝗓𝗂 𝗆𝖽 v${require("../package.json").version} (Test)\nsɪᴍᴘʟᴇ ᴡᴀʙᴏᴛ ᴍᴀᴅᴇ ʙʏ ᴅᴀɴᴜxᴢᴢ 🅥`;
-
-        // Send the video to the user
-        await messageHandler.sendMessage(from, {
-            video: { url: res.url },
-            caption: wm
-        }, { quoted: quotedMessage });
-
-    } catch (error) {
-        reply('*Error !!*');
-        console.log(error);
+        await messageHandler.sendMessage(from, { text: '⭕ *Error Occurred During The Process!*' }, { quoted: quotedMessage });
     }
 });
