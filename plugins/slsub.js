@@ -18,8 +18,9 @@ cmd({
         if (!result.status || result.results.length === 0) return reply("No results found.");
 
         let message = "*Search Results:*\n\n";
+        // Generate movie search results in 1.1, 1.2, 1.3 format
         result.results.forEach((item, index) => {
-            message += `${index + 1}. ${item.title}\nType: ${item.type}\nLink: ${item.link}\n\n`;
+            message += `${index + 1}.1 ${item.title}\nType: ${item.type}\nLink: ${item.link}\n\n`;
         });
 
         // Send the search results
@@ -38,7 +39,7 @@ cmd({
             if (!message.message || !message.message.extendedTextMessage) return;
 
             const userReply = message.message.extendedTextMessage.text.trim();
-            const selectedMovieIndex = parseInt(userReply) - 1;
+            const selectedMovieIndex = parseInt(userReply.split('.')[0]) - 1;
 
             if (isNaN(selectedMovieIndex) || selectedMovieIndex < 0 || selectedMovieIndex >= result.results.length) {
                 return await conn.sendMessage(from, { text: 'Invalid selection. Please reply with a valid movie number.' }, { quoted: mek });
@@ -72,6 +73,7 @@ async function sendMovieDetails(conn, mek, from, movieLink) {
         message += `⭐ Iᴍᴅʙ Rᴀᴛɪɴɢ: ${movie.IMDb_Rating}\n`;
         message += `🎬 Dɪʀᴇᴄᴛᴏʀ: ${movie.director.name}\n\n`;
         message += `🔢 𝗥𝗘𝗣𝗟𝗬 𝗧𝗛𝗘 𝗡𝗨𝗠𝗕𝗘𝗥 𝗕𝗘𝗟𝗢𝗪\n\n`;
+        // Using 1.1, 1.2, 1.3 format for quality selection
         message += `*1.1 | SD 480p*\n`;
         message += `*1.2 | HD 720p*\n`;
         message += `*1.3 | FHD 1080p*\n\n`;
@@ -89,7 +91,7 @@ async function sendMovieDetails(conn, mek, from, movieLink) {
             }
         }, { quoted: mek });
 
-        // Listen for the user's reply to the download options (1, 2, or 3)
+        // Listen for the user's reply to the download options (1.1, 1.2, 1.3)
         conn.ev.on("messages.upsert", async (update) => {
             const message = update.messages[0];
             if (!message.message || !message.message.extendedTextMessage) return;
@@ -100,20 +102,20 @@ async function sendMovieDetails(conn, mek, from, movieLink) {
             if (message.message.extendedTextMessage.contextInfo.stanzaId === sentMessage.key.id) {
                 let quality;
                 switch (userReply) {
-                    case '1.1':
+                    case '1':
                         quality = "SD 480p";
                         break;
-                    case '1.2':
+                    case '2':
                         quality = "HD 720p";
                         break;
-                    case '1.3':
+                    case '3':
                         quality = "FHD 1080p";
                         break;
                     default:
                         await conn.sendMessage(from, {
                             react: { text: '❌', key: mek.key }
                         });
-                        return reply("Invalid option. Please select from 1, 2, or 3.");
+                        return reply("Invalid option. Please select from 1.1, 1.2, or 1.3.");
                 }
 
                 // Fetch the direct download link for the selected quality
