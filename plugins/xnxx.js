@@ -38,6 +38,7 @@ async function xnxxs(query) {
   });
 }
 
+// Main search command
 cmd({
   pattern: "xnxx",
   alias: ["xnxxs"],
@@ -74,6 +75,7 @@ async (messageHandler, context, quotedMessage, { from, q, reply }) => {
       }
     }, { quoted: quotedMessage });
 
+    // Handle user selection to download the video
     const handleUserReply = async (update) => {
       const message = update.messages[0];
 
@@ -129,6 +131,7 @@ async function xdl(URL) {
   });
 }
 
+// Video download command
 cmd({
   pattern: "xnxxdown",
   alias: ["dlxnxx", "xnxxdl"],
