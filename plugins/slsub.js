@@ -23,7 +23,7 @@ cmd({
 
         let message = "*Search Results:*\n\n";
         result.results.forEach((item, index) => {
-            message += `${index 1 + 1}. ${item.title}\nType: ${item.type}\nLink: ${item.link}\n\n`;
+            message += `${index + 1}. ${item.title}\nType: ${item.type}\nLink: ${item.link}\n\n`;
         });
 
         // Send search results to the user
@@ -78,9 +78,9 @@ async function showMovieDetails(conn, mek, from, movie) {
         message += `⭐ *IMDb Rating*: ${movieDetails.IMDb_Rating}\n`;
         message += `🎬 *Director*: ${movieDetails.director.name}\n\n`;
         message += `🔢 *Reply with the number below to select the download quality*\n\n`;
-        message += `*1 | SD 480p*\n`;
-        message += `*2 | HD 720p*\n`;
-        message += `*3 | FHD 1080p*\n\n`;
+        message += `*480 | SD 480p*\n`;
+        message += `*720 | HD 720p*\n`;
+        message += `*1080 | FHD 1080p*\n\n`;
         message += `> Powered by DENETH-xD Tech®`;
 
         const imageUrl = movieDetails.images && movieDetails.images.length > 0 ? movieDetails.images[0] : null;
@@ -103,13 +103,13 @@ async function showMovieDetails(conn, mek, from, movie) {
             if (message.message.extendedTextMessage.contextInfo.stanzaId === sentMessage.key.id) {
                 let quality;
                 switch (userReply) {
-                    case '1':
+                    case '480':
                         quality = "SD 480p";
                         break;
-                    case '2':
+                    case '720':
                         quality = "HD 720p";
                         break;
-                    case '3':
+                    case '1080':
                         quality = "FHD 1080p";
                         break;
                     default:
