@@ -70,7 +70,7 @@ async (messageHandler, context, quotedMessage, { from, q, reply }) => {
         caption: `> Downloaded via DENETH-MD Bot\n${selectedVideo.title}\nDuration: ${selectedVideo.duration}`,
       }, { quoted: quotedMessage });
 
-      // Remove listener after handling
+      // Remove listener after handling the reply
       messageHandler.ev.off("messages.upsert", handleUserReply);
     };
 
