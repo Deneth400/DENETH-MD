@@ -30,7 +30,7 @@ async (messageHandler, context, quotedMessage, { from, q, reply }) => {
 
     // Create a list of video results
     data.forEach((v, index) => {
-      options += `${index + 1}. ${v.title}\n`;
+      options += `${index + 1}. ${v.title} (Creator: ${v.creator})\n`;
     });
 
     message += options;
@@ -82,7 +82,7 @@ async (messageHandler, context, quotedMessage, { from, q, reply }) => {
           // Send the selected video to the user
           await messageHandler.sendMessage(from, {
             video: { url: selectedVideo.nowm }, // Direct video URL for download
-            caption: `${selectedVideo.title}\nCreator: ${selectedVideo.creator}\n\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`,
+            caption: `${selectedVideo.title}\n\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`,
           }, { quoted: quotedMessage });
         } catch (err) {
           console.error(err);
