@@ -33,7 +33,7 @@ cmd({
         }, { quoted: mek });
 
         // Wait for the user to select a movie by replying with its number
-        conn.ev.once("messages.upsert", async (update) => {
+        conn.ev.on("messages.upsert", async (update) => {
             const message = update.messages[0];
             if (!message.message || !message.message.extendedTextMessage) return;
 
@@ -72,9 +72,9 @@ async function sendMovieDetails(conn, mek, from, movieLink) {
         message += `⭐ Iᴍᴅʙ Rᴀᴛɪɴɢ: ${movie.IMDb_Rating}\n`;
         message += `🎬 Dɪʀᴇᴄᴛᴏʀ: ${movie.director.name}\n\n`;
         message += `🔢 𝗥𝗘𝗣𝗟𝗬 𝗧𝗛𝗘 𝗡𝗨𝗠𝗕𝗘𝗥 𝗕𝗘𝗟𝗢𝗪\n\n`;
-        message += `*1 | SD 480p*\n`;
-        message += `*2 | HD 720p*\n`;
-        message += `*3 | FHD 1080p*\n\n`;
+        message += `*1.1 | SD 480p*\n`;
+        message += `*1.2 | HD 720p*\n`;
+        message += `*1.3 | FHD 1080p*\n\n`;
         message += `> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`;
 
         const imageUrl = movie.images && movie.images.length > 0 ? movie.images[0] : null;
@@ -90,7 +90,7 @@ async function sendMovieDetails(conn, mek, from, movieLink) {
         }, { quoted: mek });
 
         // Listen for the user's reply to the download options (1, 2, or 3)
-        conn.ev.once("messages.upsert", async (update) => {
+        conn.ev.on("messages.upsert", async (update) => {
             const message = update.messages[0];
             if (!message.message || !message.message.extendedTextMessage) return;
 
@@ -100,13 +100,13 @@ async function sendMovieDetails(conn, mek, from, movieLink) {
             if (message.message.extendedTextMessage.contextInfo.stanzaId === sentMessage.key.id) {
                 let quality;
                 switch (userReply) {
-                    case '1':
+                    case '1.1':
                         quality = "SD 480p";
                         break;
-                    case '2':
+                    case '1.2':
                         quality = "HD 720p";
                         break;
-                    case '3':
+                    case '1.3':
                         quality = "FHD 1080p";
                         break;
                     default:
