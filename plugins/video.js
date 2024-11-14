@@ -1,103 +1,116 @@
-const config = require('../config');
-const yts = require("ytsearch-venom");
 const { cmd } = require('../command');
-const fetch = require('node-fetch');
-
-const foot = `> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-ᴍᴅ ᴠ1 ᴡʜᴀᴛꜱᴀᴘᴘ ʙᴏᴛ®`;
+const { fetchJson } = require('../lib/functions');
+const yts = require('yt-search');
 
 cmd({
-    pattern: "ytv",
-    alias: ["video", "ytmp4"],
-    use: '.ytv <video name or URL>',
-    react: "📺",
-    desc: 'Download videos from YouTube',
-    category: "download",
-    filename: __filename
-}, async (messageHandler, context, quotedMessage, { from, q, reply }) => {
-    try {
-        if (!q) return reply('*Please enter a video name or URL!*');
-        
-        // Fetch video info using ytsearch-venom if it's a query
-        let videoInfo;
-        if (q.startsWith("http")) {
-            videoInfo = { url: q };
-        } else {
-            const results = await yts(q);
-            if (!results || !results.videos.length) return reply('No results found.');
-            videoInfo = results.videos[0];
-        }
-
-        let caption = `*Y T - V I D E O*\n\n`;
-        caption += `➻ *Title*: ${videoInfo.title || 'Unknown'}\n`;
-        caption += `➻ *Views*: ${videoInfo.views || 'Unknown'}\n`;
-        caption += `➻ *Duration*: ${videoInfo.duration || 'Unknown'}\n`;
-        caption += `➻ *URL*: ${videoInfo.url}\n\n`;
-
-        const buttons = [
-            { name: 'single_select', buttonParamsJson: JSON.stringify({
-                title: 'Choose Quality',
-                sections: [
-                    { rows: [
-                        { title: '144p', description: 'Download in 144p', id: `.yt144 ${videoInfo.url}` },
-                        { title: '240p', description: 'Download in 240p', id: `.yt240 ${videoInfo.url}` },
-                        { title: '360p', description: 'Download in 360p', id: `.yt360 ${videoInfo.url}` },
-                        { title: '480p', description: 'Download in 480p', id: `.yt480 ${videoInfo.url}` },
-                        { title: '720p', description: 'Download in 720p', id: `.yt720 ${videoInfo.url}` },
-                        { title: '1080p', description: 'Download in 1080p', id: `.yt1080 ${videoInfo.url}` }
-                    ]}
-                ]
-            })}
-        ];
-
-        const message = {
-            image: videoInfo.thumbnail,
-            header: '',
-            footer: foot,
-            body: caption
-        };
-
-        await messageHandler.sendButtonMessage(from, buttons, context, message);
-    } catch (error) {
-        console.error(error);
-        reply('*Error occurred while processing your request!*');
+  pattern: "ytv",
+  desc: "Download YouTube videos with quality options.",
+  category: "download",
+  react: '🎬',
+  filename: __filename
+}, async (messageHandler, context, quotedMessage, { from, reply, q }) => {
+  try {
+    // Ensure the user has provided a video name or URL
+    if (!q) {
+      return reply("Please provide a video name or URL!");
     }
-});
 
-// Handle download based on user quality selection
-const qualityCmds = ["yt144", "yt240", "yt360", "yt480", "yt720", "yt1080"];
-qualityCmds.forEach(quality => {
-    cmd({
-        pattern: quality,
-        desc: `Download YouTube video in ${quality.toUpperCase()}`,
-        category: "download",
-        filename: __filename
-    }, async (messageHandler, context, quotedMessage, { from, q, reply }) => {
-        try {
-            const url = q.trim();
-            if (!url) return reply("Please provide a valid YouTube URL.");
+    // Fetch search results using yt-search
+    const searchResults = await yts(q);
+    if (!searchResults || searchResults.videos.length === 0) {
+      return reply("No video found matching your query.");
+    }
 
-            const apiUrl = `https://api-pink-venom.vercel.app/api/ytmp4?url=${encodeURIComponent(url)}`;
-            const response = await fetch(apiUrl);
-            const result = await response.json();
+    const videoData = searchResults.videos[0]; // Get the first video from search results
 
-            if (result.status && result.data) {
-                const downloadLink = result.data.url;
-                await messageHandler.sendMessage(from, {
-                    document: { url: downloadLink },
-                    mimetype: 'video/mp4',
-                    fileName: `${result.data.title}.mp4`,
-                    caption: `${result.data.title}\n\n${foot}`
-                }, { quoted: quotedMessage });
+    // Prepare the message with video details
+    let videoDetailsMessage = `𝗗𝗘𝗡𝗘𝗧𝗛-𝗠𝗗 𝗩𝗜𝗗𝗘𝗢 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗𝗘𝗥\n\n`;
+    videoDetailsMessage += `✒ ᴛɪᴛʟᴇ : ${videoData.title}\n`;
+    videoDetailsMessage += `👀 ᴠɪᴇᴡꜱ : ${videoData.views}\n`;
+    videoDetailsMessage += `⏰ ᴅᴜʀᴀᴛɪᴏɴ : ${videoData.timestamp}\n`;
+    videoDetailsMessage += `📆 ᴜᴘʟᴏᴀᴅᴇᴅ ᴏɴ : ${videoData.ago}\n`;
+    videoDetailsMessage += `🎬 ᴄʜᴀɴɴᴇʟ : ${videoData.author.name}\n`;
+    videoDetailsMessage += `🖇️ ᴜʀʟ : ${videoData.url}\n\n`;
+    videoDetailsMessage += `*REPLY WITH DOWNLOAD OPTION* 🚀 \n\n`;
+    videoDetailsMessage += `*1 - 144p 🎥*\n`;
+    videoDetailsMessage += `*2 - 240p 🎥*\n`;
+    videoDetailsMessage += `*3 - 360p 🎥*\n`;
+    videoDetailsMessage += `*4 - 480p 🎥*\n`;
+    videoDetailsMessage += `*5 - 720p 🎥*\n\n`;
+    videoDetailsMessage += `> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-ᴍᴅ ᴠ1®`;
 
-                await messageHandler.sendMessage(from, {
-                    react: { text: '✅', key: quotedMessage.key }
-                });
-            } else {
-                reply("Failed to retrieve download link. Please try another quality or check the video URL.");
-            }
-        } catch (error) {
-            console.error(error);
-            reply('*Error occurred while processing your request!*');
+    // Send video details and options (you can also send a thumbnail or any other media)
+    const sentMessage = await messageHandler.sendMessage(from, {
+      image: { url: videoData.thumbnail },
+      caption: videoDetailsMessage,
+      contextInfo: {
+        forwardingScore: 999,
+        isForwarded: true,
+      }
+    }, { quoted: quotedMessage });
+
+    // Listen for the user's reply to the download options
+    messageHandler.ev.on("messages.upsert", async (update) => {
+      const message = update.messages[0];
+
+      if (!message.message || !message.message.extendedTextMessage) return;
+
+      const userReply = message.message.extendedTextMessage.text.trim();
+
+      // If the reply matches the sent options, fetch the download link based on quality
+      if (message.message.extendedTextMessage.contextInfo.stanzaId === sentMessage.key.id) {
+        let quality;
+
+        switch (userReply) {
+          case '1': quality = '144p'; break;
+          case '2': quality = '240p'; break;
+          case '3': quality = '360p'; break;
+          case '4': quality = '480p'; break;
+          case '5': quality = '720p'; break;
+          default:
+            await messageHandler.sendMessage(from, {
+              react: {
+                text: '❌',
+                key: quotedMessage.key
+              }
+            });
+            return reply("Invalid option. Please select a valid option🔴");
         }
+
+        // Fetch download link for the selected quality
+        const downloadLinkResult = await fetchJson(`https://api-pink-venom.vercel.app/api/ytmp4?url=${encodeURIComponent(videoData.url)}&quality=${quality}`);
+        const downloadLink = downloadLinkResult.result?.dl_link;
+
+        if (downloadLink) {
+          await messageHandler.sendMessage(from, {
+            document: {
+              url: downloadLink
+            },
+            mimetype: 'video/mp4',
+            fileName: `${videoData.title}-${quality}.mp4`,
+            caption: `${videoData.title} (${quality})\n\n> *© ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-ᴍᴅ ᴛᴇᴄʜ*`
+          }, { quoted: quotedMessage });
+
+          await messageHandler.sendMessage(from, {
+            react: {
+              text: '✅',
+              key: quotedMessage.key
+            }
+          });
+        } else {
+          reply("Failed to retrieve download link. Please try another quality or check the video URL.");
+        }
+      }
     });
+  } catch (error) {
+    console.error(error);
+    // Handle errors
+    await messageHandler.sendMessage(from, {
+      react: {
+        text: '❌',
+        key: quotedMessage.key
+      }
+    });
+    reply("An error occurred while processing your request.");
+  }
 });
