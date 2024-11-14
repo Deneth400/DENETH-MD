@@ -34,7 +34,7 @@ cmd({
         });
 
         message += options;
-        message += `\nPlease reply with the number of the video you want to download.`;
+        message += `\nPlease reply with the number(s) of the video(s) you want to download, separated by commas (e.g., 1, 3, 5).`;
 
         // Send the list of search results to the user
         const sentMessage = await messageHandler.sendMessage(from, { text: message, image: { url: `https://logohistory.net/wp-content/uploads/2023/06/XVideos-Logo-2007-1024x576.png` } }, { quoted: quotedMessage });
@@ -50,27 +50,39 @@ cmd({
             }
 
             const userReply = userMessage.message.extendedTextMessage.text.trim();
-            const videoIndex = parseInt(userReply) - 1; // Convert reply to an index
+            const videoIndexes = userReply.split(',').map(x => parseInt(x.trim()) - 1); // Convert reply to an array of indexes
 
-            if (isNaN(videoIndex) || videoIndex < 0 || videoIndex >= data.length) {
-                return reply("🚩 *Please enter a valid number from the list.*");
+            // Check if all selected indexes are valid
+            for (let index of videoIndexes) {
+                if (isNaN(index) || index < 0 || index >= data.length) {
+                    return reply("🚩 *Please enter valid numbers from the list.*");
+                }
             }
 
-            const selectedVideo = data[videoIndex];
+            // Fetch and send videos for each valid index
+            for (let index of videoIndexes) {
+                const selectedVideo = data[index];
 
-            // Fetch the download URL for the selected video
-            let downloadRes = await fetchJson(`https://raganork-network.vercel.app/api/xvideos/download?url=${selectedVideo.url}`);
-            let videoUrl = downloadRes.url;
+                try {
+                    // Fetch the download URL for the selected video
+                    let downloadRes = await fetchJson(`https://raganork-network.vercel.app/api/xvideos/download?url=${selectedVideo.url}`);
+                    let videoUrl = downloadRes.url;
 
-            if (!videoUrl) {
-                return reply("🚩 *Failed to fetch video. Try a different selection.*");
+                    if (!videoUrl) {
+                        return reply(`🚩 *Failed to fetch video* for "${selectedVideo.title}".`);
+                    }
+
+                    // Send the selected video to the user
+                    await messageHandler.sendMessage(from, {
+                        video: { url: videoUrl },
+                        caption: `> Downloaded via DENETH-MD Bot\n${selectedVideo.title}\nDuration: ${selectedVideo.duration}`,
+                    }, { quoted: quotedMessage });
+
+                } catch (err) {
+                    console.error(err);
+                    return reply(`🚩 *An error occurred while downloading "${selectedVideo.title}".*`);
+                }
             }
-
-            // Send the selected video to the user
-            await messageHandler.sendMessage(from, {
-                video: { url: videoUrl },
-                caption: `> Downloaded via DENETH-MD Bot\n${selectedVideo.title}\nDuration: ${selectedVideo.duration}`,
-            }, { quoted: quotedMessage });
 
             // Stop listening for further replies
             messageHandler.ev.off("messages.upsert", handleUserReply);
