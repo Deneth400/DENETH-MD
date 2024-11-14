@@ -60,7 +60,6 @@ cmd({
       // If the reply matches the sent options, fetch the download link based on quality
       if (message.message.extendedTextMessage.contextInfo.stanzaId === sentMessage.key.id) {
         let quality;
-
         switch (userReply) {
           case '1': quality = '144p'; break;
           case '2': quality = '240p'; break;
@@ -78,7 +77,7 @@ cmd({
         }
 
         // Fetch download link for the selected quality
-        const downloadLinkResult = await fetchJson(`https://api-pink-venom.vercel.app/api/ytmp4?url=${encodeURIComponent(videoData.url)}&quality=${quality}`);
+        const downloadLinkResult = await fetchJson(`https://dark-yasiya-api-new.vercel.app/download/ytmp4?url=${encodeURIComponent(videoData.url)}&quality=${quality}`);
         const downloadLink = downloadLinkResult.result?.dl_link;
 
         if (downloadLink) {
