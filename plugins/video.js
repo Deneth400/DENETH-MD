@@ -76,34 +76,40 @@ cmd({
             return reply("Invalid option. Please select a valid option🔴");
         }
 
-        // Fetch download link for the selected quality
-        const downloadLinkResult = await fetchJson(`https://dark-yasiya-api-new.vercel.app/download/ytmp4?url=${encodeURIComponent(videoData.url)}&quality=${quality}`);
-        const downloadLink = downloadLinkResult.result?.dl_link;
+        try {
+          // Fetch download link for the selected quality
+          const apiUrl = `https://dark-yasiya-api-new.vercel.app/download/ytmp4?url=${encodeURIComponent(videoData.url)}&quality=${quality}`;
+          const downloadLinkResult = await fetchJson(apiUrl);
 
-        if (downloadLink) {
-          await messageHandler.sendMessage(from, {
-            document: {
-              url: downloadLink
-            },
-            mimetype: 'video/mp4',
-            fileName: `${videoData.title}-${quality}.mp4`,
-            caption: `${videoData.title} (${quality})\n\n> *© ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-ᴍᴅ ᴛᴇᴄʜ*`
-          }, { quoted: quotedMessage });
+          if (downloadLinkResult && downloadLinkResult.result && downloadLinkResult.result.dl_link) {
+            const downloadLink = downloadLinkResult.result.dl_link;
+            await messageHandler.sendMessage(from, {
+              document: {
+                url: downloadLink
+              },
+              mimetype: 'video/mp4',
+              fileName: `${videoData.title}-${quality}.mp4`,
+              caption: `${videoData.title} (${quality})\n\n> *© ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-ᴍᴅ ᴛᴇᴄʜ*`
+            }, { quoted: quotedMessage });
 
-          await messageHandler.sendMessage(from, {
-            react: {
-              text: '✅',
-              key: quotedMessage.key
-            }
-          });
-        } else {
-          reply("Failed to retrieve download link. Please try another quality or check the video URL.");
+            await messageHandler.sendMessage(from, {
+              react: {
+                text: '✅',
+                key: quotedMessage.key
+              }
+            });
+          } else {
+            reply("Failed to retrieve download link. Please try another quality or check the video URL.");
+          }
+        } catch (error) {
+          console.error("Error fetching download link:", error);
+          reply("An error occurred while fetching the download link. Please try again.");
         }
       }
     });
   } catch (error) {
     console.error(error);
-    // Handle errors
+    // Handle general errors
     await messageHandler.sendMessage(from, {
       react: {
         text: '❌',
