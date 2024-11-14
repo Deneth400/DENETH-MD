@@ -19,16 +19,16 @@ async (messageHandler, context, quotedMessage, { from, q, reply }) => {
     let mal = await fetchJson('https://apis-starlights-team.koyeb.app/starlight/tiktoksearch?text=' + q);
     let data = mal.data;
 
-    let message = `ＴＩＫＴＯＫ - S E A R C H \n\n*Results for:* ${q}\n\n`;
+    let message = `𝗗𝗘𝗡𝗘𝗧𝗛-𝗠𝗗 𝗧𝗜𝗧𝗞𝗧𝗢𝗞 𝗦𝗘𝗔𝗥𝗖𝗛\n\n» ʀᴇꜱᴜʟᴛꜱ ${q}\n\n`;
 
     if (data.length < 1) return await messageHandler.sendMessage(from, {text: "🚩 *I couldn't find anything :(*" }, { quoted: quotedMessage });
 
-    let response = message + 'Choose a number to download a video:\n';
+    let response = message + 'Choose a Number to Download a Video:\n';
     data.forEach((v, index) => {
-      response += `${index + 1}. ${v.title}\n`;
+      response += `${index + 1}. ${v.title}\n\n`;
     });
 
-    response += '\n*Reply with the number of the video you want to download.*';
+    response += '\n*Reply With The Number Of The Video You Want To Download.*';
 
     // Send results with numbered options to download
     const sentMessage = await messageHandler.sendMessage(from, {
