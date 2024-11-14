@@ -9,26 +9,23 @@ cmd({
   pattern: "tiktoksearch",
   alias: ["tiks"],
   use: '.tiktoksearch <query>',
-  react: "🍟",
+  react: "🔍",
   desc: "Search and DOWNLOAD VIDEOS from TikTok.",
   category: "search",
   filename: __filename
 },
 async (messageHandler, context, quotedMessage, { from, q, reply }) => {
   try {
-    if (!q) return reply('🚩 *Please provide search terms.*');
+    if (!q) return reply('⭕ *Please Provide Search Terms.*');
 
     // Fetch TikTok search results from the API
     let res = await fetchJson(`https://apis-starlights-team.koyeb.app/starlight/tiktoksearch?text=${q}`);
     let data = res.data;
-    
-    let wm = `© 𝖰𝗎𝖾𝖾𝗇 𝗄𝖾𝗇𝗓𝗂 𝗆𝖽 v${require("../package.json").version} (Test)\nsɪᴍᴘʟᴇ ᴡᴀʙᴏᴛ ᴍᴀᴅᴇ ʙʏ ᴅᴀɴᴜxᴢᴢ 🅥`;
-    const msg = `乂 *TIKTOK SEARCH RESULTS*`;
 
     // If no results, send a failure message
-    if (data.length < 1) return await messageHandler.sendMessage(from, { text: "🚩 *I couldn't find anything :(*" }, { quoted: quotedMessage });
+    if (data.length < 1) return await messageHandler.sendMessage(from, { text: "⭕ *I Couldn't Find Anything 🙄*" }, { quoted: quotedMessage });
 
-    let message = `Search Results for "${q}":\n\n`;
+    let message = `𝗗𝗘𝗡𝗘𝗧𝗛-𝗠𝗗 𝗧𝗜𝗞𝗧𝗢𝗞 𝗦𝗘𝗔𝗥𝗖𝗛\n\nSearch Results for "${q}":\n\n`;
     let options = '';
 
     // Create a list of video results
@@ -37,10 +34,19 @@ async (messageHandler, context, quotedMessage, { from, q, reply }) => {
     });
 
     message += options;
-    message += `\nPlease reply with the number(s) of the video(s) you want to download, separated by commas (e.g., 1, 3, 5).`;
+    message += `\nYou Can Reply To A Single Number From This Command And Take The Video You Want.(Example:1)`;
+    message += `\nYou Can Reply A Few Numbers From This Command And Take The Videos You Want.(Example:1,2,3)`; 
+    message += `\n\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`;
 
     // Send the list of search results to the user
-    const sentMessage = await messageHandler.sendMessage(from, { text: message, image: { url: `https://github.com/Deneth400/DENETH-MD-HARD/blob/main/Images/Tiktok.jpg?raw=true` } }, { quoted: quotedMessage });
+    const sentMessage = await messageHandler.sendMessage(from, {
+      image: { url: `https://github.com/Deneth400/DENETH-MD-HARD/blob/main/Images/Tiktok.jpg?raw=true`},
+      caption: message,
+      contextInfo: {
+        forwardingScore: 999,
+        isForwarded: true,
+      }
+    }, { quoted: quotedMessage });
 
     // Store session information for the user
     session[from] = {
@@ -64,7 +70,7 @@ async (messageHandler, context, quotedMessage, { from, q, reply }) => {
       // Check if all selected indexes are valid
       for (let index of videoIndexes) {
         if (isNaN(index) || index < 0 || index >= data.length) {
-          return reply("🚩 *Please enter valid numbers from the list.*");
+          return reply("⭕ *Please Enter Valid Numbers From The List.*");
         }
       }
 
@@ -76,11 +82,11 @@ async (messageHandler, context, quotedMessage, { from, q, reply }) => {
           // Send the selected video to the user
           await messageHandler.sendMessage(from, {
             video: { url: selectedVideo.nowm }, // Direct video URL for download
-            caption: `> Downloaded via DENETH-MD Bot\n${selectedVideo.title}\nCreator: ${selectedVideo.creator}`,
+            caption: `${selectedVideo.title}\nCreator: ${selectedVideo.creator}\n\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`,
           }, { quoted: quotedMessage });
         } catch (err) {
           console.error(err);
-          return reply(`🚩 *An error occurred while downloading "${selectedVideo.title}".*`);
+          return reply(`⭕ *An Error Occurred While Downloading...\n "${selectedVideo.title}".*`);
         }
       }
 
@@ -93,33 +99,6 @@ async (messageHandler, context, quotedMessage, { from, q, reply }) => {
 
   } catch (error) {
     console.error(error);
-    await messageHandler.sendMessage(from, { text: '🚩 *Error occurred during the process!*' }, { quoted: quotedMessage });
-  }
-});
-
-// Download video command (for direct URL input)
-cmd({
-  pattern: "ttsdl",
-  alias: ["tiktakdown", "tiktokdl"],
-  react: '🍟',
-  dontAddCommandList: true,
-  filename: __filename
-}, async (messageHandler, context, quotedMessage, { from, q, reply }) => {
-  try {
-    if (!q) return reply('*Please provide a TikTok video URL!*');
-    
-    // Fetch the download link for the provided TikTok URL
-    let res = await fetchJson(`https://apis-starlights-team.koyeb.app/starlight/tiktokdownload?url=${q}`);
-    let wm = `© 𝖰𝗎𝖾𝖾𝗇 𝗄𝖾𝗇𝗓𝗂 𝗆𝖽 v${require("../package.json").version} (Test)\nsɪᴍᴘʟᴇ ᴡᴀʙᴏᴛ ᴍᴀᴅᴇ ʙʏ ᴅᴀɴᴜxᴢᴢ 🅥`;
-
-    // Send the video to the user
-    await messageHandler.sendMessage(from, {
-      video: { url: res.url }, // Direct download URL
-      caption: wm
-    }, { quoted: quotedMessage });
-
-  } catch (error) {
-    reply('*Error occurred during the download process!*');
-    console.log(error);
+    await messageHandler.sendMessage(from, { text: '⭕ *Error Occurred During The Process!*' }, { quoted: quotedMessage });
   }
 });
