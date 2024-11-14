@@ -3,7 +3,7 @@ const { cmd, commands } = require('../command');
 const { fetchJson } = require('../lib/functions');
 
 cmd({
-    pattern: "slsub",
+    pattern: "sjid",
     desc: "Send a message to a specific JID",
     category: "main",
     use: '',
