@@ -20,7 +20,7 @@ cmd({
         let message = "*Search Results:*\n\n";
         // Generate movie search results in 1.1, 1.2, 1.3 format
         result.results.forEach((item, index) => {
-            message += `${index + 1}.1 ${item.title}\nType: ${item.type}\nLink: ${item.link}\n\n`;
+            message += `1.${index + 1} ${item.title}\nType: ${item.type}\nLink: ${item.link}\n\n`;
         });
 
         // Send the search results
@@ -69,7 +69,11 @@ async function sendMovieDetails(conn, mek, from, movieLink) {
         message += `📅 Rᴇʟᴇᴀꜱᴇ ᴅᴀᴛᴇ: ${movie.release_date}\n`;
         message += `🗺 Cᴏᴜɴᴛʀʏ: ${movie.country}\n`;
         message += `⏰ Dᴜʀᴀᴛɪᴏɴ: ${movie.duration}\n`;
-        message += `🎭 Gᴇɴʀᴇꜱ: ${movie.genres}\n`;
+
+        // Fix for genres: Join the genres array into a comma-separated string
+        const genres = Array.isArray(movie.genres) ? movie.genres.join(', ') : movie.genres;
+        message += `🎭 Gᴇɴʀᴇꜱ: ${genres}\n`;
+
         message += `⭐ Iᴍᴅʙ Rᴀᴛɪɴɢ: ${movie.IMDb_Rating}\n`;
         message += `🎬 Dɪʀᴇᴄᴛᴏʀ: ${movie.director.name}\n\n`;
         message += `🔢 𝗥𝗘𝗣𝗟𝗬 𝗧𝗛𝗘 𝗡𝗨𝗠𝗕𝗘𝗥 𝗕𝗘𝗟𝗢𝗪\n\n`;
@@ -102,13 +106,13 @@ async function sendMovieDetails(conn, mek, from, movieLink) {
             if (message.message.extendedTextMessage.contextInfo.stanzaId === sentMessage.key.id) {
                 let quality;
                 switch (userReply) {
-                    case '1':
+                    case '1.1':
                         quality = "SD 480p";
                         break;
-                    case '2':
+                    case '1.2':
                         quality = "HD 720p";
                         break;
-                    case '3':
+                    case '1.3':
                         quality = "FHD 1080p";
                         break;
                     default:
