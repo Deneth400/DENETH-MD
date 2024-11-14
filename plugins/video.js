@@ -80,8 +80,9 @@ cmd({
           const downloadLinkResult = await fetchJson(apiUrl);
           console.log("API Response:", downloadLinkResult);
 
-          if (downloadLinkResult && downloadLinkResult.result && downloadLinkResult.result.dl_link) {
-            const downloadLink = downloadLinkResult.result.dl_link;
+          // Access the dl_link directly from the response
+          if (downloadLinkResult && downloadLinkResult.dl_link) {
+            const downloadLink = downloadLinkResult.dl_link;
             await messageHandler.sendMessage(from, {
               document: {
                 url: downloadLink
