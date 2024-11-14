@@ -53,7 +53,7 @@ cmd({
 
     // Send message with menu
     const sentMessage = await conn.sendMessage(from, {
-            image: res.video.cover,
+            image: {url: `https://github.com/Deneth400/DENETH-MD-HARD/blob/main/Images/Tiktok.jpg?raw=true`},
             caption: message,  // Send the description as the caption
             contextInfo: {
                 forwardingScore: 999,
