@@ -24,7 +24,7 @@ cmd({
     const videoData = searchResults.videos[0]; // Get the first video from search results
 
     // Prepare the message with video details
-    let videoDetailsMessage = `𝗬𝗢𝗨𝗧𝗨𝗕𝗘 𝗩𝗜𝗗𝗘𝗢 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗𝗘𝗥\n\n`;
+    let videoDetailsMessage = `𝗗𝗘𝗡𝗘𝗧𝗛-𝗠𝗗 𝗩𝗜𝗗𝗘𝗢 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗𝗘𝗥\n\n`;
     videoDetailsMessage += `✒ ᴛɪᴛʟᴇ : ${videoData.title}\n`;
     videoDetailsMessage += `👀 ᴠɪᴇᴡꜱ : ${videoData.views}\n`;
     videoDetailsMessage += `⏰ ᴅᴜʀᴀᴛɪᴏɴ : ${videoData.timestamp}\n`;
@@ -32,10 +32,11 @@ cmd({
     videoDetailsMessage += `🎬 ᴄʜᴀɴɴᴇʟ : ${videoData.author.name}\n`;
     videoDetailsMessage += `🖇️ ᴜʀʟ : ${videoData.url}\n\n`;
     videoDetailsMessage += `*REPLY WITH DOWNLOAD OPTION* 🚀 \n\n`;
-    videoDetailsMessage += `*1 - 360p 🎥*\n`;
-    videoDetailsMessage += `*2 - 480p 🎥*\n`;
-    videoDetailsMessage += `*3 - 720p 🎥*\n`;
-    videoDetailsMessage += `*4 - 1080p 🎥*\n\n`;
+    videoDetailsMessage += `𝟭 | 𝗦𝗗 𝟯𝟲𝟬𝗽\n`;
+    videoDetailsMessage += `𝟮 | 𝗦𝗗 𝟰𝟴𝟬𝗽\n`;
+    videoDetailsMessage += `𝟯 | 𝗛𝗗 𝟳𝟮𝟬𝗽\n`;
+    videoDetailsMessage += `𝟰 | 𝗙𝗛𝗗 𝟭𝟬𝟴𝟬𝗽\n\n`;
+    videoDetailsMessage += `> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®\n`;
 
     // Send video details and options (you can also send a thumbnail or any other media)
     const sentMessage = await messageHandler.sendMessage(from, {
@@ -84,12 +85,11 @@ cmd({
           if (downloadLinkResult && downloadLinkResult.dl_link) {
             const downloadLink = downloadLinkResult.dl_link;
             await messageHandler.sendMessage(from, {
-              document: {
+              video: {
                 url: downloadLink
               },
               mimetype: 'video/mp4',
-              fileName: `${videoData.title}-${quality}.mp4`,
-              caption: `${videoData.title} (${quality})\n\n> *© Powered by Deneth-MD*`
+              caption: `${videoData.title} (${quality})\n\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`
             }, { quoted: quotedMessage });
 
             await messageHandler.sendMessage(from, {
