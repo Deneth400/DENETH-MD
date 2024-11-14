@@ -89,7 +89,7 @@ cmd({
                     // Send the selected video to the user
                     await messageHandler.sendMessage(from, {
                         video: { url: videoUrl },
-                        caption: `${selectedVideo.title}\nDuration: ${selectedVideo.duration}\n\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`,
+                        caption: `*${selectedVideo.title}*\n⏰ Dᴜʀᴀᴛɪᴏɴ: ${selectedVideo.duration}\n\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`,
                     }, { quoted: quotedMessage });
 
                 } catch (err) {
