@@ -69,11 +69,13 @@ cmd({
 
         // Create list of video options for user
         data.forEach((v, index) => {
-            options += `${index + 1}. ${v.title} (Info: ${v.info})\n`;
+            options += `${index + 1}. ${v.title}\n`;
         });
 
         message += options;
-        message += `\nPlease reply with the number(s) of the video(s) you want to download, separated by commas (e.g., 1, 3, 5).`;
+        message += `\n❗ *You Can Reply To A Single Number From This Command And Take The Video You Want.(Example:1)*`;
+        message += `\n\n❗ *You Can Reply A Few Numbers From This Command And Take The Videos You Want.(Example:1,2,3)*`; 
+        message += `\n\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`;
 
         // Send message to user with video options
         const sentMessage = await messageHandler.sendMessage(from, {
@@ -127,7 +129,7 @@ cmd({
                     // Send the video to the user
                     await messageHandler.sendMessage(from, {
                         video: { url: videoUrl },
-                        caption: `> Downloaded via Bot\n${selectedVideo.title}\nInfo: ${selectedVideo.info}`,
+                        caption: `${selectedVideo.title}\n\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`,
                     }, { quoted: quotedMessage });
 
                 } catch (err) {
