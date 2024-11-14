@@ -1,10 +1,10 @@
-const { cmd } = require('../command');
-const { fetchJson } = require('../lib/functions');
+const config = require('../config');
+const { cmd, commands } = require('../command');
+const { getBuffer, getGroupAdmins, getRandom, h2k, isUrl, Json, runtime, sleep, fetchJson } = require('../lib/functions');
 const axios = require('axios');
 const cheerio = require('cheerio');
 const fetch = require('node-fetch');
 
-// Function to fetch search results from XNXX
 async function xnxxs(query) {
   return new Promise((resolve, reject) => {
     const baseurl = 'https://www.xnxx.com';
@@ -16,15 +16,15 @@ async function xnxxs(query) {
         const url = [];
         const desc = [];
         const results = [];
-        $('div.mozaique').each(function (a, b) {
-          $(b).find('div.thumb').each(function (c, d) {
+        $('div.mozaique').each(function(a, b) {
+          $(b).find('div.thumb').each(function(c, d) {
             url.push(baseurl + $(d).find('a').attr('href').replace('/THUMBNUM/', '/'));
           });
         });
-        $('div.mozaique').each(function (a, b) {
-          $(b).find('div.thumb-under').each(function (c, d) {
+        $('div.mozaique').each(function(a, b) {
+          $(b).find('div.thumb-under').each(function(c, d) {
             desc.push($(d).find('p.metadata').text());
-            $(d).find('a').each(function (e, f) {
+            $(d).find('a').each(function(e, f) {
               title.push($(f).attr('title'));
             });
           });
@@ -38,83 +38,62 @@ async function xnxxs(query) {
   });
 }
 
-// Main search command
+// Command to search and download videos
 cmd({
   pattern: "xnxx",
   alias: ["xnxxs"],
   use: '.xnxx <query>',
   react: "🍟",
-  desc: "Search and DOWNLOAD VIDEOS from XNXX.",
+  desc: "Search and DOWNLOAD VIDEOS from xnxx.",
   category: "search",
   filename: __filename
 },
-async (messageHandler, context, quotedMessage, { from, q, reply }) => {
+async (conn, mek, m, { from, q, reply }) => {
   try {
     if (!q) return reply('🚩 *Please give me words to search*');
-
     let res = await xnxxs(q);
-    let wm = `© 𝖰𝗎𝖾𝖾𝗇 𝗄𝖾𝗇𝗓𝗂 𝗆𝖽 v${require("../package.json").version} (Test)\nsɪᴍᴘʟᴇ ᴡᴀʙᴏᴛ ᴍᴀᴅᴇ ʙʏ ᴅᴀɴᴜxᴢᴢ 🅥`;
-    const msg = `乂 X N X X - D O W N L O A D E R `;
     const data = res.result;
 
-    if (data.length < 1) return await messageHandler.sendMessage(from, { text: "🚩 *I couldn't find anything :(*" }, { quoted: quotedMessage });
+    if (data.length < 1) return await conn.sendMessage(from, { text: "🚩 *I couldn't find anything :(*" }, { quoted: mek });
 
-    let response = msg + '\nChoose a Number to Download a Video:\n';
+    // Create a numbered list for the user to choose from
+    let response = '乂 X N X X - D O W N L O A D E R\n\nChoose a video by number:\n';
     data.forEach((v, index) => {
-      response += `${index + 1}. ${v.title}\n\n`;
+      response += `${index + 1}. ${v.title} - Info: ${v.info}\n`;
     });
 
-    response += '\n*Reply With The Number Of The Video You Want To Download.*';
+    response += '\n*Reply with the number of the video you want to download.*';
 
-    const sentMessage = await messageHandler.sendMessage(from, {
-      image: { url: `https://1000logos.net/wp-content/uploads/2021/04/XNXX-logo.png` },
-      caption: response,
-      contextInfo: {
-        forwardingScore: 999,
-        isForwarded: true,
-      }
-    }, { quoted: quotedMessage });
+    await conn.sendMessage(from, { text: response }, { quoted: mek });
 
-    // Handle user selection to download the video
-    const handleUserReply = async (update) => {
+    // Handle user reply with a number to select video
+    conn.ev.on("messages.upsert", async (update) => {
       const message = update.messages[0];
-
-      // Ensure this message is a reply to the original prompt
-      if (!message.message || !message.message.extendedTextMessage ||
-        message.message.extendedTextMessage.contextInfo.stanzaId !== sentMessage.key.id) {
-        return;
-      }
-
       const userReply = message.message.extendedTextMessage.text.trim();
-      let videoIndex = parseInt(userReply) - 1; // Get the index from the user's response
 
+      // Ensure the reply is a number and valid
+      let videoIndex = parseInt(userReply) - 1; 
       if (isNaN(videoIndex) || videoIndex < 0 || videoIndex >= data.length) {
-        return reply("🚩 *Please enter a valid number from the list.*");
+        return reply("🚩 *Please reply with a valid number from the list.*");
       }
 
-      let selectedVideo = data[videoIndex];
-      let videoUrl = selectedVideo.link; // Direct video URL
+      const selectedVideo = data[videoIndex];
+      let videoUrl = selectedVideo.link; 
 
-      // Send the video to the user
-      await messageHandler.sendMessage(from, {
-        video: { url: videoUrl },
-        caption: `> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-ᴍᴅ ᴠ1 ᴡʜᴀᴛꜱᴀᴘᴘ ʙᴏᴛ®`
-      }, { quoted: quotedMessage });
+      // Download and send the selected video
+      let videoRes = await xdl(videoUrl);
+      let title = videoRes.result.title;
 
-      // Remove this listener after processing
-      messageHandler.ev.off("messages.upsert", handleUserReply);
-    };
+      await conn.sendMessage(from, { video: { url: videoRes.result.files.high }, caption: title }, { quoted: mek });
+    });
 
-    // Attach the listener function to the message update event
-    messageHandler.ev.on("messages.upsert", handleUserReply);
-  } catch (error) {
-    console.error(error);
-    await messageHandler.sendMessage(from, { text: '🚩 *Error Occurred!*' }, { quoted: quotedMessage });
+  } catch (e) {
+    console.log(e);
+    await conn.sendMessage(from, { text: '🚩 *Error occurred while fetching videos!*' }, { quoted: mek });
   }
 });
 
-// ------------------------ Video Download Handler ------------------------
-
+// Function to fetch the download link from the video page
 async function xdl(URL) {
   return new Promise((resolve, reject) => {
     fetch(`${URL}`, { method: 'get' })
@@ -130,30 +109,3 @@ async function xdl(URL) {
       .catch((err) => reject({ status: false, result: err }));
   });
 }
-
-// Video download command
-cmd({
-  pattern: "xnxxdown",
-  alias: ["dlxnxx", "xnxxdl"],
-  react: '🍟',
-  dontAddCommandList: true,
-  filename: __filename
-},
-async (messageHandler, context, quotedMessage, { from, q, reply }) => {
-  try {
-    if (!q) return reply('*Please give me the XNXX URL!*');
-
-    let res = await xdl(q);
-    let title = res.result.title;
-    let videoUrl = res.result.videoUrl;
-
-    // Send the video to the user
-    await messageHandler.sendMessage(from, {
-      video: { url: videoUrl },
-      caption: title
-    }, { quoted: quotedMessage });
-  } catch (e) {
-    reply('*Error !!*');
-    console.log(e);
-  }
-});
