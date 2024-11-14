@@ -2,6 +2,7 @@ const { cmd } = require('../command');
 const { SinhalaSub } = require('@sl-code-lords/movie-api');
 const { PixaldrainDL } = require("pixaldrain-sinhalasub");
 
+// Movie search command
 cmd({
     pattern: "movie",
     desc: "Search for a movie or TV show",
@@ -12,7 +13,7 @@ cmd({
     try {
         const input = q.trim();
         if (!input) return reply("Please provide a movie or TV show name to search.");
-        
+
         const result = await SinhalaSub.get_list.by_search(input);
         if (!result.status || result.results.length === 0) return reply("No results found.");
 
@@ -21,8 +22,9 @@ cmd({
             message += `${index + 1}. ${item.title}\nType: ${item.type}\nLink: ${item.link}\n\n`;
         });
 
+        // Send the search results
         const sentMsg = await conn.sendMessage(from, {
-            image: { url: `https://github.com/Deneth400/DENETH-MD-HARD/blob/main/Images/SinhalaSub.jpg?raw=true`},
+            image: { url: `https://github.com/Deneth400/DENETH-MD-HARD/blob/main/Images/SinhalaSub.jpg?raw=true` },
             caption: message,  // Send the description as the caption
             contextInfo: {
                 forwardingScore: 999,
@@ -30,11 +32,11 @@ cmd({
             }
         }, { quoted: mek });
 
-        // Wait for user to select a movie by replying with its number
+        // Wait for the user to select a movie by replying with its number
         conn.ev.on("messages.upsert", async (update) => {
             const message = update.messages[0];
             if (!message.message || !message.message.extendedTextMessage) return;
-            
+
             const userReply = message.message.extendedTextMessage.text.trim();
             const selectedMovieIndex = parseInt(userReply) - 1;
 
@@ -46,6 +48,7 @@ cmd({
             // Send movie details and download options
             await sendMovieDetails(conn, mek, from, selectedMovie.link);
         });
+
     } catch (e) {
         console.log(e);
         await conn.sendMessage(from, { react: { text: '❌', key: mek.key } });
@@ -53,6 +56,7 @@ cmd({
     }
 });
 
+// Send movie details and ask for download quality
 async function sendMovieDetails(conn, mek, from, movieLink) {
     try {
         // Fetch movie details using SinhalaSub API
@@ -85,7 +89,7 @@ async function sendMovieDetails(conn, mek, from, movieLink) {
             }
         }, { quoted: mek });
 
-        // Listen for the user's reply to the download options
+        // Listen for the user's reply to the download options (1, 2, or 3)
         conn.ev.on("messages.upsert", async (update) => {
             const message = update.messages[0];
             if (!message.message || !message.message.extendedTextMessage) return;
