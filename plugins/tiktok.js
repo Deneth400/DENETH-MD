@@ -53,7 +53,7 @@ cmd({
 
     // Send message with menu
     const sentMessage = await conn.sendMessage(from, {
-            image: { url: data.image[i].src },
+            image: res.video.cover,
             caption: message,  // Send the description as the caption
             contextInfo: {
                 forwardingScore: 999,
