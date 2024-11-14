@@ -2,6 +2,9 @@ const { cmd } = require('../command');
 const { fetchJson } = require('../lib/functions');
 const axios = require('axios');
 
+// Store session information for ongoing interactions
+let session = {};
+
 cmd({
   pattern: "tiktoksearch",
   alias: ["tiks"],
@@ -13,67 +16,110 @@ cmd({
 },
 async (messageHandler, context, quotedMessage, { from, q, reply }) => {
   try {
-    if (!q) return reply('🚩 *Please give me words to search*');
+    if (!q) return reply('🚩 *Please provide search terms.*');
 
-    // Fetch TikTok search results using an external API
-    let mal = await fetchJson('https://apis-starlights-team.koyeb.app/starlight/tiktoksearch?text=' + q);
-    let data = mal.data;
+    // Fetch TikTok search results from the API
+    let res = await fetchJson(`https://apis-starlights-team.koyeb.app/starlight/tiktoksearch?text=${q}`);
+    let data = res.data;
+    
+    let wm = `© 𝖰𝗎𝖾𝖾𝗇 𝗄𝖾𝗇𝗓𝗂 𝗆𝖽 v${require("../package.json").version} (Test)\nsɪᴍᴘʟᴇ ᴡᴀʙᴏᴛ ᴍᴀᴅᴇ ʙʏ ᴅᴀɴᴜxᴢᴢ 🅥`;
+    const msg = `乂 *TIKTOK SEARCH RESULTS*`;
 
-    let message = `𝗗𝗘𝗡𝗘𝗧𝗛-𝗠𝗗 𝗧𝗜𝗧𝗞𝗧𝗢𝗞 𝗦𝗘𝗔𝗥𝗖𝗛\n\n» ʀᴇꜱᴜʟᴛꜱ ${q}\n\n`;
+    // If no results, send a failure message
+    if (data.length < 1) return await messageHandler.sendMessage(from, { text: "🚩 *I couldn't find anything :(*" }, { quoted: quotedMessage });
 
-    if (data.length < 1) return await messageHandler.sendMessage(from, {text: "🚩 *I couldn't find anything :(*" }, { quoted: quotedMessage });
+    let message = `Search Results for "${q}":\n\n`;
+    let options = '';
 
-    let response = message + 'Choose a Number to Download a Video:\n';
+    // Create a list of video results
     data.forEach((v, index) => {
-      response += `${index + 1}. ${v.title}\n\n`;
+      options += `${index + 1}. ${v.title} (Creator: ${v.creator})\n`;
     });
 
-    response += '\n*Reply With The Number Of The Video You Want To Download.*';
+    message += options;
+    message += `\nPlease reply with the number(s) of the video(s) you want to download, separated by commas (e.g., 1, 3, 5).`;
 
-    // Send results with numbered options to download
-    const sentMessage = await messageHandler.sendMessage(from, {
-            image: { url: `https://github.com/Deneth400/DENETH-MD-HARD/blob/main/Images/Tiktok.jpg?raw=true`},
-            caption: response,  // Send the description as the caption
-            contextInfo: {
-                forwardingScore: 999,
-                isForwarded: true,
-            }
-        }, { quoted: quotedMessage });
+    // Send the list of search results to the user
+    const sentMessage = await messageHandler.sendMessage(from, { text: message, image: { url: `https://github.com/Deneth400/DENETH-MD-HARD/blob/main/Images/Tiktok.jpg?raw=true` } }, { quoted: quotedMessage });
 
-    // Define a listener function for handling the user's reply
+    // Store session information for the user
+    session[from] = {
+      searchResults: data,
+      messageId: sentMessage.key.id,  // Store message ID for future reference
+    };
+
+    // Function to handle the user reply
     const handleUserReply = async (update) => {
-      const message = update.messages[0];
+      const userMessage = update.messages[0];
 
       // Ensure this message is a reply to the original prompt
-      if (!message.message || !message.message.extendedTextMessage || 
-          message.message.extendedTextMessage.contextInfo.stanzaId !== sentMessage.key.id) {
+      if (!userMessage.message.extendedTextMessage ||
+          userMessage.message.extendedTextMessage.contextInfo.stanzaId !== sentMessage.key.id) {
         return;
       }
 
-      const userReply = message.message.extendedTextMessage.text.trim();
-      let videoIndex = parseInt(userReply) - 1; // Get the index from the user's response
+      const userReply = userMessage.message.extendedTextMessage.text.trim();
+      const videoIndexes = userReply.split(',').map(x => parseInt(x.trim()) - 1); // Convert reply to an array of indexes
 
-      if (isNaN(videoIndex) || videoIndex < 0 || videoIndex >= data.length) {
-        return reply("🚩 *Please enter a valid number from the list.*");
+      // Check if all selected indexes are valid
+      for (let index of videoIndexes) {
+        if (isNaN(index) || index < 0 || index >= data.length) {
+          return reply("🚩 *Please enter valid numbers from the list.*");
+        }
       }
 
-      let selectedVideo = data[videoIndex];
-      let videoUrl = selectedVideo.nowm; // Direct video URL
+      // Fetch and send videos for each valid index
+      for (let index of videoIndexes) {
+        const selectedVideo = data[index];
 
-      // Send the video to the user
-      await messageHandler.sendMessage(from, { 
-        video: { url: videoUrl }, 
-        caption: `> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-ᴍᴅ ᴠ1 ᴡʜᴀᴛꜱᴀᴘᴘ ʙᴏᴛ®` 
-      }, { quoted: quotedMessage });
+        try {
+          // Send the selected video to the user
+          await messageHandler.sendMessage(from, {
+            video: { url: selectedVideo.nowm }, // Direct video URL for download
+            caption: `> Downloaded via DENETH-MD Bot\n${selectedVideo.title}\nCreator: ${selectedVideo.creator}`,
+          }, { quoted: quotedMessage });
+        } catch (err) {
+          console.error(err);
+          return reply(`🚩 *An error occurred while downloading "${selectedVideo.title}".*`);
+        }
+      }
 
-      // Remove this listener after processing
-      messageHandler.ev.off("messages.upsert", handleUserReply);
+      // After a selection, clear the session for that user (this is important to prevent unwanted interactions)
+      delete session[from];
     };
 
-    // Attach the listener function to the message update event
+    // Attach the listener for user replies
     messageHandler.ev.on("messages.upsert", handleUserReply);
+
   } catch (error) {
     console.error(error);
-    await messageHandler.sendMessage(from, { text: '🚩 *Error Occurred!*' }, { quoted: quotedMessage });
+    await messageHandler.sendMessage(from, { text: '🚩 *Error occurred during the process!*' }, { quoted: quotedMessage });
+  }
+});
+
+// Download video command (for direct URL input)
+cmd({
+  pattern: "ttsdl",
+  alias: ["tiktakdown", "tiktokdl"],
+  react: '🍟',
+  dontAddCommandList: true,
+  filename: __filename
+}, async (messageHandler, context, quotedMessage, { from, q, reply }) => {
+  try {
+    if (!q) return reply('*Please provide a TikTok video URL!*');
+    
+    // Fetch the download link for the provided TikTok URL
+    let res = await fetchJson(`https://apis-starlights-team.koyeb.app/starlight/tiktokdownload?url=${q}`);
+    let wm = `© 𝖰𝗎𝖾𝖾𝗇 𝗄𝖾𝗇𝗓𝗂 𝗆𝖽 v${require("../package.json").version} (Test)\nsɪᴍᴘʟᴇ ᴡᴀʙᴏᴛ ᴍᴀᴅᴇ ʙʏ ᴅᴀɴᴜxᴢᴢ 🅥`;
+
+    // Send the video to the user
+    await messageHandler.sendMessage(from, {
+      video: { url: res.url }, // Direct download URL
+      caption: wm
+    }, { quoted: quotedMessage });
+
+  } catch (error) {
+    reply('*Error occurred during the download process!*');
+    console.log(error);
   }
 });
