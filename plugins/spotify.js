@@ -1,103 +1,104 @@
 const { cmd } = require('../command');
-const { fetchJson } = require('../lib/functions');
+const { fetchJson, getBuffer } = require('../lib/functions');
 const axios = require('axios');
+const cheerio = require('cheerio');
+const fetch = require('node-fetch');
 
-// Store session information for ongoing interactions
-let session = {};
+let ayo = `© 𝖰𝗎𝖾𝖾𝗇 𝗄𝖾𝗇𝗓𝗂 𝗆𝖽 v${require("../package.json").version} (Test)\nsɪᴍᴘʟᴇ ᴡᴀʙᴏᴛ ᴍᴀᴅᴇ ʙʏ ᴅᴀɴᴜxᴢᴢ 🅥`;
 
+// Step 1: Searching for a song based on a query
 cmd({
-  pattern: "spotify",
-  alias: ["spot"],
-  use: '.spotify <query>',
-  react: "🍟",
-  desc: "Search and DOWNLOAD SONGS from Spotify.",
-  category: "download",
-  filename: __filename
-}, async (messageHandler, context, quotedMessage, { from, q, reply }) => {
-  try {
-    if (!q) return reply('🚩 *Please give me words to search*');
+    pattern: "spotify",
+    alias: ["spot"],
+    use: '.spotify <query>',
+    react: "🍟",
+    desc: "Search and DOWNLOAD VIDEOS from Spotify.",
+    category: "download",
+    filename: __filename
+}, async (conn, mek, m, { from, q, reply }) => {
+    try {
+        if (!q) return reply('🚩 *Please provide a search query.*');
 
-    // Fetch Spotify search results from the API
-    let res = await fetchJson(`https://manaxu-seven.vercel.app/api/internet/spotify?query=${q}`);
-    let data = res.result;
+        // Fetching the search results
+        let res = await fetchJson(`https://manaxu-seven.vercel.app/api/internet/spotify?query=${q}`);
+        const data = res.result;
 
-    // If no results, send a failure message
-    if (data.length < 1) return await messageHandler.sendMessage(from, { text: "🚩 *I Couldn't Find Anything 🙄*" }, { quoted: quotedMessage });
+        if (data.length < 1) return await conn.sendMessage(from, { text: "🚩 *I couldn't find anything :(*" }, { quoted: mek });
 
-    let message = `𝗦𝗣𝗢𝗧𝗜𝗙𝗬 𝗦𝗘𝗔𝗥𝗖𝗛\n\n_Search Results for_ "${q}":\n\n`;
-    let options = '';
+        // Build the message with search results and numbers for selection
+        let message = `乂 S P O T I F Y - D L \n\n*Search Results for*: ${q}\n\n`;
+        data.forEach((v, index) => {
+            message += `*${index + 1}* - ${v.name} by ${v.artists} (${v.duration_ms}ms)\n`;
+        });
 
-    // Create a list of search results
-    data.forEach((v, index) => {
-      options += `${index + 1}. ${v.name} (Artist: ${v.artists})\n`;
-    });
+        message += `\n\n*Reply with the number of the song you want to download (1, 2, etc.)*`;
 
-    message += options;
-    message += `\n❗ *You Can Reply To A Single Number From This Command To Get The Song You Want. (Example: 1)*`;
-    message += `\n❗ *You Can Reply Multiple Numbers To Get Several Songs. (Example: 1,2,3)*`; 
-    message += `\n\n> Powered by DENETH-xd Tech®`;
+        // Send the list of songs
+        return await conn.sendMessage(from, { text: message }, { quoted: mek });
+    } catch (e) {
+        console.log(e);
+        return await conn.sendMessage(from, { text: '🚩 *Error occurred while processing your request!*' }, { quoted: mek });
+    }
+});
 
-    // Send the list of search results to the user
-    const sentMessage = await messageHandler.sendMessage(from, {
-      image: { url: `https://upload.wikimedia.org/wikipedia/commons/6/6b/Spotify_Logo.png` },
-      caption: message,
-      contextInfo: {
-        forwardingScore: 999,
-        isForwarded: true,
-      }
-    }, { quoted: quotedMessage });
+// Step 2: User selects the song
+cmd({
+    pattern: "spotifyselect",
+    dontAddCommandList: true,
+    filename: __filename
+}, async (conn, mek, m, { from, q, reply, body }) => {
+    try {
+        const selected = parseInt(q);  // The user's number selection for the song
+        if (isNaN(selected) || selected < 1) return reply('🚩 *Please provide a valid number.*');
 
-    // Store session information for the user
-    session[from] = {
-      searchResults: data,
-      messageId: sentMessage.key.id,  // Store message ID for future reference
-    };
+        let res = await fetchJson(`https://manaxu-seven.vercel.app/api/downloader/spotify?url=${body}`); // Assuming body contains the URL from the previous search
+        let song = res.result[selected - 1]; // Get the song corresponding to the selected number
 
-    // Function to handle the user reply
-    const handleUserReply = async (update) => {
-      const userMessage = update.messages[0];
+        if (!song) return reply('🚩 *Invalid selection.*');
 
-      // Ensure this message is a reply to the original prompt
-      if (!userMessage.message.extendedTextMessage ||
-        userMessage.message.extendedTextMessage.contextInfo.stanzaId !== sentMessage.key.id) {
-        return;
-      }
+        const downloadLink = song.download; // URL for downloading the song
 
-      const userReply = userMessage.message.extendedTextMessage.text.trim();
-      const songIndexes = userReply.split(',').map(x => parseInt(x.trim()) - 1); // Convert reply to an array of indexes
+        // Inform the user about the selection and ask for the download type
+        const msg = `*Selected Song:*\n*Title:* ${song.title}\n*Artist:* ${song.artist}\n\n*Choose the download type:*\n\n1 - Audio\n2 - Document`;
 
-      // Check if all selected indexes are valid
-      for (let index of songIndexes) {
-        if (isNaN(index) || index < 0 || index >= data.length) {
-          return reply("🚩 *Please Enter Valid Numbers From The List.*");
+        // Send the message asking for the download type
+        await conn.sendMessage(from, { text: msg }, { quoted: mek });
+    } catch (e) {
+        console.log(e);
+        return reply('🚩 *Error occurred while processing your selection.*');
+    }
+});
+
+// Step 3: User selects the download type (Audio or Document)
+cmd({
+    pattern: "spotifydownload",
+    dontAddCommandList: true,
+    filename: __filename
+}, async (conn, mek, m, { from, q, reply, body }) => {
+    try {
+        const selectedType = parseInt(q); // Get the number for the selected download type
+        if (isNaN(selectedType) || ![1, 2].includes(selectedType)) return reply('🚩 *Please select a valid option: 1 for Audio or 2 for Document.*');
+
+        let res = await fetchJson(`https://manaxu-seven.vercel.app/api/downloader/spotify?url=${body}`); // Assuming body contains the URL from previous search
+        let song = res.result; // Get song data
+
+        if (!song) return reply('🚩 *Could not fetch song details.*');
+
+        const downloadLink = song.download; // Song download link
+
+        if (selectedType === 1) {
+            // If user selects "Audio"
+            const audioBuffer = await getBuffer(downloadLink); // Get audio buffer from URL
+            await conn.sendMessage(from, { audio: audioBuffer, mimetype: 'audio/mpeg' }, { quoted: mek });
+            return reply('*Sending the audio file...*');
+        } else if (selectedType === 2) {
+            // If user selects "Document"
+            const docBuffer = await getBuffer(downloadLink); // Get document buffer from URL
+            await conn.sendMessage(from, { document: docBuffer, mimetype: 'audio/mpeg', fileName: `${song.title}.mp3`, caption: ayo }, { quoted: mek });
+            return reply('*Sending the document (MP3) file...*');
         }
-      }
-
-      // Fetch and send songs for each valid index
-      for (let index of songIndexes) {
-        const selectedSong = data[index];
-
-        try {
-          // Send the selected song to the user
-          await messageHandler.sendMessage(from, {
-            audio: { url: selectedSong.download }, // Direct song URL for download
-            caption: `${selectedSong.name}\nArtist: ${selectedSong.artists}\n\n> Powered by DENETH-xd Tech®`,
-          }, { quoted: quotedMessage });
-        } catch (err) {
-          console.error(err);
-          return reply(`🚩 *An Error Occurred While Downloading "${selectedSong.name}".*`);
-        }
-      }
-
-      // After a selection, clear the session for that user
-      delete session[from];
-    };
-
-    // Attach the listener for user replies
-    messageHandler.ev.on("messages.upsert", handleUserReply);
-
-  } catch (error) {
-    console.error(error);
-    await messageHandler.sendMessage(from, { text: '🚩 *Error Occurred During The Process!*' }, { quoted: quotedMessage });
-  }
+    } catch (e) {
+        console.log(e);
+        return reply('🚩 *Error occurred while processing your request.*');
+    }
 });
