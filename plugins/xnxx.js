@@ -66,13 +66,14 @@ async (conn, mek, m, { from, q, reply }) => {
 
     await conn.sendMessage(from, { text: response }, { quoted: mek });
 
-    // Handle user reply with a number to select video
+    // Listen for the user's reply (this part is fixed)
     conn.ev.on("messages.upsert", async (update) => {
       const message = update.messages[0];
-      const userReply = message.message.extendedTextMessage.text.trim();
+      if (!message.message || !message.message.extendedTextMessage) return;
 
-      // Ensure the reply is a number and valid
-      let videoIndex = parseInt(userReply) - 1; 
+      const userReply = message.message.extendedTextMessage.text.trim();
+      const videoIndex = parseInt(userReply) - 1;
+
       if (isNaN(videoIndex) || videoIndex < 0 || videoIndex >= data.length) {
         return reply("🚩 *Please reply with a valid number from the list.*");
       }
@@ -102,9 +103,13 @@ async function xdl(URL) {
         const $ = cheerio.load(res, { xmlMode: false });
         const title = $('meta[property="og:title"]').attr('content');
         const videoScript = $('#video-player-bg > script:nth-child(6)').html();
-        const videoUrl = videoScript.match('html5player.setVideoUrlHigh\\(\'(.*?)\'\\);')[1];
+        const videoUrl = videoScript.match(/html5player.setVideoUrlHigh\('([^']+)'\)/);
 
-        resolve({ status: true, result: { title, videoUrl } });
+        if (!videoUrl) {
+          return reject({ status: false, result: 'Failed to extract video URL' });
+        }
+
+        resolve({ status: true, result: { title, files: { high: videoUrl[1] } } });
       })
       .catch((err) => reject({ status: false, result: err }));
   });
