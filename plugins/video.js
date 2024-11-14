@@ -3,7 +3,7 @@ const { fetchJson } = require('../lib/functions');
 const yts = require('yt-search');
 
 cmd({
-  pattern: "ytv",
+  pattern: "video",
   desc: "Download YouTube videos with quality options.",
   category: "download",
   react: '🎬',
