@@ -93,9 +93,8 @@ cmd({
                 }
             }
 
-            // After a selection, prompt for a new search again
-            delete session[from]; // Clear the session after video selection
-            reply("🚩 *You can now search for new videos.* Please type '.xvid <query>' again.");
+            // After a selection, clear the session for that user (this is important to prevent unwanted interactions)
+            delete session[from]; 
         };
 
         // Attach the listener for user replies
