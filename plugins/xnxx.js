@@ -48,24 +48,23 @@ cmd({
     pattern: "xnxx",
     alias: ["xnxxs"],
     use: '.xnxx <query>',
-    react: "🍟",
+    react: "🔞",
     desc: "Search and DOWNLOAD VIDEOS from xnxx.",
     category: "search",
     filename: __filename
 }, async (messageHandler, context, quotedMessage, { from, q, reply }) => {
     try {
-        if (!q) return reply('🚩 *Please provide search terms.*');
+        if (!q) return reply('⭕ *Please Provide Search Terms.*');
 
         // Fetch search results for XNXX
         let res = await xnxxs(q);
-        let wm = `© 𝖰𝗎𝖾𝖾𝗇 𝗄𝖾𝗇𝗓𝗂 𝗆𝖽 v${require("../package.json").version} (Test)\nsɪᴍᴘʟᴇ ᴡᴀʙᴏᴛ ᴍᴀᴅᴇ ʙʏ ᴅᴀɴᴜxᴢᴢ 🅥`;
 
-        const msg = `乂 X N X X - D O W N L O A D E R`;
+        const msg = `𝗗𝗘𝗡𝗘𝗧𝗛-𝗠𝗗 𝗫𝗡𝗫𝗫 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗𝗘𝗥`;
 
         const data = res.result;
-        if (data.length < 1) return await messageHandler.sendMessage(from, { text: "🚩 *I couldn't find anything :(*" }, { quoted: quotedMessage });
+        if (data.length < 1) return await messageHandler.sendMessage(from, { text: "⭕ *I Couldn't Find Anything 🙄*" }, { quoted: quotedMessage });
 
-        let message = `Search Results for "${q}":\n\n`;
+        let message = `_Search Results For_ "${q}":\n\n`;
         let options = '';
 
         // Create list of video options for user
@@ -77,7 +76,14 @@ cmd({
         message += `\nPlease reply with the number(s) of the video(s) you want to download, separated by commas (e.g., 1, 3, 5).`;
 
         // Send message to user with video options
-        const sentMessage = await messageHandler.sendMessage(from, { text: message, image: { url: `https://1000logos.net/wp-content/uploads/2021/04/XNXX-logo.png` } }, { quoted: quotedMessage });
+        const sentMessage = await messageHandler.sendMessage(from, {
+      image: { url: `https://github.com/Deneth400/DENETH-MD-HARD/blob/main/Images/XNXX.jpg?raw=true`},
+      caption: message,
+      contextInfo: {
+        forwardingScore: 999,
+        isForwarded: true,
+      }
+    }, { quoted: quotedMessage });
 
         // Store session information for future reference
         session[from] = {
@@ -101,7 +107,7 @@ cmd({
             // Validate the selected indexes
             for (let index of videoIndexes) {
                 if (isNaN(index) || index < 0 || index >= data.length) {
-                    return reply("🚩 *Please enter valid numbers from the list.*");
+                    return reply("⭕ *Please Enter Valid Numbers From The List.*");
                 }
             }
 
@@ -115,7 +121,7 @@ cmd({
                     let videoUrl = downloadRes.url;
 
                     if (!videoUrl) {
-                        return reply(`🚩 *Failed to fetch video* for "${selectedVideo.title}".`);
+                        return reply(`⭕ *Failed To Fetch Video* For "${selectedVideo.title}".`);
                     }
 
                     // Send the video to the user
@@ -126,7 +132,7 @@ cmd({
 
                 } catch (err) {
                     console.error(err);
-                    return reply(`🚩 *An error occurred while downloading "${selectedVideo.title}".*`);
+                    return reply(`⭕ *An Error Occurred While Downloading "${selectedVideo.title}".*`);
                 }
             }
 
@@ -139,33 +145,6 @@ cmd({
 
     } catch (error) {
         console.error(error);
-        await messageHandler.sendMessage(from, { text: '🚩 *Error occurred during the process!*' }, { quoted: quotedMessage });
-    }
-});
-
-// Video download command for XNXX videos
-cmd({
-    pattern: "xnxxdown",
-    alias: ["dlxnxx", "xnxxdl"],
-    react: '🍟',
-    dontAddCommandList: true,
-    filename: __filename
-}, async (messageHandler, context, quotedMessage, { from, q, reply }) => {
-    try {
-        if (!q) return reply('*Please provide a video URL!*');
-        
-        // Fetch the download link for the provided URL
-        let res = await fetchJson(`https://raganork-network.vercel.app/api/xvideos/download?url=${q}`);
-        let wm = `© 𝖰𝗎𝖾𝖾𝗇 𝗄𝖾𝗇𝗓𝗂 𝗆𝖽 v${require("../package.json").version} (Test)\nsɪᴍᴘʟᴇ ᴡᴀʙᴏᴛ ᴍᴀᴅᴇ ʙʏ ᴅᴀɴᴜxᴢᴢ 🅥`;
-
-        // Send the video to the user
-        await messageHandler.sendMessage(from, {
-            video: { url: res.url },
-            caption: wm
-        }, { quoted: quotedMessage });
-
-    } catch (error) {
-        reply('*Error !!*');
-        console.log(error);
+        await messageHandler.sendMessage(from, { text: '⭕ *Error Occurred During The Process!*' }, { quoted: quotedMessage });
     }
 });
