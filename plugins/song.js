@@ -88,7 +88,7 @@ cmd({
               },
               mimetype: 'audio/mpeg',
               fileName: `${songData.title}.mp3`,
-              caption: `${songData.title}\n\n> *© ᴘᴏᴡᴇʀᴇᴅ ʙʏ ɴᴇᴛʜᴍɪᴋᴀ-ᴛᴇᴄʜ*`
+              caption: `${songData.title}\n\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`
             }, { quoted: quotedMessage });
 
             // React with a success emoji
