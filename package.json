@@ -28,6 +28,7 @@
     "fetch-json":"3.3.4",
     "hirunews-scrap": "^1.1.2",
     "@sl-code-lords/esana-news": "latest",
+    "mongoose":"8.8.1",
     "fs-extra": "^11.1.0",
     "path": "^0.12.7",
     "node-fetch": "^2.6.1",
