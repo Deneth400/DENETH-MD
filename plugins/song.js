@@ -1,127 +1,119 @@
-const {cmd} = require('../command');
-const {fetchJson} = require('../lib/functions');
-const yts = require('yt-search');
+const { cmd } = require('../command');
+const { fetchJson, getBuffer } = require('../lib/functions');
+const axios = require('axios');
+const cheerio = require('cheerio');
+const fetch = require('node-fetch');
+
+let ayo = `© 𝖰𝗎𝖾𝖾𝗇 𝗄𝖾𝗇𝗓𝗂 𝗆𝖽 v${require("../package.json").version} (Test)\nsɪᴍᴘʟᴇ ᴡᴀʙᴏᴛ ᴍᴀᴅᴇ ʙʏ ᴅᴀɴᴜxᴢᴢ 🅥`;
 
 cmd({
-  pattern: "song",
-  desc: "Download songs.",
-  category: "download",
-  react: '🎧',
-  filename: __filename
-}, async (messageHandler, context, quotedMessage, { from, reply, q }) => {
-  try {
-    // Ensure the user has provided a song name or URL
-    if (!q) {
-      return reply("Please provide a song name or URL!");
+    pattern: "spotify",
+    alias: ["spot"],
+    use: '.spotify <query>',
+    react: "🍟",
+    desc: "Search and DOWNLOAD VIDEOS from xvideos.",
+    category: "download",
+    filename: __filename
+}, async (conn, mek, m, { from, q, reply }) => {
+    try {
+        if (!q) return reply('🚩 *Please provide a search query.*');
+        let res = await fetchJson(`https://manaxu-seven.vercel.app/api/internet/spotify?query=${q}`);
+        const data = res.result;
+        if (data.length < 1) return await conn.sendMessage(from, { text: "🚩 *I couldn't find anything :(*" }, { quoted: mek });
+
+        let message = `乂 S P O T I F Y - D L \n\n*Search Results for*: ${q}\n\n`;
+        data.forEach((v, index) => {
+            message += `*${index + 1}* - ${v.name} by ${v.artists} (${v.duration_ms}ms)\n`;
+        });
+
+        message += `\n\n*Reply with the number of the song you want to download (1, 2, etc.)*`;
+
+        return await conn.sendMessage(from, { text: message }, { quoted: mek });
+    } catch (e) {
+        console.log(e);
+        return await conn.sendMessage(from, { text: '🚩 *Error occurred while processing your request!*' }, { quoted: mek });
     }
+});
 
-    // Fetch search results using yt-search
-    const searchResults = await yts(q);
-    if (!searchResults || searchResults.videos.length === 0) {
-      return reply("No song found matching your query.");
+cmd({
+    pattern: "spotifydl",
+    dontAddCommandList: true,
+    filename: __filename
+}, async (conn, mek, m, { from, q, reply }) => {
+    try {
+        if (!q) return reply('*Please provide the Spotify URL!*');
+        let res = await fetchJson(`https://manaxu-seven.vercel.app/api/downloader/spotify?url=${q}`);
+        let x = res.result;
+        let dat = `乂 S P O T I F Y - D L \n\n*Title:* ${x.title}\n*Type:* ${x.type}\n*Artist:* ${x.artist}\n\n*Reply with the number to select download type*\n\n1 - Audio\n2 - Document`;
+
+        return await conn.sendMessage(from, { text: dat }, { quoted: mek });
+    } catch (e) {
+        reply('🚩 *Error! Could not fetch the download data.*');
+        console.log(e);
     }
+});
 
-    const songData = searchResults.videos[0]; // Get the first video from search results
+cmd({
+    pattern: "spodoc",
+    dontAddCommandList: true,
+    filename: __filename
+}, async (conn, mek, m, { from, q, reply }) => {
+    try {
+        if (!q) return await conn.sendMessage(from, { text: '*Please provide the download link...*' }, { quoted: mek });
+        const docBuffer = await getBuffer(q); // Assuming q is a URL for a document
+        return await conn.sendMessage(from, { document: docBuffer, mimetype: 'audio/mpeg', fileName: q + '.mp3', caption: ayo }, { quoted: mek });
+    } catch (e) {
+        reply('*ERROR!! Could not send document*');
+        console.log(e);
+    }
+});
 
-    // Fetch download link for the song
-    const downloadLinkResult = await fetchJson(`https://dark-yasiya-api-new.vercel.app/download/ytmp3?url=${songData.url}`);
-    const downloadLink = downloadLinkResult.result.dl_link;
+cmd({
+    pattern: "spoaud",
+    dontAddCommandList: true,
+    filename: __filename
+}, async (conn, mek, m, { from, q, reply }) => {
+    try {
+        if (!q) return await conn.sendMessage(from, { text: '*Please provide the download link...*' }, { quoted: mek });
+        const audioBuffer = await getBuffer(q); // Assuming q is a URL for an audio file
+        return await conn.sendMessage(from, { audio: audioBuffer, mimetype: 'audio/mpeg' }, { quoted: mek });
+    } catch (e) {
+        reply('*ERROR!! Could not send audio*');
+        console.log(e);
+    }
+});
 
-    // Prepare the message with song details
-    let songDetailsMessage = `𝗗𝗘𝗡𝗘𝗧𝗛-𝗠𝗗 𝗔𝗨𝗗𝗜𝗢 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗𝗘𝗥\n\n`;
-    songDetailsMessage += `✒ ᴛɪᴛʟᴇ : ${songData.title}\n`;
-    songDetailsMessage += `💭 ᴅᴇꜱᴄʀɪᴘᴛɪᴏɴ : ${songData.description}\n`;
-    songDetailsMessage += `👀 ᴠɪᴇᴡꜱ : ${songData.views}\n`;
-    songDetailsMessage += `⏰ ᴅᴜʀᴀᴛɪᴏɴ : ${songData.timestamp}\n`;
-    songDetailsMessage += `📆 ᴜᴘʟᴏᴀᴅᴇᴅ ᴏɴ : ${songData.ago}\n`;
-    songDetailsMessage += `🎬 ᴄʜᴀɴɴᴇʟ : ${songData.author.name}\n`;
-    songDetailsMessage += `🖇️ ᴜʀʟ : ${songData.url}\n\n`;
-    songDetailsMessage += `*REPLY THE DOWNLOAD OPTION* 🚀 \n\n`;
-    songDetailsMessage += `*1-𝖠𝗎𝖽𝗂𝗈 File🎶*\n`;
-    songDetailsMessage += `*2-Document File📂*\n\n`;
-    songDetailsMessage += `> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`;
+// This command listens for the user's response after they choose a number for download type.
+cmd({
+    pattern: "spotifyselect",
+    dontAddCommandList: true,
+    filename: __filename
+}, async (conn, mek, m, { from, q, reply, body }) => {
+    try {
+        const selected = parseInt(q);  // Assuming q contains the number selected by the user
+        if (isNaN(selected) || selected < 1) return reply('🚩 *Please provide a valid number.*');
 
-    // Send the song details and options (you can also send a thumbnail or any other media)
-    const sentMessage = await messageHandler.sendMessage(from, {
-      image: { url: songData.thumbnail },  // Assuming songData has a thumbnail property
-      caption: songDetailsMessage,
-      contextInfo: {
-        forwardingScore: 999,
-        isForwarded: true,
-      }
-    }, { quoted: quotedMessage });
+        let res = await fetchJson(`https://manaxu-seven.vercel.app/api/downloader/spotify?url=${body}`);  // Assuming 'body' contains the URL sent previously.
+        let song = res.result[selected - 1];  // Get the song corresponding to the selected number
 
-    // Listen for the user's reply to the download options
-    messageHandler.ev.on("messages.upsert", async (update) => {
-      const message = update.messages[0];
+        if (!song) return reply('🚩 *Invalid selection.*');
+        
+        const downloadLink = song.download;
+        const msg = `*Selected Song:*\n*Title:* ${song.title}\n*Artist:* ${song.artist}\n\n*Sending Download...*`;
 
-      if (!message.message || !message.message.extendedTextMessage) return;
+        await conn.sendMessage(from, { text: msg }, { quoted: mek });
 
-      const userReply = message.message.extendedTextMessage.text.trim();
-
-      // If the reply matches the sent options, download the audio or document
-      if (message.message.extendedTextMessage.contextInfo.stanzaId === sentMessage.key.id) {
-        switch (userReply) {
-          case '1':
-            // Send audio download link
-            await messageHandler.sendMessage(from, {
-              audio: {
-                url: downloadLink
-              },
-              mimetype: "audio/mpeg"
-            }, { quoted: quotedMessage });
-
-            // React with a success emoji
-            await messageHandler.sendMessage(from, {
-              react: {
-                text: '✅',
-                key: quotedMessage.key
-              }
-            });
-            break;
-
-          case '2':
-            // Send document (mp3) download link
-            await messageHandler.sendMessage(from, {
-              document: {
-                url: downloadLink
-              },
-              mimetype: 'audio/mpeg',
-              fileName: `${songData.title}.mp3`,
-              caption: `${songData.title}\n\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`
-            }, { quoted: quotedMessage });
-
-            // React with a success emoji
-            await messageHandler.sendMessage(from, {
-              react: {
-                text: '✅',
-                key: quotedMessage.key
-              }
-            });
-            break;
-
-          default:
-            // Invalid option handling
-            await messageHandler.sendMessage(from, {
-              react: {
-                text: '❌',
-                key: quotedMessage.key
-              }
-            });
-            reply("Invalid option. Please select a valid option🔴");
-            break;
+        if (body === "1") {
+            // Send audio file
+            return await conn.sendMessage(from, { audio: { url: downloadLink }, mimetype: "audio/mpeg" }, { quoted: mek });
+        } else if (body === "2") {
+            // Send document (mp3 file)
+            return await conn.sendMessage(from, { document: { url: downloadLink }, mimetype: "audio/mpeg", fileName: `${song.title}.mp3`, caption: msg }, { quoted: mek });
+        } else {
+            return reply('🚩 *Invalid option. Please select 1 for audio or 2 for document.*');
         }
-      }
-    });
-  } catch (error) {
-    console.error(error);
-    // Handle errors
-    await messageHandler.sendMessage(from, {
-      react: {
-        text: '❌',
-        key: quotedMessage.key
-      }
-    });
-    reply("An error occurred while processing your request.");
-  }
+    } catch (e) {
+        console.log(e);
+        return reply('🚩 *Error occurred during the download process.*');
+    }
 });
