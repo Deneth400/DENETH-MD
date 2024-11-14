@@ -1,70 +1,79 @@
-const config = require('../config');
-const { cmd, commands } = require('../command');
-const { getBuffer, getGroupAdmins, getRandom, h2k, isUrl, Json, runtime, sleep, fetchJson } = require('../lib/functions');
+const { cmd } = require('../command');
+const { fetchJson } = require('../lib/functions');
 const axios = require('axios');
-const cheerio = require('cheerio');
-const fetch = require('node-fetch');
 
 cmd({
   pattern: "xvideo",
   alias: ["xvid"],
-  use: '.xvid <query>',
+  use: '.xvideo <query>',
   react: "🍟",
   desc: "Search and DOWNLOAD VIDEOS from xvideos.",
   category: "search",
   filename: __filename
-}, async (conn, mek, m, { from, q, reply }) => {
+},
+async (messageHandler, context, quotedMessage, { from, q, reply }) => {
   try {
-    if (!q) return reply('🚩 *Please give me words to search*');
+    if (!q) return reply('🚩 *Please provide search terms*');
     
-    let res = await fetchJson('https://raganork-network.vercel.app/api/xvideos/search?query=' + q);
-    const wm = `© 𝖰𝗎𝖾𝖾𝗇 𝗄𝖾𝗇𝗓𝗂 𝗆𝖽 v${require("../package.json").version} (Test)\nsɪᴍᴘʟᴇ ᴡᴀʙᴏᴛ ᴍᴀᴅᴇ ʙʏ ᴅᴀɴᴜxᴢᴢ 🅥`;
-    const msg = `乂 X V I D - D O W N L O A D E R `;
-    const data = res.result;
+    // Fetch xvideos search results from the API
+    let response = await fetchJson(`https://raganork-network.vercel.app/api/xvideos/search?query=${q}`);
+    let data = response.result;
 
-    if (data.length < 1) return await conn.sendMessage(from, { text: "🚩 *I couldn't find anything :(*" }, { quoted: mek });
+    let message = `𝗫𝗩𝗜𝗗𝗘𝗢 𝗦𝗘𝗔𝗥𝗖𝗛 𝗥𝗘𝗦𝗨𝗟𝗧𝗦\n\n» ʀᴇꜱᴜʟᴛꜱ for "${q}"\n\n`;
 
-    let response = 'Choose a video to download by number:\n\n';
+    if (data.length < 1) return await messageHandler.sendMessage(from, { text: "🚩 *No results found :(*" }, { quoted: quotedMessage });
+
+    // Display numbered options to download videos
+    let resultList = message + 'Choose a number to download:\n';
     data.forEach((v, index) => {
-      response += `${index + 1}. ${v.title} - Info: ${v.duration}\n`;
+      resultList += `${index + 1}. ${v.title}\nInfo: ${v.duration}\n\n`;
     });
+    resultList += '\n*Reply with the number of the video you want to download.*';
 
-    response += '\n*Reply with the number of the video you want to download.*';
+    // Send results to the user
+    const sentMessage = await messageHandler.sendMessage(from, {
+            image: { url: `https://logohistory.net/wp-content/uploads/2023/06/XVideos-Logo-2007-1024x576.png` },
+            caption: resultList,
+            contextInfo: {
+                forwardingScore: 999,
+                isForwarded: true,
+            }
+        }, { quoted: quotedMessage });
 
-    await conn.sendMessage(from, { text: response }, { quoted: mek });
-  } catch (e) {
-    console.log(e);
-    await conn.sendMessage(from, { text: '🚩 *Error occurred while searching for videos!*' }, { quoted: mek });
-  }
-});
+    // Define a listener function for handling the user's reply
+    const handleUserReply = async (update) => {
+      const message = update.messages[0];
 
-//------------------------dl---------------
-cmd({
-  pattern: "xvideodown",
-  alias: ["xviddl", "xvideodl"],
-  react: '🍟',
-  dontAddCommandList: true,
-  filename: __filename
-}, async (conn, mek, m, { from, q, reply }) => {
-  try {
-    if (!q) return reply('*Please reply with the number of the video to download!*');
-    
-    let videoIndex = parseInt(q) - 1;
-    if (isNaN(videoIndex) || videoIndex < 0) return reply('*Invalid selection! Please provide a valid number.*');
-    
-    let res = await fetchJson('https://raganork-network.vercel.app/api/xvideos/search?query=' + q);
-    const video = res.result[videoIndex];
-    
-    if (!video) return reply('*Video not found!*');
-    
-    // Fetch the video download link
-    let downloadRes = await fetchJson('https://raganork-network.vercel.app/api/xvideos/download?url=' + video.url);
-    
-    const wm = `© 𝖰𝗎𝖾𝖾𝗇 𝗄𝖾𝗇𝗓𝗂 𝗆𝖽 v${require("../package.json").version} (Test)\nsɪᴍᴘʟᴇ ᴡᴀʙᴏᴛ ᴍᴀᴅᴇ ʙʏ ᴅᴀɴᴜxᴢᴢ 🅥`;
-    
-    await conn.sendMessage(from, { video: { url: downloadRes.url }, caption: wm }, { quoted: mek });
-  } catch (e) {
-    console.log(e);
-    reply('*Error occurred while downloading the video!*');
+      // Ensure this message is a reply to the original prompt
+      if (!message.message || !message.message.extendedTextMessage || 
+          message.message.extendedTextMessage.contextInfo.stanzaId !== sentMessage.key.id) {
+        return;
+      }
+
+      const userReply = message.message.extendedTextMessage.text.trim();
+      let videoIndex = parseInt(userReply) - 1; // Get the index from the user's response
+
+      if (isNaN(videoIndex) || videoIndex < 0 || videoIndex >= data.length) {
+        return reply("🚩 *Please enter a valid number from the list.*");
+      }
+
+      let selectedVideo = data[videoIndex];
+      let videoUrl = selectedVideo.url; // Direct video URL
+
+      // Send the video to the user
+      await messageHandler.sendMessage(from, { 
+        video: { url: videoUrl }, 
+        caption: `> ᴘᴏᴡᴇʀᴇᴅ ʙʏ 𝗗𝗘𝗡𝗘𝗧𝗛-𝗠𝗗 ᴠ1 ᴡʜᴀᴛꜱᴀᴘᴘ ʙᴏᴛ®` 
+      }, { quoted: quotedMessage });
+
+      // Remove this listener after processing
+      messageHandler.ev.off("messages.upsert", handleUserReply);
+    };
+
+    // Attach the listener function to the message update event
+    messageHandler.ev.on("messages.upsert", handleUserReply);
+  } catch (error) {
+    console.error(error);
+    await messageHandler.sendMessage(from, { text: '🚩 *Error Occurred!*' }, { quoted: quotedMessage });
   }
 });
