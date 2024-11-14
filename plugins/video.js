@@ -15,7 +15,7 @@ cmd({
       return reply("Please provide a video name or URL!");
     }
 
-    // Fetch search results using yt-search
+    // Search for the video using yt-search
     const searchResults = await yts(q);
     if (!searchResults || searchResults.videos.length === 0) {
       return reply("No video found matching your query.");
@@ -24,7 +24,7 @@ cmd({
     const videoData = searchResults.videos[0]; // Get the first video from search results
 
     // Prepare the message with video details
-    let videoDetailsMessage = `𝗗𝗘𝗡𝗘𝗧𝗛-𝗠𝗗 𝗩𝗜𝗗𝗘𝗢 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗𝗘𝗥\n\n`;
+    let videoDetailsMessage = `𝗬𝗢𝗨𝗧𝗨𝗕𝗘 𝗩𝗜𝗗𝗘𝗢 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗𝗘𝗥\n\n`;
     videoDetailsMessage += `✒ ᴛɪᴛʟᴇ : ${videoData.title}\n`;
     videoDetailsMessage += `👀 ᴠɪᴇᴡꜱ : ${videoData.views}\n`;
     videoDetailsMessage += `⏰ ᴅᴜʀᴀᴛɪᴏɴ : ${videoData.timestamp}\n`;
@@ -32,12 +32,10 @@ cmd({
     videoDetailsMessage += `🎬 ᴄʜᴀɴɴᴇʟ : ${videoData.author.name}\n`;
     videoDetailsMessage += `🖇️ ᴜʀʟ : ${videoData.url}\n\n`;
     videoDetailsMessage += `*REPLY WITH DOWNLOAD OPTION* 🚀 \n\n`;
-    videoDetailsMessage += `*1 - 144p 🎥*\n`;
-    videoDetailsMessage += `*2 - 240p 🎥*\n`;
-    videoDetailsMessage += `*3 - 360p 🎥*\n`;
-    videoDetailsMessage += `*4 - 480p 🎥*\n`;
-    videoDetailsMessage += `*5 - 720p 🎥*\n\n`;
-    videoDetailsMessage += `> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-ᴍᴅ ᴠ1®`;
+    videoDetailsMessage += `*1 - 360p 🎥*\n`;
+    videoDetailsMessage += `*2 - 480p 🎥*\n`;
+    videoDetailsMessage += `*3 - 720p 🎥*\n`;
+    videoDetailsMessage += `*4 - 1080p 🎥*\n\n`;
 
     // Send video details and options (you can also send a thumbnail or any other media)
     const sentMessage = await messageHandler.sendMessage(from, {
@@ -61,11 +59,10 @@ cmd({
       if (message.message.extendedTextMessage.contextInfo.stanzaId === sentMessage.key.id) {
         let quality;
         switch (userReply) {
-          case '1': quality = '144p'; break;
-          case '2': quality = '240p'; break;
-          case '3': quality = '360p'; break;
-          case '4': quality = '480p'; break;
-          case '5': quality = '720p'; break;
+          case '1': quality = '360p'; break;
+          case '2': quality = '480p'; break;
+          case '3': quality = '720p'; break;
+          case '4': quality = '1080p'; break;
           default:
             await messageHandler.sendMessage(from, {
               react: {
@@ -78,7 +75,7 @@ cmd({
 
         try {
           // Fetch download link for the selected quality
-          const apiUrl = `https://dark-yasiya-api-new.vercel.app/download/ytmp4?url=${encodeURIComponent(videoData.url)}&quality=${quality}`;
+          const apiUrl = `https://www.dark-yasiya-api.site/download/ytmp4?url=${encodeURIComponent(videoData.url)}&quality=${quality}`;
           const downloadLinkResult = await fetchJson(apiUrl);
 
           if (downloadLinkResult && downloadLinkResult.result && downloadLinkResult.result.dl_link) {
@@ -89,7 +86,7 @@ cmd({
               },
               mimetype: 'video/mp4',
               fileName: `${videoData.title}-${quality}.mp4`,
-              caption: `${videoData.title} (${quality})\n\n> *© ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-ᴍᴅ ᴛᴇᴄʜ*`
+              caption: `${videoData.title} (${quality})\n\n> *© Powered by Deneth-MD*`
             }, { quoted: quotedMessage });
 
             await messageHandler.sendMessage(from, {
