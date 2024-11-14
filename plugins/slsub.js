@@ -33,7 +33,7 @@ cmd({
         }, { quoted: mek });
 
         // Wait for the user to select a movie by replying with its number
-        conn.ev.on("messages.upsert", async (update) => {
+        conn.ev.once("messages.upsert", async (update) => {
             const message = update.messages[0];
             if (!message.message || !message.message.extendedTextMessage) return;
 
@@ -90,7 +90,7 @@ async function sendMovieDetails(conn, mek, from, movieLink) {
         }, { quoted: mek });
 
         // Listen for the user's reply to the download options (1, 2, or 3)
-        conn.ev.on("messages.upsert", async (update) => {
+        conn.ev.once("messages.upsert", async (update) => {
             const message = update.messages[0];
             if (!message.message || !message.message.extendedTextMessage) return;
 
