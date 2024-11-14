@@ -25,17 +25,17 @@ async (messageHandler, context, quotedMessage, { from, q, reply }) => {
     // If no results, send a failure message
     if (data.length < 1) return await messageHandler.sendMessage(from, { text: "⭕ *I Couldn't Find Anything 🙄*" }, { quoted: quotedMessage });
 
-    let message = `𝗗𝗘𝗡𝗘𝗧𝗛-𝗠𝗗 𝗧𝗜𝗞𝗧𝗢𝗞 𝗦𝗘𝗔𝗥𝗖𝗛\n\nSearch Results for "${q}":\n\n`;
+    let message = `𝗗𝗘𝗡𝗘𝗧𝗛-𝗠𝗗 𝗧𝗜𝗞𝗧𝗢𝗞 𝗦𝗘𝗔𝗥𝗖𝗛\n\n_Search Results for_ "${q}":\n\n`;
     let options = '';
 
     // Create a list of video results
     data.forEach((v, index) => {
-      options += `${index + 1}. ${v.title} (Creator: ${v.creator})\n`;
+      options += `${index + 1}. ${v.title}\n`;
     });
 
     message += options;
-    message += `\nYou Can Reply To A Single Number From This Command And Take The Video You Want.(Example:1)`;
-    message += `\nYou Can Reply A Few Numbers From This Command And Take The Videos You Want.(Example:1,2,3)`; 
+    message += `\n❗ *You Can Reply To A Single Number From This Command And Take The Video You Want.(Example:1)*`;
+    message += `\n\n❗ *You Can Reply A Few Numbers From This Command And Take The Videos You Want.(Example:1,2,3)*`; 
     message += `\n\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`;
 
     // Send the list of search results to the user
