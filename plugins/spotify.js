@@ -36,7 +36,7 @@ cmd({
         // Send the list of songs
         return await conn.sendMessage(from, { text: message }, { quoted: mek });
     } catch (e) {
-        console.log(e);
+        console.log('Error in search:', e);
         return await conn.sendMessage(from, { text: '🚩 *Error occurred while processing your request!*' }, { quoted: mek });
     }
 });
@@ -49,14 +49,18 @@ cmd({
 }, async (conn, mek, m, { from, q, reply, body }) => {
     try {
         const selected = parseInt(q);  // The user's number selection for the song
-        if (isNaN(selected) || selected < 1) return reply('🚩 *Please provide a valid number.*');
+        if (isNaN(selected) || selected < 1) return reply('🚩 *Please provide a valid number (e.g., 1, 2, 3, etc.).*');
 
-        let res = await fetchJson(`https://manaxu-seven.vercel.app/api/downloader/spotify?url=${body}`); // Assuming body contains the URL from the previous search
-        let song = res.result[selected - 1]; // Get the song corresponding to the selected number
+        // Assuming the song URL is passed in 'body' from the previous step
+        let songUrl = body;  // Ensure body contains the valid song URL from the previous search
+        if (!songUrl) return reply('🚩 *No song URL found. Please try again.*');
 
-        if (!song) return reply('🚩 *Invalid selection.*');
+        let res = await fetchJson(`https://manaxu-seven.vercel.app/api/downloader/spotify?url=${songUrl}`);
+        const song = res.result[selected - 1]; // Get the song corresponding to the selected number
 
-        const downloadLink = song.download; // URL for downloading the song
+        if (!song) return reply('🚩 *Invalid selection. Please try again.*');
+
+        const downloadLink = song.download; // Assuming the response contains a download URL
 
         // Inform the user about the selection and ask for the download type
         const msg = `*Selected Song:*\n*Title:* ${song.title}\n*Artist:* ${song.artist}\n\n*Choose the download type:*\n\n1 - Audio\n2 - Document`;
@@ -64,7 +68,7 @@ cmd({
         // Send the message asking for the download type
         await conn.sendMessage(from, { text: msg }, { quoted: mek });
     } catch (e) {
-        console.log(e);
+        console.log('Error in selecting song:', e);
         return reply('🚩 *Error occurred while processing your selection.*');
     }
 });
@@ -79,12 +83,15 @@ cmd({
         const selectedType = parseInt(q); // Get the number for the selected download type
         if (isNaN(selectedType) || ![1, 2].includes(selectedType)) return reply('🚩 *Please select a valid option: 1 for Audio or 2 for Document.*');
 
-        let res = await fetchJson(`https://manaxu-seven.vercel.app/api/downloader/spotify?url=${body}`); // Assuming body contains the URL from previous search
-        let song = res.result; // Get song data
+        let songUrl = body;  // Make sure the song URL is passed correctly
+        if (!songUrl) return reply('🚩 *No song URL found. Please try again.*');
 
-        if (!song) return reply('🚩 *Could not fetch song details.*');
+        let res = await fetchJson(`https://manaxu-seven.vercel.app/api/downloader/spotify?url=${songUrl}`);
+        const song = res.result[selected - 1]; // Get song details from the API response
 
-        const downloadLink = song.download; // Song download link
+        if (!song) return reply('🚩 *Song not found. Please try again.*');
+
+        const downloadLink = song.download; // Get the download link
 
         if (selectedType === 1) {
             // If user selects "Audio"
@@ -98,7 +105,7 @@ cmd({
             return reply('*Sending the document (MP3) file...*');
         }
     } catch (e) {
-        console.log(e);
-        return reply('🚩 *Error occurred while processing your request.*');
+        console.log('Error in downloading:', e);
+        return reply('🚩 *Error occurred while processing your download request.*');
     }
 });
