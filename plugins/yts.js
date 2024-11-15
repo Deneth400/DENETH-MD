@@ -3,7 +3,7 @@ const fetch = require('node-fetch');
 
 // Movie search command
 cmd({
-    pattern: "yts",
+    pattern: "movie",
     desc: "Search for a movie and get details.",
     category: "movie",
     react: "🔍",
@@ -18,7 +18,8 @@ async (conn, mek, m, { from, q, reply }) => {
         const response = await fetch(`https://www.dark-yasiya-api.site/movie/ytsmx/search?text=${encodeURIComponent(input)}`);
         const result = await response.json();
 
-        if (!result.status || result.results.length === 0) return reply("No results found.");
+        // Check if the result and the results array exist
+        if (!result.status || !result.results || result.results.length === 0) return reply("No results found.");
 
         let message = "*Search Results:*\n\n";
         result.results.forEach((item, index) => {
