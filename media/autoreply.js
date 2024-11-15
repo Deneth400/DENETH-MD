@@ -1,0 +1,6 @@
+{
+"hi":"Example",
+"ai":"Example",
+"kohomada":"Example",
+"hello":"Example"
+}
