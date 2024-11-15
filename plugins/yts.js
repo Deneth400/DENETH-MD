@@ -29,13 +29,71 @@ async (conn, mek, m, { from, q, reply }) => {
         });
 
         // Step 2: Send the search results to the user
-        await conn.sendMessage(from, {
+        const sentMsg = await conn.sendMessage(from, {
             text: message,
             contextInfo: {
                 forwardingScore: 999,
                 isForwarded: true,
             }
         }, { quoted: mek });
+
+        // Wait for the user to select a movie by number
+        const movieSelectionListener = async (update) => {
+            const message = update.messages[0];
+
+            if (!message.message || !message.message.extendedTextMessage) return;
+
+            const userReply = message.message.extendedTextMessage.text.trim();
+            const selectedMovieIndex = parseInt(userReply) - 1;
+
+            // Ensure the user has selected a valid movie index
+            if (selectedMovieIndex < 0 || selectedMovieIndex >= result.result.data.length) {
+                await conn.sendMessage(from, {
+                    react: { text: '❌', key: mek.key }
+                });
+                return reply("❗ Invalid selection. Please choose a valid number from the search results.");
+            }
+
+            const selectedMovie = result.result.data[selectedMovieIndex];
+            const movieId = selectedMovie.url.split('/').pop();
+
+            // Step 3: Fetch movie details from the selected movie's ID
+            const movieResponse = await fetch(`https://www.dark-yasiya-api.site/movie/ytsmx/movie?id=${movieId}`);
+            const movieDetails = await movieResponse.json();
+            if (!movieDetails || !movieDetails.status || !movieDetails.result) {
+                return reply("❗ Movie details not found.");
+            }
+
+            const movie = movieDetails.result;
+            let movieMessage = `*${movie.title}*\n\n`;
+            movieMessage += `📅 Release Date: ${movie.year}\n`;
+            movieMessage += `⏰ Duration: ${movie.runtime} minutes\n`;
+            movieMessage += `🎭 Genres: ${movie.genres.join(', ')}\n`;
+            movieMessage += `⭐ IMDb Rating: ${movie.rating}\n\n`;
+            movieMessage += `🎬 Director: ${movie.director}\n`;
+            movieMessage += `📋 Description: ${movie.description_full}\n\n`;
+
+            movie.torrents.forEach((torrent, idx) => {
+                movieMessage += `Torrent ${idx + 1}:\nQuality: ${torrent.quality}\nSize: ${torrent.size}\nLink: ${torrent.url}\n\n`;
+            });
+
+            // Step 4: Send movie details with download options
+            await conn.sendMessage(from, {
+                text: movieMessage,
+                contextInfo: {
+                    forwardingScore: 999,
+                    isForwarded: true,
+                }
+            }, { quoted: mek });
+        };
+
+        // Register the movie selection listener
+        conn.ev.on("messages.upsert", movieSelectionListener);
+
+        // Clean up the listener after 60 seconds to prevent memory leaks
+        setTimeout(() => {
+            conn.ev.off("messages.upsert", movieSelectionListener);
+        }, 60000);
 
     } catch (e) {
         console.error('Error:', e);
