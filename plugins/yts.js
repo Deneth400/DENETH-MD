@@ -25,7 +25,7 @@ async (conn, mek, m, { from, q, reply }) => {
 
         let message = "*Search Results:*\n\n";
         result.result.data.forEach((item, index) => {
-            message += `${index + 1}. ${item.title}\nYear: ${item.year}\nLink: ${item.url}\n\n`;
+            message += `${index + 1}. ${item.title}\nYear: ${item.year}\n\n`;
         });
 
         // Step 2: Send the search results to the user
