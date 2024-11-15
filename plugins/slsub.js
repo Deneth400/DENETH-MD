@@ -2,151 +2,183 @@ const { cmd } = require('../command');
 const { SinhalaSub } = require('@sl-code-lords/movie-api');
 const { PixaldrainDL } = require("pixaldrain-sinhalasub");
 
+// Movie search and details handler
 cmd({
     pattern: "movie",
-    desc: "Search for a movie",
+    desc: "Search for a movie and get details and download options.",
     category: "movie",
-    react: "🔍",
+    react: "🍿",
     filename: __filename
 },
 async (conn, mek, m, { from, q, reply }) => {
     try {
         const input = q.trim();
-        if (!input) return reply("Please provide a movie or TV show name to search.");
+        if (!input) return reply("❗ *Please Provide A Movie Name To Search.*");
         
+        // Step 1: Search for the movie
         const result = await SinhalaSub.get_list.by_search(input);
         if (!result.status || result.results.length === 0) return reply("No results found.");
 
-        let message = "*Search Results:*\n\n";
+        let message = "𝗗𝗘𝗡𝗘𝗧𝗛-𝗠𝗗 𝗠𝗢𝗩𝗜𝗘 𝗦𝗘𝗔𝗥𝗖𝗛\n\n_Search Results :_\n\n";
         result.results.forEach((item, index) => {
             message += `${index + 1}. ${item.title}\nType: ${item.type}\nLink: ${item.link}\n\n`;
         });
-        const sentMsg = await conn.sendMessage(from, {
-            image: { url: `https://github.com/Deneth400/DENETH-MD-HARD/blob/main/Images/SinhalaSub.jpg?raw=true`},
-            caption: message,  // Send the description as the caption
-            contextInfo: {
-                forwardingScore: 999,
-                isForwarded: true,
-            }
+
+        // Step 2: Send search results (No forwarding)
+        await conn.sendMessage(from, {
+            image: { url: `https://github.com/Deneth400/DENETH-MD-HARD/blob/main/Images/SinhalaSub.jpg?raw=true` },
+            caption: message,
         }, { quoted: mek });
-    } catch (e) {
-        console.log(e);
-        await conn.sendMessage(from, { react: { text: '❌', key: mek.key } });
-        return reply(`Error: ${e.message}`);
-    }
-});
-cmd({
-  pattern: "slsub",
-  desc: "Get movie details and download options.",
-  category: "movie",
-  react: "🍿",
-  filename: __filename
-},
-async (messageHandler, context, quotedMessage, { from, q, reply }) => {
-  try {
-    const link = q.trim();
-    if (!link) return reply("Please provide a movie link!");
 
-    // Fetch movie details from SinhalaSub API
-    const result = await SinhalaSub.movie(link);
-    if (!result.status) return reply("Movie details not found.");
+        // Wait for the user to select a movie by number
+        const messageListener = async (update) => {
+            const message = update.messages[0];
+            if (!message.message || !message.message.extendedTextMessage) return;
 
-    const movie = result.result;
-    let message = `*${movie.title}*\n\n`;
-    message += `📅 Rᴇʟᴇᴀꜱᴇ ᴅᴀᴛᴇ: ${movie.release_date}\n`;
-    message += `🗺 Cᴏᴜɴᴛʀʏ: ${movie.country}\n`;
-    message += `⏰ Dᴜʀᴀᴛɪᴏɴ: ${movie.duration}\n`;
-    message += `🎭 Gᴇɴʀᴇꜱ: ${movie.genres}\n`;
-    message += `⭐ Iᴍᴅʙ Rᴀᴛɪɴɢ: ${movie.IMDb_Rating}\n`;
-    message += `🎬 Dɪʀᴇᴄᴛᴏʀ: ${movie.director.name}\n\n`;
-    message += `🔢 𝗥𝗘𝗣𝗟𝗬 𝗧𝗛𝗘 𝗡𝗨𝗠𝗕𝗘𝗥 𝗕𝗘𝗟𝗢𝗪\n\n`;
-    message += `*1 | SD 480p*\n`;
-    message += `*2 | HD 720p*\n`;
-    message += `*3 | FHD 1080p*\n\n`;
-    message += `> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`;
+            const userReply = message.message.extendedTextMessage.text.trim();
+            const selectedMovieIndex = parseInt(userReply) - 1;
 
-    const imageUrl = movie.images && movie.images.length > 0 ? movie.images[0] : null;
+            // Ensure the user has selected a valid movie index
+            if (selectedMovieIndex < 0 || selectedMovieIndex >= result.results.length) {
+                await conn.sendMessage(from, {
+                    react: { text: '❌', key: mek.key }
+                });
+                return reply("❗ *Invalid Selection. Please Choose A Valid Number From The Search Results.*");
+            }
 
-    // Send movie details along with download options
-    const sentMessage = await messageHandler.sendMessage(from, {
-      image: { url: imageUrl },  // Assuming the movie has a poster or thumbnail
-      caption: message,
-      contextInfo: {
-        forwardingScore: 999,
-        isForwarded: true,
-      }
-    }, { quoted: quotedMessage });
+            const selectedMovie = result.results[selectedMovieIndex];
+            const link = selectedMovie.link;
 
-    // Listen for the user's reply to the download options
-    messageHandler.ev.on("messages.upsert", async (update) => {
-      const message = update.messages[0];
+            // Step 3: Fetch movie details from the selected movie's link
+            const movieDetails = await SinhalaSub.movie(link);
+            if (!movieDetails || !movieDetails.status || !movieDetails.result) {
+                return reply("❗ *Movie Details Not Found Or Invalid Link Provided.*");
+            }
 
-      if (!message.message || !message.message.extendedTextMessage) return;
+            const movie = movieDetails.result;
+            let message = `*${movie.title}*\n\n`;
+            message += `📅 Rᴇʟᴇᴀꜱᴇ ᴅᴀᴛᴇ: ${movie.release_date}\n`;
+            message += `🗺 Cᴏᴜɴᴛʀʏ: ${movie.country}\n`;
+            message += `⏰ Dᴜʀᴀᴛɪᴏɴ: ${movie.duration}\n`;
 
-      const userReply = message.message.extendedTextMessage.text.trim();
+            // Fixing genre formatting
+            const genres = Array.isArray(movie.genres) ? movie.genres.join(', ') : movie.genres;
+            message += `🎭 Gᴇɴʀᴇꜱ: ${genres}\n`;
 
-      // If the reply matches the sent options, download the movie
-      if (message.message.extendedTextMessage.contextInfo.stanzaId === sentMessage.key.id) {
-        let quality;
-        switch (userReply) {
-          case '1':
-            quality = "SD 480p";
-            break;
-          case '2':
-            quality = "HD 720p";
-            break;
-          case '3':
-            quality = "FHD 1080p";
-            break;
-          default:
-            await messageHandler.sendMessage(from, {
-              react: {
-                text: '❌',
-                key: quotedMessage.key
-              }
+            message += `⭐ Iᴍᴅʙ Rᴀᴛɪɴɢ: ${movie.IMDb_Rating}\n`;
+            message += `🎬 Dɪʀᴇᴄᴛᴏʀ: ${movie.director.name}\n\n`;
+            message += "🔢 ʀᴇᴘʟʏ ᴛʜᴇ Qᴜᴀʟɪᴛʏ ʙᴇʟᴏᴡ\n\n";
+            message += "*480 - SD 480p*\n";
+            message += "*720 - HD 720p*\n";
+            message += "*1080 - FHD 1080p*\n\n";
+            message += "> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®";
+
+            const imageUrl = movie.images && movie.images.length > 0 ? movie.images[0] : '';
+
+            // Step 4: Send movie details with download options
+            const movieDetailsMessage = await conn.sendMessage(from, {
+                image: { url: imageUrl },
+                caption: message
             });
-            return reply("Invalid option. Please select from 1, 2, or 3.");
-        }
 
-        // Fetch the direct download link for the selected quality
-        const directLink = await PixaldrainDL(link, quality, "direct");
-        if (directLink) {
-          // Provide download option
-          await messageHandler.sendMessage(from, {
-            document: {
-              url: directLink
-            },
-            mimetype: 'video/mp4',
-            fileName: `${movie.title}.mp4`,
-            caption: `${movie.title}\n\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`
-          }, { quoted: quotedMessage });
+            let userSelectedQuality = null;  // Track if a quality has already been selected
 
-          // React with success
-          await messageHandler.sendMessage(from, {
-            react: {
-              text: '✅',
-              key: quotedMessage.key
-            }
-          });
-        } else {
-          await messageHandler.sendMessage(from, {
-            react: {
-              text: '❌',
-              key: quotedMessage.key
-            }
-          });
-          return reply(`Could not find the ${quality} download link. Please check the URL or try another quality.`);
-        }
-      }
-    });
-  } catch (error) {
-    console.error(error);
-    await messageHandler.sendMessage(from, {
-      react: {
-        text: '❌',
-        key: quotedMessage.key
-      }
-    });
-    reply("An error occurred while processing your request.");
-  }
+            // Listener for the user's quality selection
+            const qualityListener = async (update) => {
+                const message = update.messages[0];
+                if (!message.message || !message.message.extendedTextMessage) return;
+
+                const userReply = message.message.extendedTextMessage.text.trim();
+
+                // Ensure the user is responding to the right message
+                if (message.message.extendedTextMessage.contextInfo.stanzaId === movieDetailsMessage.key.id) {
+                    if (userSelectedQuality) {
+                        // If quality was already selected, stop the process
+                        await conn.sendMessage(from, {
+                            react: { text: '❌', key: mek.key }
+                        });
+                        return reply("❗ *You Have Already Selected A Quality Option.*");
+                    }
+
+                    let quality;
+                    switch (userReply) {
+                        case '480':
+                            quality = "SD 480p";
+                            break;
+                        case '720':
+                            quality = "HD 720p";
+                            break;
+                        case '1080':
+                            quality = "FHD 1080p";
+                            break;
+                        default:
+                            await conn.sendMessage(from, {
+                                react: { text: '❌', key: mek.key }
+                            });
+                            return reply("Invalid option. Please select from 1, 2, or 3.");
+                    }
+
+                    try {
+                        // Assuming PixaldrainDL is a function that you have defined elsewhere
+                        const directLink = await PixaldrainDL(link, quality, "direct");
+                        if (directLink) {
+                            // Provide download option
+                            await conn.sendMessage(from, {
+                                document: { url: directLink },
+                                mimetype: 'video/mp4',
+                                fileName: `ᴅᴇɴᴇᴛʜ-ᴍᴅ ᴍᴏᴠɪᴇꜱ(${movie.title}).mp4`,
+                                caption: `${movie.title}\n\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`
+                            });
+
+                            // React with success
+                            await conn.sendMessage(from, {
+                                react: { text: '✅', key: mek.key }
+                            });
+
+                            // Mark quality as selected
+                            userSelectedQuality = userReply;
+
+                            // Unregister the quality listener after selection
+                            conn.ev.off("messages.upsert", qualityListener);
+
+                        } else {
+                            await conn.sendMessage(from, {
+                                react: { text: '❌', key: mek.key }
+                            });
+                            return reply(`Could Not Find The ${quality} Download Link. Please Check The URL Or Try Another Quality.`);
+                        }
+                    } catch (err) {
+                        console.error('Error in PixaldrainDL function:', err);
+                        await conn.sendMessage(from, {
+                            react: { text: '❌', key: mek.key }
+                        });
+                        return reply("❗ *An Error Occurred While Processing Your Download Request.*");
+                    }
+                }
+            };
+
+            // Register the quality listener for this movie
+            conn.ev.on("messages.upsert", qualityListener);
+
+            // Clean up the listener after 60 seconds to prevent memory leaks
+            setTimeout(() => {
+                conn.ev.off("messages.upsert", qualityListener);
+            }, 60000);
+        };
+
+        // Register the movie selection listener
+        conn.ev.on("messages.upsert", messageListener);
+
+        // Clean up after 60 seconds to prevent memory leaks
+        setTimeout(() => {
+            conn.ev.off("messages.upsert", messageListener);
+        }, 60000);
+
+    } catch (error) {
+        console.error('Error in movie search or details:', error);
+        await conn.sendMessage(from, {
+            react: { text: '❌', key: mek.key }
+        });
+        reply("An error occurred while fetching the movie search or details.");
+    }
 });
