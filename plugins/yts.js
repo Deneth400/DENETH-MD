@@ -55,6 +55,12 @@ async (conn, mek, m, { from, q, reply }) => {
             }
 
             const selectedMovie = result.result.data[selectedMovieIndex];
+            if (!selectedMovie || !selectedMovie.url) {
+                await conn.sendMessage(from, {
+                    react: { text: '❌', key: mek.key }
+                });
+                return reply("❗ Invalid selection. Unable to retrieve movie details.");
+            }
             const movieId = selectedMovie.url.split('/').pop();
 
             // Step 3: Fetch movie details from the selected movie's ID
