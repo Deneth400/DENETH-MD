@@ -40,10 +40,9 @@ async (conn, mek, m, { from, q, reply }) => {
         movieMessage += `⭐ IMDb Rating: ${movie.IMDb_Rating}\n`;
         movieMessage += `🎬 Director: ${movie.director.name}\n\n`;
          movieMessage += `🔗 Download Link: ${link}`;
-        movieMessage += `🔢 Reply with one of the following to select quality:\n\n`;
-        movieMessage += `*SD | SD 480p*\n`;
-        movieMessage += `*HD | HD 720p*\n`;
-        movieMessage += `*FHD | FHD 1080p*\n\n`;
+        movieMessage += `\n\nɪ ᴀᴍ ᴀɴ ᴀᴜᴛᴏᴍᴀᴛᴇᴅ ꜱʏꜱᴛᴇᴍ ᴡʜᴀᴛꜱᴀᴘᴘ ʙᴏᴛ ᴛʜᴀᴛ ᴄᴀɴ ʜᴇʟᴘ ᴛᴏ ᴅᴏ ꜱᴏᴍᴇᴛʜɪɴɢ,ꜱᴇᴀʀᴄʜ ᴀɴᴅ ɢᴇᴛ ᴅᴀᴛᴀ / ɪɴꜰᴏʀᴍᴀᴛɪᴏɴ ᴏɴʟʏ ᴛʜᴏᴜɢʜ ᴡʜᴀᴛꜱᴀᴘᴘ\n\n`;
+        movieMessage += `_*ෆිල්ම්ස් ඕනෙනම් මේ නම්බරයට මැසේජ් කරන්න*_\n`;
+        movieMessage += `+94761864425\n\n`;
         movieMessage += `> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`;
 
         const imageUrl = movie.images && movie.images.length > 0 ? movie.images[0] : null;
