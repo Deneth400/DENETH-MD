@@ -16,7 +16,7 @@ cmd({
         const targetJid = args[0]; 
         const message = args.slice(1).join(' '); 
         await conn.sendMessage(targetJid, { text: message });
-        reply(Message successfully sent to ${targetJid}. ✅);
+        reply(`Message successfully sent to ${targetJid}. ✅`);
     } catch (e) {
         reply("An error occurred while sending the message.");
         console.error(e);
