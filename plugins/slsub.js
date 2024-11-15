@@ -72,10 +72,10 @@ async (conn, mek, m, { from, q, reply }) => {
 
             movieMessage += `⭐ Iᴍᴅʙ Rᴀᴛɪɴɢ: ${movie.IMDb_Rating}\n`;
             movieMessage += `🎬 Dɪʀᴇᴄᴛᴏʀ: ${movie.director.name}\n\n`;
-            movieMessage += `🔢 𝗥𝗘𝗣𝗟𝗬 𝗧𝗛𝗘 𝗡𝗨𝗠𝗕𝗘𝗥 𝗕𝗘𝗟𝗢𝗪\n\n`;
-            movieMessage += `*1 | SD 480p*\n`;
-            movieMessage += `*2 | HD 720p*\n`;
-            movieMessage += `*3 | FHD 1080p*\n\n`;
+            movieMessage += `🔢 𝗥𝗘𝗣𝗟𝗬 𝗧𝗛𝗘 𝗤𝗨𝗔𝗟𝗜𝗧𝗬 𝗕𝗘𝗟𝗢𝗪\n\n`;
+            movieMessage += `*480 | SD 480p*\n`;
+            movieMessage += `*720 | HD 720p*\n`;
+            movieMessage += `*1080 | FHD 1080p*\n\n`;
             movieMessage += `> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`;
 
             const imageUrl = movie.images && movie.images.length > 0 ? movie.images[0] : null;
@@ -102,13 +102,13 @@ async (conn, mek, m, { from, q, reply }) => {
                 if (message.message.extendedTextMessage.contextInfo.stanzaId === movieDetailsMessage.key.id) {
                     let quality;
                     switch (userReply) {
-                        case '1':
+                        case '480':
                             quality = "SD 480p";
                             break;
-                        case '2':
+                        case '720':
                             quality = "HD 720p";
                             break;
-                        case '3':
+                        case '1080':
                             quality = "FHD 1080p";
                             break;
                         default:
