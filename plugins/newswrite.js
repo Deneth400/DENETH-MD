@@ -21,17 +21,25 @@ async(conn, mek, m, {from, quoted, reply }) => {
         // Fetch the latest news from the API
         const news = await fetchJson(`${apilink}`)
         
+        // Safely handle missing or empty image URL
+        const imageUrl = news.result.image ? news.result.image : 'https://via.placeholder.com/150'; // Placeholder if no image
+        
+        // Ensure that desc is a string
+        const desc = news.result.desc ? news.result.desc.toString() : 'No description available';
+        
+        // Prepare the message
         const msg = 
         `*LATEST NEWS FROM DARK YASIYA API*\n\n
         *Title:* ${news.result.title}\n
-        *News:* ${news.result.desc}\n
+        *News:* ${desc}\n
         *Date:* ${news.result.date}\n
         *Link:* ${news.result.url}\n\n
         > ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-ᴍᴅ ᴡᴀ-ʙᴏᴛ`
 
-        await conn.sendMessage( from, { image: { url: news.result.image || '' }, caption: msg }, { quoted: mek })
+        // Send message with image (if available) and caption
+        await conn.sendMessage(from, { image: { url: imageUrl }, caption: msg }, { quoted: mek });
     } catch (e) {
-        console.log(e)
-        reply(e)
+        console.error(e);
+        reply(`An error occurred: ${e.message}`);
     }
 })
