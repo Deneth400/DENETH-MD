@@ -3,7 +3,7 @@ const fetch = require('node-fetch');
 
 // Movie search command
 cmd({
-    pattern: "movie",
+    pattern: "yts",
     desc: "Search for a movie and get details.",
     category: "movie",
     react: "🔍",
