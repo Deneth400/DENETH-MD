@@ -57,13 +57,7 @@ cmd({
 async (conn, mek, m, { from, quoted, reply }) => {
     try {
         // Fetch the latest news from BBC API
-        const news = await fetchJson(apilink);
-
-        // Check if the API returns the expected result
-        if (!news || !news.result) {
-            return reply("❗ Failed to fetch news. Please try again later.");
-        }
-
+        const news = await fetchJson(`${apilink}/bbc`)
         // Structure the news message
         const msg = `
 *BBC NEWS DENETH-MD*
@@ -201,13 +195,7 @@ cmd({
 async (conn, mek, m, { from, quoted, reply }) => {
     try {
         // Fetch the latest news from Ada News API
-        const news = await fetchJson(apilink);
-
-        // Check if the API returns the expected result
-        if (!news || !news.result) {
-            return reply("❗ Failed to fetch news. Please try again later.");
-        }
-
+        const news = await fetchJson(`${apilink}/ada`)
         // Structure the news message
         const msg = `
 *ADA NEWS DENETH-MD*
@@ -243,13 +231,7 @@ cmd({
 async (conn, mek, m, { from, quoted, reply }) => {
     try {
         // Fetch the latest news from NewsWrite API
-        const news = await fetchJson(apilink);
-
-        // Check if the API returns the expected result
-        if (!news || !news.result) {
-            return reply("❗ Failed to fetch news. Please try again later.");
-        }
-
+        const news = await fetchJson(`${apilink}/NewsWrite`)
         // Structure the news message
         const msg = `
 *NEWSWRITE NEWS DENETH-MD*
@@ -285,13 +267,7 @@ cmd({
 async (conn, mek, m, { from, quoted, reply }) => {
     try {
         // Fetch the latest news from Daily Mirror API
-        const news = await fetchJson(apilink);
-
-        // Check if the API returns the expected result
-        if (!news || !news.result) {
-            return reply("❗ Failed to fetch news. Please try again later.");
-        }
-
+        const news = await fetchJson(`${apilink}/dailymirror`)
         // Structure the news message
         const msg = `
 *DAILY MIRROR NEWS DENETH-MD*
