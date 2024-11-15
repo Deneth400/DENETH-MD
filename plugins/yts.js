@@ -18,6 +18,9 @@ async (conn, mek, m, { from, q, reply }) => {
         const response = await fetch(`https://www.dark-yasiya-api.site/movie/ytsmx/search?text=${encodeURIComponent(input)}`);
         const result = await response.json();
 
+        // Add debugging information
+        console.log('API Response:', result);
+
         // Check if the result and the results array exist
         if (!result.status || !result.results || result.results.length === 0) return reply("No results found.");
 
@@ -36,7 +39,7 @@ async (conn, mek, m, { from, q, reply }) => {
         }, { quoted: mek });
 
     } catch (e) {
-        console.error(e);
+        console.error('Error:', e);
         await conn.sendMessage(from, { react: { text: '❌', key: mek.key } });
         return reply(`❗ Error: ${e.message}`);
     }
