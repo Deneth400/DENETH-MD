@@ -11,7 +11,14 @@ cmd({
     try {
         // Trim the query to remove unnecessary spaces
         const searchText = q.trim();
-        if (!searchText) return reply("Please provide a cartoon name or keyword to search.");
+        if (!searchText) {
+            return reply("Please provide a cartoon name or keyword to search.");
+        }
+
+        // Make sure the search text is a valid string and not a full URL
+        if (searchText.startsWith('http')) {
+            return reply("Please provide a valid search term (not a URL).");
+        }
 
         // Make a request to the Ginisisila search API with the search text
         const apiUrl = `https://dark-yasiya-api-new.vercel.app/search/ginisisila?text=${encodeURIComponent(searchText)}&page=1`;
@@ -40,6 +47,14 @@ cmd({
         
     } catch (error) {
         console.error(error);
+
+        // Log the error response from the API to understand what went wrong
+        if (error.response) {
+            console.error('API Response Error:', error.response.data);
+        } else {
+            console.error('Request Error:', error.message);
+        }
+
         await conn.sendMessage(from, { react: { text: '❌', key: mek.key } });
         return reply("An error occurred while processing your request. Please try again later.");
     }
