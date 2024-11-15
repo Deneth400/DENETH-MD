@@ -1,3 +1,5 @@
+// NEW ADDED NEWS SITE [ BBC , LANKADEEPA ]
+
 const config = require('../config')
 const { cmd } = require('../command')
 const axios = require('axios')
@@ -10,7 +12,7 @@ const apilink = 'https://dark-yasiya-news-apis.vercel.app/api' // API LINK ( DO 
 
 cmd({
     pattern: "lankadeepanews",
-    alias: ["lankadeepa","news4"],
+    alias: ["lankadeepa","news1"],
     react: "📰",
     desc: "",
     category: "news",
@@ -46,12 +48,12 @@ reply(e)
 // ================================BBC NEWS========================================
 
 cmd({
-    pattern: "bbc",
-    alias: ["bbcnew","bbcnews"],
-    react: "📰",
+    pattern: "bbcnews",
+    alias: ["bbc","news2"],
+    react: "🌍",
     desc: "",
     category: "news",
-    use: '.lankadeepanews',
+    use: '.bbcnews',
     filename: __filename
 },
 async(conn, mek, m,{from, quoted, reply }) => {
@@ -60,18 +62,16 @@ try{
 const news = await fetchJson(`${apilink}/bbc`)
   
 const msg = `
-*BBC NEWS DENETH-MD*
+*BBC NEWS DENTH-MD*
+
        
 * Title - ${news.result.title}
 
 * News - ${news.result.desc}
 
-* Date - ${news.result.date}
-
-* Link - ${news.result.url}
+* Link - ${news.result.url} 
 
 > ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-ᴍᴅ ᴡᴀ-ʙᴏᴛ`
-
 
 await conn.sendMessage( from, { image: { url: news.result.image || '' }, caption: msg }, { quoted: mek })
 } catch (e) {
@@ -83,7 +83,7 @@ reply(e)
 // ================================HIRU NEWS========================================
 cmd({
     pattern: "hirunews",
-    alias: ["hiru","news1"],
+    alias: ["hiru","news3"],
     react: "☀",
     desc: "",
     category: "news",
@@ -118,7 +118,7 @@ reply(e)
 
 cmd({
     pattern: "sirasanews",
-    alias: ["sirasa","news2"],
+    alias: ["sirasa","news4"],
     react: "🔺",
     desc: "",
     category: "news",
@@ -152,7 +152,7 @@ reply(e)
 
 cmd({
     pattern: "derananews",
-    alias: ["derana","news3"],
+    alias: ["derana","news5"],
     react: "🟥",
     desc: "",
     category: "news",
@@ -184,110 +184,85 @@ reply(e)
 }
 })
 
-//================ADA NEWS=========================
+// NEW ADDED NEWS SITE [ DAILY MIRROR ]
+const apilink = 'https://dark-yasiya-api-new.vercel.app/news/dailymirror' // API LINK FOR DAILY MIRROR
+
+// ================================DAILY MIRROR NEWS========================================
+
 cmd({
-    pattern: "ada",
-    alias: ["adanew","adanews"],
-    react: "📰",
-    desc: "",
+    pattern: "dailymirrornews",
+    alias: ["dailymirror", "news6"],
+    react: "🗞️",
+    desc: "Fetches the latest news from Daily Mirror",
     category: "news",
-    use: '.lankadeepanews',
+    use: '.dailymirrornews',
     filename: __filename
 },
-async(conn, mek, m,{from, quoted, reply }) => {
-try{
+async (conn, mek, m, { from, quoted, reply }) => {
+    try {
+        // Fetch news from the Daily Mirror API
+        const news = await fetchJson(apilink)
 
-const news = await fetchJson(`${apilink}/ada`)
-  
-const msg = `
-*ADA NEWS DENETH-MD*
-       
-* Title - ${news.result.title}
+        // Format the message to be sent
+        const msg = `
+*DAILY MIRROR NEWS*
 
-* News - ${news.result.desc}
+*Title* - ${news.result.title}
 
-* Date - ${news.result.date}
+*News* - ${news.result.desc}
 
-* Link - ${news.result.url}
+*Date* - ${news.result.date}
+
+*Link* - ${news.result.url}
 
 > ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-ᴍᴅ ᴡᴀ-ʙᴏᴛ`
 
-
-await conn.sendMessage( from, { image: { url: news.result.image || '' }, caption: msg }, { quoted: mek })
-} catch (e) {
-console.log(e)
-reply(e)
-}
+        // Send the message with an image if available
+        await conn.sendMessage(from, { image: { url: news.result.image || '' }, caption: msg }, { quoted: mek })
+    } catch (e) {
+        console.log(e)
+        reply("Error fetching news. Please try again later.")
+    }
 })
+// New API link for GAGANA News ( DO NOT CHANGE THIS!! )
+const apilink = 'https://dark-yasiya-api-new.vercel.app/news/gagana';
 
-//================NEWS WRITE======================================
+// ================================ GAGANA NEWS =====================================
+
 cmd({
-    pattern: "newswrite",
-    alias: ["newswritenew","newswritenew"],
-    react: "📰",
-    desc: "",
-    category: "news",
-    use: '.lankadeepanews',
+    pattern: "gagananews", // Command for fetching news
+    alias: ["gagana", "news5"], // Aliases for the command
+    react: "📰", // Emoji reaction to indicate news
+    desc: "Fetch the latest news from GAGANA",
+    category: "news", // Category of the command
+    use: '.gagananews', // How to use the command
     filename: __filename
 },
-async(conn, mek, m,{from, quoted, reply }) => {
-try{
+async (conn, mek, m, { from, quoted, reply }) => {
+    try {
+        // Fetch the latest GAGANA news from the API
+        const news = await fetchJson(apilink);
+        
+        // Safely handle missing or empty image URL
+        const imageUrl = news.result.image ? news.result.image : 'https://via.placeholder.com/150'; // Placeholder if no image
+        
+        // Ensure that desc is a string
+        const desc = news.result.desc ? news.result.desc.toString() : 'No description available';
+        
+        // Prepare the message with relevant details
+        const msg = `
+            *GAGANA NEWS FROM DARK YASIYA API*\n\n
+            *Title:* ${news.result.title}\n
+            *News:* ${desc}\n
+            *Date:* ${news.result.date}\n
+            *Link:* ${news.result.url}\n\n
+            > ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-ᴍᴅ ᴡᴀ-ʙᴏᴛ
+        `;
 
-const news = await fetchJson(`${apilink}/NewsWrite`)
-  
-const msg = `
-*NEWS WRITE NEWS DENETH-MD*
-       
-* Title - ${news.result.title}
-
-* News - ${news.result.desc}
-
-* Date - ${news.result.date}
-
-* Link - ${news.result.url}
-
-> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-ᴍᴅ ᴡᴀ-ʙᴏᴛ`
-
-
-await conn.sendMessage( from, { image: { url: news.result.image || '' }, caption: msg }, { quoted: mek })
-} catch (e) {
-console.log(e)
-reply(e)
-}
-})
-
-//=========================DAILY MIRROR=======================================
-cmd({
-    pattern: "daily",
-    alias: ["mirror","daily"],
-    react: "📰",
-    desc: "",
-    category: "news",
-    use: '.lankadeepanews',
-    filename: __filename
-},
-async(conn, mek, m,{from, quoted, reply }) => {
-try{
-
-const news = await fetchJson(`${apilink}/dailymirror`)
-  
-const msg = `
-*DAILY MIRROR NEWS DENETH-MD*
-       
-* Title - ${news.result.title}
-
-* News - ${news.result.desc}
-
-* Date - ${news.result.date}
-
-* Link - ${news.result.url}
-
-> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-ᴍᴅ ᴡᴀ-ʙᴏᴛ`
-
-
-await conn.sendMessage( from, { image: { url: news.result.image || '' }, caption: msg }, { quoted: mek })
-} catch (e) {
-console.log(e)
-reply(e)
-}
-})
+        // Send message with image (if available) and caption
+        await conn.sendMessage(from, { image: { url: imageUrl }, caption: msg }, { quoted: mek });
+    } catch (e) {
+        console.error(e);
+        reply(`An error occurred while fetching the news: ${e.message}`);
+    }
+});
