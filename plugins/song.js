@@ -39,7 +39,7 @@ cmd({
     songDetailsMessage += > *Choose Your Download Format:*  \n\n;
     songDetailsMessage += *1-𝖠𝗎𝖽𝗂𝗈 File🎶*\n;
     songDetailsMessage += *2-Document File📂*\n\n;
-    songDetailsMessage += > *ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®*;
+    songDetailsMessage += > ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®;
 
     // Send the song details and options (you can also send a thumbnail or any other media)
     const sentMessage = await messageHandler.sendMessage(from, {
@@ -88,7 +88,7 @@ cmd({
               },
               mimetype: 'audio/mpeg',
               fileName: ${songData.title}.mp3,
-              caption: ${songData.title}\n\n> *© ᴘᴏᴡᴇʀᴇᴅ ʙʏ ɴᴇᴛʜᴍɪᴋᴀ-ᴛᴇᴄʜ*
+              caption: ${songData.title}\n\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®
             }, { quoted: quotedMessage });
 
             // React with a success emoji
