@@ -189,4 +189,4 @@ async (conn, mek, m, { from, q, reply }) => {
         await conn.sendMessage(from, { react: { text: '❌', key: mek.key } });
         return reply(`❗ Error: ${e.message}`);
     }
-}); ⬤
+});
