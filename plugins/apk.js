@@ -1,22 +1,27 @@
-const config = require('../config')
-const { cmd, commands } = require('../command')
-const { getBuffer, getGroupAdmins, getRandom, h2k, isUrl, Json, runtime, sleep, fetchJson} = require('../lib/functions')
-const apkdl = require('../lib/apkdl')
+const config = require('../config');
+const { cmd, commands } = require('../command');
+const { getBuffer, getGroupAdmins, getRandom, h2k, isUrl, Json, runtime, sleep, fetchJson } = require('../lib/functions');
+const apkdl = require('../lib/apkdl');
 const ufs = require('../lib/ufs');
-let newsize = config.MAX_SIZE * 1024 * 1024
-let wm = `© 𝖰𝗎𝖾𝖾𝗇 𝗄𝖾𝗇𝗓𝗂 𝗆𝖽 v${require("../package.json").version} (Test)
-sɪᴍᴘʟᴇ ᴡᴀʙᴏᴛ ᴍᴀᴅᴇ ʙʏ ᴅᴀɴᴜxᴢᴢ 🅥`
+
+let newsize = config.MAX_SIZE * 1024 * 1024;
+let wm = `© 𝖰𝗎𝖾𝖾𝗇 𝗄𝖾𝗇𝗓𝗂 𝗆𝖽 v${require("../package.json").version} (Test)\nsɪᴍᴘʟᴇ ᴡᴀʙᴏᴛ ᴍᴀᴅᴇ ʙʏ ᴅᴀɴᴜxᴢᴢ 🅥`;
+
+var N_FOUND = "🚩 *I couldn't find anything :(*";
+var urlneed = "🚩 *It downloads apps from playstore.*";  // Ensure this line exists
+var imgmsg = "🚩 ``*Please write a few words*";
 
 cmd({
     pattern: "apk",
     react: "🍟",
     alias: ["app", "playstore"],
-    desc: urlneed,
+    desc: urlneed,  // Reference to urlneed
     category: "download",
     use: '.apk whatsapp',
-    filename: __filename
+    filename: __filename,
 }, async (conn, mek, m, { from, prefix, l, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply }) => {
-    try {
+    // ...your existing code, unchanged
+});
         if (!q) return await conn.sendMessage(from, { text: imgmsg }, { quoted: mek });
         
         // Fetch search results from Play Store
