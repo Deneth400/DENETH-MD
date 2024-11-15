@@ -46,37 +46,39 @@ reply(e)
 // ================================BBC NEWS========================================
 
 cmd({
-    pattern: "bbcnews",
-    alias: ["bbc", "news5"],
-    react: "🌍",
-    desc: "Fetch the latest news from BBC.",
+    pattern: "bbc",
+    alias: ["bbcnew","bbcnews"],
+    react: "📰",
+    desc: "",
     category: "news",
-    use: '.bbcnews',
+    use: '.lankadeepanews',
     filename: __filename
 },
-async (conn, mek, m, { from, quoted, reply }) => {
-    try {
-        // Fetch the latest news from BBC API
-        const news = await fetchJson(`${apilink}/bbc`)
-        // Structure the news message
-        const msg = `
-*BBC NEWS DENETH-MD*
+async(conn, mek, m,{from, quoted, reply }) => {
+try{
 
+const news = await fetchJson(`${apilink}/bbc`)
+  
+const msg = `
+*BBC NEWS DENETH-MD*
+       
 * Title - ${news.result.title}
 
 * News - ${news.result.desc}
 
+* Date - ${news.result.date}
+
 * Link - ${news.result.url}
 
-> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-ᴍᴅ ᴡᴀ-ʙᴏᴛ`;
+> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-ᴍᴅ ᴡᴀ-ʙᴏᴛ`
 
-        // Send the message with news details
-        await conn.sendMessage(from, { image: { url: news.result.image || '' }, caption: msg }, { quoted: mek });
-    } catch (e) {
-        console.log(e);
-        reply("❗ An error occurred while fetching BBC News. Please try again later.");
-    }
-});
+
+await conn.sendMessage( from, { image: { url: news.result.image || '' }, caption: msg }, { quoted: mek })
+} catch (e) {
+console.log(e)
+reply(e)
+}
+})
 
 // ================================HIRU NEWS========================================
 cmd({
@@ -184,22 +186,22 @@ reply(e)
 
 //================ADA NEWS=========================
 cmd({
-    pattern: "adanews",
-    alias: ["ada", "news6"],
+    pattern: "ada",
+    alias: ["adanew","adanews"],
     react: "📰",
-    desc: "Fetch the latest news from Ada News.",
+    desc: "",
     category: "news",
-    use: '.adanews',
+    use: '.lankadeepanews',
     filename: __filename
 },
-async (conn, mek, m, { from, quoted, reply }) => {
-    try {
-        // Fetch the latest news from Ada News API
-        const news = await fetchJson(`${apilink}/ada`)
-        // Structure the news message
-        const msg = `
-*ADA NEWS DENETH-MD*
+async(conn, mek, m,{from, quoted, reply }) => {
+try{
 
+const news = await fetchJson(`${apilink}/ada`)
+  
+const msg = `
+*ADA NEWS DENETH-MD*
+       
 * Title - ${news.result.title}
 
 * News - ${news.result.desc}
@@ -208,34 +210,34 @@ async (conn, mek, m, { from, quoted, reply }) => {
 
 * Link - ${news.result.url}
 
-> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-ᴍᴅ ᴡᴀ-ʙᴏᴛ`;
+> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-ᴍᴅ ᴡᴀ-ʙᴏᴛ`
 
-        // Send the message with news details
-        await conn.sendMessage(from, { image: { url: news.result.image || '' }, caption: msg }, { quoted: mek });
-    } catch (e) {
-        console.log(e);
-        reply("❗ An error occurred while fetching Ada News. Please try again later.");
-    }
-});
+
+await conn.sendMessage( from, { image: { url: news.result.image || '' }, caption: msg }, { quoted: mek })
+} catch (e) {
+console.log(e)
+reply(e)
+}
+})
 
 //================NEWS WRITE======================================
 cmd({
-    pattern: "newswritenews",
-    alias: ["newswrite", "news7"],
+    pattern: "newswrite",
+    alias: ["newswritenew","newswritenew"],
     react: "📰",
-    desc: "Fetch the latest news from NewsWrite.",
+    desc: "",
     category: "news",
-    use: '.newswritenews',
+    use: '.lankadeepanews',
     filename: __filename
 },
-async (conn, mek, m, { from, quoted, reply }) => {
-    try {
-        // Fetch the latest news from NewsWrite API
-        const news = await fetchJson(`${apilink}/NewsWrite`)
-        // Structure the news message
-        const msg = `
-*NEWSWRITE NEWS DENETH-MD*
+async(conn, mek, m,{from, quoted, reply }) => {
+try{
 
+const news = await fetchJson(`${apilink}/NewsWrite`)
+  
+const msg = `
+*NEWS WRITE NEWS DENETH-MD*
+       
 * Title - ${news.result.title}
 
 * News - ${news.result.desc}
@@ -244,34 +246,34 @@ async (conn, mek, m, { from, quoted, reply }) => {
 
 * Link - ${news.result.url}
 
-> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-ᴍᴅ ᴡᴀ-ʙᴏᴛ`;
+> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-ᴍᴅ ᴡᴀ-ʙᴏᴛ`
 
-        // Send the message with news details
-        await conn.sendMessage(from, { image: { url: news.result.image || '' }, caption: msg }, { quoted: mek });
-    } catch (e) {
-        console.log(e);
-        reply("❗ An error occurred while fetching NewsWrite News. Please try again later.");
-    }
-});
+
+await conn.sendMessage( from, { image: { url: news.result.image || '' }, caption: msg }, { quoted: mek })
+} catch (e) {
+console.log(e)
+reply(e)
+}
+})
 
 //=========================DAILY MIRROR=======================================
 cmd({
-    pattern: "dailymirrornews",
-    alias: ["dailymirror", "news8"],
+    pattern: "daily",
+    alias: ["mirror","daily"],
     react: "📰",
-    desc: "Fetch the latest news from Daily Mirror.",
+    desc: "",
     category: "news",
-    use: '.dailymirrornews',
+    use: '.lankadeepanews',
     filename: __filename
 },
-async (conn, mek, m, { from, quoted, reply }) => {
-    try {
-        // Fetch the latest news from Daily Mirror API
-        const news = await fetchJson(`${apilink}/dailymirror`)
-        // Structure the news message
-        const msg = `
-*DAILY MIRROR NEWS DENETH-MD*
+async(conn, mek, m,{from, quoted, reply }) => {
+try{
 
+const news = await fetchJson(`${apilink}/dailymirror`)
+  
+const msg = `
+*DAILY MIRROR NEWS DENETH-MD*
+       
 * Title - ${news.result.title}
 
 * News - ${news.result.desc}
@@ -280,12 +282,12 @@ async (conn, mek, m, { from, quoted, reply }) => {
 
 * Link - ${news.result.url}
 
-> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-ᴍᴅ ᴡᴀ-ʙᴏᴛ`;
+> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-ᴍᴅ ᴡᴀ-ʙᴏᴛ`
 
-        // Send the message with news details
-        await conn.sendMessage(from, { image: { url: news.result.image || '' }, caption: msg }, { quoted: mek });
-    } catch (e) {
-        console.log(e);
-        reply("❗ An error occurred while fetching Daily Mirror News. Please try again later.");
-    }
-});
+
+await conn.sendMessage( from, { image: { url: news.result.image || '' }, caption: msg }, { quoted: mek })
+} catch (e) {
+console.log(e)
+reply(e)
+}
+})
