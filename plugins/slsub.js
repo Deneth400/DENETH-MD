@@ -1,6 +1,19 @@
 const { cmd } = require('../command');
 const { SinhalaSub } = require('@sl-code-lords/movie-api');
 const { PixaldrainDL } = require("pixaldrain-sinhalasub");
+const fetch = require('node-fetch');  // Ensure to install node-fetch
+
+// Fetch the premium partners list from the JSON URL
+async function getPremiumPartners() {
+    try {
+        const response = await fetch("https://raw.githubusercontent.com/Deneth400/DENETH-MD-HARD/refs/heads/main/premium/movie.json");
+        const data = await response.json();
+        return data.premiumPartners || [];  // Assuming the JSON has a 'premiumPartners' key
+    } catch (err) {
+        console.error("Failed to fetch premium partners:", err);
+        return [];
+    }
+}
 
 // Movie search command
 cmd({
@@ -9,13 +22,20 @@ cmd({
     category: "movie",
     react: "🔍",
     filename: __filename
-},
-async (conn, mek, m, { from, q, reply }) => {
+}, async (conn, mek, m, { from, q, reply }) => {
     try {
         const input = q.trim();
         if (!input) return reply("Please provide a movie or TV show name to search.");
-        
-        // Step 1: Search for the movie
+
+        // Step 1: Fetch premium partners list
+        const premiumPartners = await getPremiumPartners();
+
+        // Step 2: Check if the user is a premium partner
+        if (!premiumPartners.includes(from)) {
+            return reply("❗ Sorry, you must be a premium partner to access this feature.");
+        }
+
+        // Step 3: Search for the movie
         const result = await SinhalaSub.get_list.by_search(input);
         if (!result.status || result.results.length === 0) return reply("No results found.");
 
@@ -24,7 +44,7 @@ async (conn, mek, m, { from, q, reply }) => {
             message += `${index + 1}. ${item.title}\nType: ${item.type}\nLink: ${item.link}\n\n`;
         });
 
-        // Step 2: Send the search results to the user
+        // Step 4: Send the search results to the user
         const sentMsg = await conn.sendMessage(from, {
             image: { url: `https://github.com/Deneth400/DENETH-MD-HARD/blob/main/Images/SinhalaSub.jpg?raw=true` },
             caption: message,  // Send the description as the caption
@@ -171,7 +191,4 @@ async (conn, mek, m, { from, q, reply }) => {
 
     } catch (e) {
         console.log(e);
-        await conn.sendMessage(from, { react: { text: '❌', key: mek.key } });
-        return reply(`❗ Error: ${e.message}`);
-    }
-});
+        await conn.sendMessage
