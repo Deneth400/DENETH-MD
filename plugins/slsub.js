@@ -55,7 +55,7 @@ async (conn, mek, m, { from, q, reply }) => {
                 return reply("❗ *Movie Details Not Found Or Invalid Link Provided.*");
             }
 
-            const movie = movieDetails.result;
+            const movie = result.result;
             let message = `*${movie.title}*\n\n`;
             message += `📅 Rᴇʟᴇᴀꜱᴇ ᴅᴀᴛᴇ: ${movie.release_date}\n`;
             message += `🗺 Cᴏᴜɴᴛʀʏ: ${movie.country}\n`;
