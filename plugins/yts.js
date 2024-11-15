@@ -18,9 +18,6 @@ async (conn, mek, m, { from, q, reply }) => {
         const response = await fetch(`https://www.dark-yasiya-api.site/movie/ytsmx/search?text=${encodeURIComponent(input)}`);
         const result = await response.json();
 
-        // Add debugging information
-        console.log('API Response:', JSON.stringify(result, null, 2));
-
         // Check if the result and the results array exist
         if (!result.status || !result.result || !result.result.data || result.result.data.length === 0) {
             return reply("No results found.");
@@ -33,7 +30,7 @@ async (conn, mek, m, { from, q, reply }) => {
 
         // Step 2: Send the search results to the user
         await conn.sendMessage(from, {
-            text: message, // Changed from caption to text
+            text: message,
             contextInfo: {
                 forwardingScore: 999,
                 isForwarded: true,
