@@ -37,7 +37,6 @@ async (conn, mek, m, { from, q, reply }) => {
             }
         }, { quoted: mek });
 
-        // Wait for the user to select a movie by number
         const movieSelectionListener = async (update) => {
             const message = update.messages[0];
 
@@ -61,6 +60,7 @@ async (conn, mek, m, { from, q, reply }) => {
                 });
                 return reply("❗ Invalid selection. Unable to retrieve movie details.");
             }
+
             const movieId = selectedMovie.url.split('/').pop();
 
             // Step 3: Fetch movie details from the selected movie's ID
