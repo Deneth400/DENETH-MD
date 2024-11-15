@@ -62,10 +62,13 @@ async (conn, mek, m, { from, q, reply }) => {
             }
 
             const movieId = selectedMovie.url.split('/').pop();
+            console.log('Selected movie ID:', movieId);
 
             // Step 3: Fetch movie details from the selected movie's ID
             const movieResponse = await fetch(`https://www.dark-yasiya-api.site/movie/ytsmx/movie?id=${movieId}`);
             const movieDetails = await movieResponse.json();
+            console.log('Movie Details Response:', movieDetails);
+
             if (!movieDetails || !movieDetails.status || !movieDetails.result) {
                 await conn.sendMessage(from, {
                     react: { text: '❌', key: mek.key }
