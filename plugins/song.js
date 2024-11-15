@@ -25,23 +25,26 @@ cmd({
 
     // Fetch download link for the song
     const downloadLinkResult = await fetchJson(`https://dark-yasiya-api-new.vercel.app/download/ytmp3?url=${songData.url}`);
+    if (!downloadLinkResult || !downloadLinkResult.result || !downloadLinkResult.result.dl_link) {
+      return reply("Failed to fetch download link for the song.");
+    }
     const downloadLink = downloadLinkResult.result.dl_link;
 
     // Prepare the message with song details
-    let songDetailsMessage = ‎‎`*DENETH-MD AUDIO DOWNLOADER*\n\n`;
+    let songDetailsMessage = `*DENETH-MD AUDIO DOWNLOADER*\n\n`;
     songDetailsMessage += `*⚜ ᴛɪᴛʟᴇ* : ${songData.title}\n`;
     songDetailsMessage += `*📃 ᴅᴇꜱᴄʀɪᴘᴛɪᴏɴ* : ${songData.description}\n`;
     songDetailsMessage += `*👀 ᴠɪᴇᴡꜱ* : ${songData.views}\n`;
     songDetailsMessage += `*⏰ ᴅᴜʀᴀᴛɪᴏɴ* : ${songData.timestamp}\n`;
     songDetailsMessage += `*📆 ᴜᴘʟᴏᴀᴅᴇᴅ ᴏɴ* : ${songData.ago}\n`;
-    songDetailsMessage += `*📽 ᴄʜᴀɴɴᴇʟ* : ${songData.author.name}\n`;
+    songDetailsMessage += `*📽 ᴄʜᴀɴɴɪᴇʟ* : ${songData.author.name}\n`;
     songDetailsMessage += `*🖇️ ᴜʀʟ* : ${songData.url}\n\n`;
     songDetailsMessage += `*Choose Your Download Format:*  \n\n`;
     songDetailsMessage += `*1-𝖠𝗎𝖽𝗂𝗈 File🎶*\n`;
     songDetailsMessage += `*2-Document File📂*\n\n`;
     songDetailsMessage += `> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`;
 
-    // Send the song details and options (you can also send a thumbnail or any other media)
+    // Send the song details and options
     const sentMessage = await messageHandler.sendMessage(from, {
       image: { url: songData.thumbnail },  // Assuming songData has a thumbnail property
       caption: songDetailsMessage,
@@ -59,54 +62,41 @@ cmd({
 
       const userReply = message.message.extendedTextMessage.text.trim();
 
-      // If the reply matches the sent options, download the audio or document
+      // Check if the reply matches the sent options and handle accordingly
       if (message.message.extendedTextMessage.contextInfo.stanzaId === sentMessage.key.id) {
         switch (userReply) {
           case '1':
             // Send audio download link
             await messageHandler.sendMessage(from, {
-              audio: {
-                url: downloadLink
-              },
+              audio: { url: downloadLink },
               mimetype: "audio/mpeg"
             }, { quoted: quotedMessage });
 
             // React with a success emoji
             await messageHandler.sendMessage(from, {
-              react: {
-                text: '✅',
-                key: quotedMessage.key
-              }
+              react: { text: '✅', key: quotedMessage.key }
             });
             break;
 
           case '2':
             // Send document (mp3) download link
             await messageHandler.sendMessage(from, {
-              document: {
-                url: downloadLink
-              },
+              document: { url: downloadLink },
               mimetype: 'audio/mpeg',
-              fileName: ${songData.title}.mp3,
-              caption: ${songData.title}\n\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®
+              fileName: `${songData.title}.mp3`,
+              caption: `${songData.title}\n\n> Powered by Deneth-XD Tech®`
             }, { quoted: quotedMessage });
 
             // React with a success emoji
             await messageHandler.sendMessage(from, {
-              react: {
-                text: '✅',
-                key: quotedMessage.key
-              }
+              react: { text: '✅', key: quotedMessage.key }
             });
             break;
 
           default:
             // Invalid option handling
             await messageHandler.sendMessage(from, {
-              react: {
-                text: '❌',
-                key: quotedMessage.key
-              }
+              react: { text: '❌', key: quotedMessage.key }
             });
             reply("Invalid option. Please select a valid option🔴");
             break;
@@ -117,10 +107,7 @@ cmd({
     console.error(error);
     // Handle errors
     await messageHandler.sendMessage(from, {
-      react: {
-        text: '❌',
-        key: quotedMessage.key
-      }
+      react: { text: '❌', key: quotedMessage.key }
     });
     reply("An error occurred while processing your request.");
   }
