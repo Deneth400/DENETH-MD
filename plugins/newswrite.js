@@ -1,47 +1,37 @@
-// NEW ADDED NEWS SITE [ NEWSWRITE ]
-
 const config = require('../config')
 const { cmd } = require('../command')
 const axios = require('axios')
 const { fetchJson } = require('../lib/functions')
 
-const apilink = 'https://dark-yasiya-api-new.vercel.app/news/NewsWrite' // API LINK FOR NEWSWRITE
+const apilink = 'https://dark-yasiya-api-new.vercel.app/news/NewsWrite' // API LINK ( DO NOT CHANGE THIS!! )
 
-
-// ================================NEWSWRITE NEWS========================================
+// ================================NEW ADDED NEWS SITE========================================
 
 cmd({
-    pattern: "newswritenews",
-    alias: ["newswrite", "news7"],
-    react: "📜",
-    desc: "Fetches the latest news from NewsWrite",
+    pattern: "news",
+    alias: ["latestnews", "newswrite"],
+    react: "📰",
+    desc: "Fetch latest news from Dark Yasiya API",
     category: "news",
-    use: '.newswritenews',
+    use: '.news',
     filename: __filename
 },
-async (conn, mek, m, { from, quoted, reply }) => {
+async(conn, mek, m, {from, quoted, reply }) => {
     try {
-        // Fetch news from the NewsWrite API
-        const news = await fetchJson(apilink)
+        // Fetch the latest news from the API
+        const news = await fetchJson(`${apilink}`)
+        
+        const msg = 
+        `*LATEST NEWS FROM DARK YASIYA API*\n\n
+        *Title:* ${news.result.title}\n
+        *News:* ${news.result.desc}\n
+        *Date:* ${news.result.date}\n
+        *Link:* ${news.result.url}\n\n
+        > ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-ᴍᴅ ᴡᴀ-ʙᴏᴛ`
 
-        // Format the message to be sent
-        const msg = `
-*NEWSWRITE NEWS*
-
-*Title* - ${news.result.title}
-
-*News* - ${news.result.desc}
-
-*Date* - ${news.result.date}
-
-*Link* - ${news.result.url}
-
-> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-ᴍᴅ ᴡᴀ-ʙᴏᴛ`
-
-        // Send the message with an image if available
-        await conn.sendMessage(from, { image: { url: news.result.image || '' }, caption: msg }, { quoted: mek })
+        await conn.sendMessage( from, { image: { url: news.result.image || '' }, caption: msg }, { quoted: mek })
     } catch (e) {
         console.log(e)
-        reply("Error fetching news. Please try again later.")
+        reply(e)
     }
 })
