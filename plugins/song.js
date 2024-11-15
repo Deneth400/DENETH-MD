@@ -24,22 +24,22 @@ cmd({
     const songData = searchResults.videos[0]; // Get the first video from search results
 
     // Fetch download link for the song
-    const downloadLinkResult = await fetchJson(https://dark-yasiya-api-new.vercel.app/download/ytmp3?url=${songData.url});
+    const downloadLinkResult = await fetchJson(`https://dark-yasiya-api-new.vercel.app/download/ytmp3?url=${songData.url}`);
     const downloadLink = downloadLinkResult.result.dl_link;
 
     // Prepare the message with song details
-    let songDetailsMessage = ‎‎*DENETH-MD AUDIO DOWNLOADER*\n\n;
-    songDetailsMessage += *⚜ ᴛɪᴛʟᴇ* : ${songData.title}\n;
-    songDetailsMessage += *📃 ᴅᴇꜱᴄʀɪᴘᴛɪᴏɴ* : ${songData.description}\n;
-    songDetailsMessage += *👀 ᴠɪᴇᴡꜱ* : ${songData.views}\n;
-    songDetailsMessage += *⏰ ᴅᴜʀᴀᴛɪᴏɴ* : ${songData.timestamp}\n;
-    songDetailsMessage += *📆 ᴜᴘʟᴏᴀᴅᴇᴅ ᴏɴ* : ${songData.ago}\n;
-    songDetailsMessage += *📽 ᴄʜᴀɴɴᴇʟ* : ${songData.author.name}\n;
-    songDetailsMessage += *🖇️ ᴜʀʟ* : ${songData.url}\n\n;
-    songDetailsMessage += > *Choose Your Download Format:*  \n\n;
-    songDetailsMessage += *1-𝖠𝗎𝖽𝗂𝗈 File🎶*\n;
-    songDetailsMessage += *2-Document File📂*\n\n;
-    songDetailsMessage += > ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®;
+    let songDetailsMessage = ‎‎`*DENETH-MD AUDIO DOWNLOADER*\n\n`;
+    songDetailsMessage += `*⚜ ᴛɪᴛʟᴇ* : ${songData.title}\n`;
+    songDetailsMessage += `*📃 ᴅᴇꜱᴄʀɪᴘᴛɪᴏɴ* : ${songData.description}\n`;
+    songDetailsMessage += `*👀 ᴠɪᴇᴡꜱ* : ${songData.views}\n`;
+    songDetailsMessage += `*⏰ ᴅᴜʀᴀᴛɪᴏɴ* : ${songData.timestamp}\n`;
+    songDetailsMessage += `*📆 ᴜᴘʟᴏᴀᴅᴇᴅ ᴏɴ* : ${songData.ago}\n`;
+    songDetailsMessage += `*📽 ᴄʜᴀɴɴᴇʟ* : ${songData.author.name}\n`;
+    songDetailsMessage += `*🖇️ ᴜʀʟ* : ${songData.url}\n\n`;
+    songDetailsMessage += `*Choose Your Download Format:*  \n\n`;
+    songDetailsMessage += `*1-𝖠𝗎𝖽𝗂𝗈 File🎶*\n`;
+    songDetailsMessage += `*2-Document File📂*\n\n`;
+    songDetailsMessage += `> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`;
 
     // Send the song details and options (you can also send a thumbnail or any other media)
     const sentMessage = await messageHandler.sendMessage(from, {
