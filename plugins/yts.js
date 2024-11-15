@@ -19,7 +19,7 @@ async (conn, mek, m, { from, q, reply }) => {
         const result = await response.json();
 
         // Add debugging information
-        console.log('API Response:', result);
+        console.log('API Response:', JSON.stringify(result, null, 2));
 
         // Check if the result and the results array exist
         if (!result.status || !result.result || !result.result.data || result.result.data.length === 0) {
