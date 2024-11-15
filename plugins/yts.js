@@ -33,7 +33,7 @@ async (conn, mek, m, { from, q, reply }) => {
 
         // Step 2: Send the search results to the user
         await conn.sendMessage(from, {
-            caption: message,
+            text: message, // Changed from caption to text
             contextInfo: {
                 forwardingScore: 999,
                 isForwarded: true,
