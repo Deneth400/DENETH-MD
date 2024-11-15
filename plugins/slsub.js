@@ -61,29 +61,29 @@ async (conn, mek, m, { from, q, reply }) => {
             }
 
             const movie = movieDetails.result;
-            let message = `*${movie.title}*\n\n`;
-            message += `📅 Rᴇʟᴇᴀꜱᴇ ᴅᴀᴛᴇ: ${movie.release_date}\n`;
-            message += `🗺 Cᴏᴜɴᴛʀʏ: ${movie.country}\n`;
-            message += `⏰ Dᴜʀᴀᴛɪᴏɴ: ${movie.duration}\n`;
+            let movieMessage = `*${movie.title}*\n\n`;
+            movieMessage += `📅 Rᴇʟᴇᴀꜱᴇ ᴅᴀᴛᴇ: ${movie.release_date}\n`;
+            movieMessage += `🗺 Cᴏᴜɴᴛʀʏ: ${movie.country}\n`;
+            movieMessage += `⏰ Dᴜʀᴀᴛɪᴏɴ: ${movie.duration}\n`;
 
             // Handling genres properly
             const genres = Array.isArray(movie.genres) ? movie.genres.join(', ') : movie.genres;
-            message += `🎭 Gᴇɴʀᴇꜱ: ${genres}\n`;
+            movieMessage += `🎭 Gᴇɴʀᴇꜱ: ${genres}\n`;
 
-            message += `⭐ Iᴍᴅʙ Rᴀᴛɪɴɢ: ${movie.IMDb_Rating}\n`;
-            message += `🎬 Dɪʀᴇᴄᴛᴏʀ: ${movie.director.name}\n\n`;
-            message += `🔢 𝗥𝗘𝗣𝗟𝗬 𝗧𝗛𝗘 𝗡𝗨𝗠𝗕𝗘𝗥 𝗕𝗘𝗟𝗢𝗪\n\n`;
-            message += `*1 | SD 480p*\n`;
-            message += `*2 | HD 720p*\n`;
-            message += `*3 | FHD 1080p*\n\n`;
-            message += `> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`;
+            movieMessage += `⭐ Iᴍᴅʙ Rᴀᴛɪɴɢ: ${movie.IMDb_Rating}\n`;
+            movieMessage += `🎬 Dɪʀᴇᴄᴛᴏʀ: ${movie.director.name}\n\n`;
+            movieMessage += `🔢 𝗥𝗘𝗣𝗟𝗬 𝗧𝗛𝗘 𝗡𝗨𝗠𝗕𝗘𝗥 𝗕𝗘𝗟𝗢𝗪\n\n`;
+            movieMessage += `*1 | SD 480p*\n`;
+            movieMessage += `*2 | HD 720p*\n`;
+            movieMessage += `*3 | FHD 1080p*\n\n`;
+            movieMessage += `> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ᴅᴇɴᴇᴛʜ-xᴅ ᴛᴇᴄʜ®`;
 
             const imageUrl = movie.images && movie.images.length > 0 ? movie.images[0] : null;
 
             // Step 4: Send movie details with download options
             const movieDetailsMessage = await conn.sendMessage(from, {
                 image: { url: imageUrl },
-                caption: message,
+                caption: movieMessage,
                 contextInfo: {
                     forwardingScore: 999,
                     isForwarded: true,
