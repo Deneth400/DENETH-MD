@@ -179,7 +179,7 @@ async (conn, mek, m, { from, q, reply }) => {
 // JID Share Command (share)
 cmd({
     pattern: "share",
-    desc: "Share movie details and download link with a JID (group or contact).",
+    desc: "Share movie details, quality options, and download link with a JID (group or contact).",
     category: "movie",
     react: "🔗",
     use: "<JID> <movie title>",
@@ -213,17 +213,66 @@ async (conn, mek, m, { from, q, reply }) => {
         movieMessage += `⏰ Duration: ${movie.duration}\n`;
         movieMessage += `⭐ IMDb Rating: ${movie.IMDb_Rating}\n`;
         movieMessage += `🎬 Director: ${movie.director.name}\n\n`;
-        movieMessage += `🔗 Download Link: ${link}`;
+        movieMessage += `🔢 Reply with one of the following to select quality:\n\n`;
+        movieMessage += `*SD | SD 480p*\n`;
+        movieMessage += `*HD | HD 720p*\n`;
+        movieMessage += `*FHD | FHD 1080p*\n\n`;
+        movieMessage += `> Powered by Deneth-xD Tech®`;
 
         const imageUrl = movie.images && movie.images.length > 0 ? movie.images[0] : null;
 
-        // Step 3: Share the movie details and download link with the JID
+        // Step 3: Share the movie details and download quality options with the JID
         await conn.sendMessage(jid, {
             image: { url: imageUrl },
             caption: movieMessage
         });
 
-        return reply(`Movie details and download link have been shared with ${jid}`);
+        // Wait for JID to select quality
+        const qualityListener = async (update) => {
+            const message = update.messages[0];
+
+            if (!message.message || !message.message.extendedTextMessage) return;
+
+            const userReply = message.message.extendedTextMessage.text.trim();
+
+            if (userReply === 'SD' || userReply === 'HD' || userReply === 'FHD') {
+                let quality;
+                switch (userReply) {
+                    case 'SD':
+                        quality = "SD 480p";
+                        break;
+                    case 'HD':
+                        quality = "HD 720p";
+                        break;
+                    case 'FHD':
+                        quality = "FHD 1080p";
+                        break;
+                }
+
+                // Get the direct download link
+                const directLink = await PixaldrainDL(link, quality, "direct");
+                if (directLink) {
+                    // Send the download link to the JID
+                    await conn.sendMessage(jid, {
+                        document: {
+                            url: directLink
+                        },
+                        mimetype: 'video/mp4',
+                        fileName: `Deneth-MD Movies(${movie.title}).mp4`,
+                        caption: `Download link for ${movie.title} - ${quality}`
+                    });
+                }
+            }
+        };
+
+        // Register the quality listener for this JID
+        conn.ev.on("messages.upsert", qualityListener);
+
+        // Clean up the listener after 60 seconds to prevent memory leaks
+        setTimeout(() => {
+            conn.ev.off("messages.upsert", qualityListener);
+        }, 60000);
+
     } catch (err) {
         console.log(err);
         return reply(`❗ Error: ${err.message}`);
