@@ -67,6 +67,9 @@ async (conn, mek, m, { from, q, reply }) => {
             const movieResponse = await fetch(`https://www.dark-yasiya-api.site/movie/ytsmx/movie?id=${movieId}`);
             const movieDetails = await movieResponse.json();
             if (!movieDetails || !movieDetails.status || !movieDetails.result) {
+                await conn.sendMessage(from, {
+                    react: { text: '❌', key: mek.key }
+                });
                 return reply("❗ Movie details not found.");
             }
 
@@ -91,6 +94,9 @@ async (conn, mek, m, { from, q, reply }) => {
                     isForwarded: true,
                 }
             }, { quoted: mek });
+
+            // Clean up the listener to prevent the issue of multiple messages
+            conn.ev.off("messages.upsert", movieSelectionListener);
         };
 
         // Register the movie selection listener
