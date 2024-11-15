@@ -21,6 +21,7 @@
     "xnxx-dl": "^1.0.2",
     "pm2": "^5.2.0",
     "util": "^0.12.4",
+    "file_size_url": "1.0.4",
     "os":"0.1.2",
     "express": "latest",
     "axios": "^1.2.5",
