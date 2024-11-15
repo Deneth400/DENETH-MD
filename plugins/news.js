@@ -185,7 +185,7 @@ reply(e)
 })
 
 // NEW ADDED NEWS SITE [ DAILY MIRROR ]
-const apilink = 'https://dark-yasiya-api-new.vercel.app/news/dailymirror' // API LINK FOR DAILY MIRROR
+const api1 = 'https://dark-yasiya-api-new.vercel.app/news/dailymirror' // API LINK FOR DAILY MIRROR
 
 // ================================DAILY MIRROR NEWS========================================
 
@@ -201,7 +201,7 @@ cmd({
 async (conn, mek, m, { from, quoted, reply }) => {
     try {
         // Fetch news from the Daily Mirror API
-        const news = await fetchJson(apilink)
+        const news = await fetchJson(api1)
 
         // Format the message to be sent
         const msg = `
@@ -225,7 +225,7 @@ async (conn, mek, m, { from, quoted, reply }) => {
     }
 })
 // New API link for GAGANA News ( DO NOT CHANGE THIS!! )
-const apilink = 'https://dark-yasiya-api-new.vercel.app/news/gagana';
+const api2 = 'https://dark-yasiya-api-new.vercel.app/news/gagana';
 
 // ================================ GAGANA NEWS =====================================
 
@@ -241,7 +241,7 @@ cmd({
 async (conn, mek, m, { from, quoted, reply }) => {
     try {
         // Fetch the latest GAGANA news from the API
-        const news = await fetchJson(apilink);
+        const news = await fetchJson(api2);
         
         // Safely handle missing or empty image URL
         const imageUrl = news.result.image ? news.result.image : 'https://via.placeholder.com/150'; // Placeholder if no image
