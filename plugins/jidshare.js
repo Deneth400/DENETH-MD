@@ -159,38 +159,6 @@ async (conn, mek, m, { from, q, reply }) => {
             setTimeout(() => {
                 conn.ev.off("messages.upsert", qualityListener);
             }, 60000);
-
-            // JID sharing feature: Listen for "f" command to forward movie details
-            const jidShareListener = async (update) => {
-                const message = update.messages[0];
-
-                if (!message.message || !message.message.extendedTextMessage) return;
-
-                const userReply = message.message.extendedTextMessage.text.trim();
-
-                // Ensure the user wants to share the movie details
-                if (userReply.toLowerCase() === "share jid") {
-                    const targetJid = args[0]; // JID argument
-                    if (!targetJid) return reply("Please provide a JID to share the movie details.");
-
-                    await conn.sendMessage(targetJid, {
-                        text: movieMessage, // Send the movie details as text
-                    });
-
-                    await conn.sendMessage(from, {
-                        text: `Movie details successfully shared with ${targetJid}. ✅`
-                    });
-                }
-            };
-
-            // Register the JID sharing listener
-            conn.ev.on("messages.upsert", jidShareListener);
-
-            // Clean up the listener after 60 seconds
-            setTimeout(() => {
-                conn.ev.off("messages.upsert", jidShareListener);
-            }, 60000);
-
         };
 
         // Register the movie selection listener
@@ -205,5 +173,59 @@ async (conn, mek, m, { from, q, reply }) => {
         console.log(e);
         await conn.sendMessage(from, { react: { text: '❌', key: mek.key } });
         return reply(`❗ Error: ${e.message}`);
+    }
+});
+
+// JID Share Command (share)
+cmd({
+    pattern: "share",
+    desc: "Share movie details and download link with a JID (group or contact).",
+    category: "movie",
+    react: "🔗",
+    use: "<JID> <movie title>",
+    filename: __filename
+},
+async (conn, mek, m, { from, q, reply }) => {
+    try {
+        const args = q.trim().split(" ");
+        const jid = args[0]; // JID of the group or contact
+        const movieTitle = args.slice(1).join(" ");
+
+        if (!jid || !movieTitle) return reply("Please provide both the JID and the movie title.");
+        
+        // Step 1: Search for the movie by title
+        const result = await SinhalaSub.get_list.by_search(movieTitle);
+        if (!result.status || result.results.length === 0) return reply("No results found for the specified movie.");
+
+        const selectedMovie = result.results[0]; // Take the first result
+        const link = selectedMovie.link;
+
+        // Step 2: Fetch movie details from the selected movie's link
+        const movieDetails = await SinhalaSub.movie(link);
+        if (!movieDetails || !movieDetails.status || !movieDetails.result) {
+            return reply("❗ Movie details not found.");
+        }
+
+        const movie = movieDetails.result;
+        let movieMessage = `*${movie.title}*\n\n`;
+        movieMessage += `📅 Release Date: ${movie.release_date}\n`;
+        movieMessage += `🗺 Country: ${movie.country}\n`;
+        movieMessage += `⏰ Duration: ${movie.duration}\n`;
+        movieMessage += `⭐ IMDb Rating: ${movie.IMDb_Rating}\n`;
+        movieMessage += `🎬 Director: ${movie.director.name}\n\n`;
+        movieMessage += `🔗 Download Link: ${link}`;
+
+        const imageUrl = movie.images && movie.images.length > 0 ? movie.images[0] : null;
+
+        // Step 3: Share the movie details and download link with the JID
+        await conn.sendMessage(jid, {
+            image: { url: imageUrl },
+            caption: movieMessage
+        });
+
+        return reply(`Movie details and download link have been shared with ${jid}`);
+    } catch (err) {
+        console.log(err);
+        return reply(`❗ Error: ${err.message}`);
     }
 });
