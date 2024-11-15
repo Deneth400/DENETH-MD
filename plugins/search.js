@@ -18,7 +18,7 @@ cmd({
         const searchResponse = await fetch(searchUrl);
         const searchResult = await searchResponse.json();
 
-        if (!searchResult.status || searchResult.results.length === 0) {
+        if (!searchResult.status || !Array.isArray(searchResult.results) || searchResult.results.length === 0) {
             return reply("No results found.");
         }
 
@@ -73,16 +73,16 @@ cmd({
                         const movieInfoResponse = await fetch(movieInfoUrl);
                         const movieInfoData = await movieInfoResponse.json();
 
-                        if (!movieInfoData.status) return reply("Could not fetch movie details.");
+                        if (!movieInfoData.status || !movieInfoData.result) return reply("Could not fetch movie details.");
 
                         const movie = movieInfoData.result;
                         let movieMessage = `*${movie.title}*\n\n`;
-                        movieMessage += `📅 Release Date: ${movie.release_date}\n`;
-                        movieMessage += `🗺 Country: ${movie.country}\n`;
-                        movieMessage += `⏰ Duration: ${movie.duration}\n`;
-                        movieMessage += `🎭 Genres: ${movie.genres}\n`;
-                        movieMessage += `⭐ IMDb Rating: ${movie.IMDb_Rating}\n`;
-                        movieMessage += `🎬 Director: ${movie.director.name}\n\n`;
+                        movieMessage += `📅 Release Date: ${movie.release_date || 'N/A'}\n`;
+                        movieMessage += `🗺 Country: ${movie.country || 'N/A'}\n`;
+                        movieMessage += `⏰ Duration: ${movie.duration || 'N/A'}\n`;
+                        movieMessage += `🎭 Genres: ${movie.genres || 'N/A'}\n`;
+                        movieMessage += `⭐ IMDb Rating: ${movie.IMDb_Rating || 'N/A'}\n`;
+                        movieMessage += `🎬 Director: ${movie.director ? movie.director.name : 'N/A'}\n\n`;
                         movieMessage += `🔢 Choose download options:\n*1 | SD 480p*\n*2 | HD 720p*\n*3 | FHD 1080p*\n`;
 
                         await conn.sendMessage(from, {
@@ -116,20 +116,21 @@ cmd({
                                     return reply("Invalid choice. Please select from 1, 2, or 3.");
                             }
 
-                            // Fetch the download link for the selected quality
-                            const downloadLink = movie.download_links[quality];
-                            if (!downloadLink) {
+                            // Check if download links exist
+                            if (!movie.download_links || !movie.download_links[quality]) {
                                 return reply(`Could not find the ${quality} download link.`);
                             }
+
+                            downloadUrl = movie.download_links[quality];
 
                             // Provide download link
                             await conn.sendMessage(from, {
                                 document: {
-                                    url: downloadLink
+                                    url: downloadUrl
                                 },
                                 mimetype: 'video/mp4',
                                 fileName: `${movie.title} - ${quality}.mp4`,
-                                caption: `${movie.title}\nDownload Link for ${quality}: ${downloadLink}\n> Powered by DENETH-xD Tech®`
+                                caption: `${movie.title}\nDownload Link for ${quality}: ${downloadUrl}\n> Powered by DENETH-xD Tech®`
                             }, { quoted: mek });
                         });
                         break;
@@ -140,14 +141,14 @@ cmd({
                         const tvShowResponse = await fetch(tvShowUrl);
                         const tvShowData = await tvShowResponse.json();
 
-                        if (!tvShowData.status) return reply("Could not fetch TV show details.");
+                        if (!tvShowData.status || !tvShowData.result) return reply("Could not fetch TV show details.");
 
                         const tvShow = tvShowData.result;
                         let tvShowMessage = `*${tvShow.title}*\n\n`;
-                        tvShowMessage += `📅 Release Date: ${tvShow.release_date}\n`;
-                        tvShowMessage += `🗺 Country: ${tvShow.country}\n`;
-                        tvShowMessage += `⏰ Duration: ${tvShow.duration}\n`;
-                        tvShowMessage += `🎭 Genres: ${tvShow.genres}\n\n`;
+                        tvShowMessage += `📅 Release Date: ${tvShow.release_date || 'N/A'}\n`;
+                        tvShowMessage += `🗺 Country: ${tvShow.country || 'N/A'}\n`;
+                        tvShowMessage += `⏰ Duration: ${tvShow.duration || 'N/A'}\n`;
+                        tvShowMessage += `🎭 Genres: ${tvShow.genres || 'N/A'}\n\n`;
 
                         await conn.sendMessage(from, {
                             caption: tvShowMessage,
