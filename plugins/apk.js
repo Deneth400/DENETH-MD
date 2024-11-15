@@ -1,4 +1,11 @@
-// Other code remains the same...
+const config = require('../config')
+const { cmd, commands } = require('../command')
+const { getBuffer, getGroupAdmins, getRandom, h2k, isUrl, Json, runtime, sleep, fetchJson} = require('../lib/functions')
+const apkdl = require('../lib/apkdl')
+const ufs = require('../lib/ufs');
+let newsize = config.MAX_SIZE * 1024 * 1024
+let wm = `© 𝖰𝗎𝖾𝖾𝗇 𝗄𝖾𝗇𝗓𝗂 𝗆𝖽 v${require("../package.json").version} (Test)
+sɪᴍᴘʟᴇ ᴡᴀʙᴏᴛ ᴍᴀᴅᴇ ʙʏ ᴅᴀɴᴜxᴢᴢ 🅥`
 
 cmd({
     pattern: "apk",
