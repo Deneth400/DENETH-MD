@@ -18,6 +18,9 @@ async (conn, mek, m, { from, q, reply }) => {
         const searchUrl = `https://dark-yasiya-api-new.vercel.app/search/ginisisila?text=${encodeURIComponent(query)}&page=1`;
         const searchResponse = await axios.get(searchUrl);
         
+        // Log the entire response for debugging
+        console.log('Search Response:', searchResponse.data);
+
         if (!searchResponse.data.results || searchResponse.data.results.length === 0) {
             return reply("No results found for the given search term.");
         }
