@@ -22,10 +22,12 @@ async (conn, mek, m, { from, q, reply }) => {
         console.log('API Response:', result);
 
         // Check if the result and the results array exist
-        if (!result.status || !result.results || result.results.length === 0) return reply("No results found.");
+        if (!result.status || !result.result || !result.result.data || result.result.data.length === 0) {
+            return reply("No results found.");
+        }
 
         let message = "*Search Results:*\n\n";
-        result.results.forEach((item, index) => {
+        result.result.data.forEach((item, index) => {
             message += `${index + 1}. ${item.title}\nYear: ${item.year}\nLink: ${item.url}\n\n`;
         });
 
