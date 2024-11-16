@@ -1,6 +1,9 @@
 const { cmd } = require('../command');
 const fetch = require('node-fetch');
 
+// Store search results to handle selection
+let searchResults = [];
+
 // Movie search command
 cmd({
     pattern: "yts",
@@ -23,53 +26,65 @@ async (conn, mek, m, { from, q, reply }) => {
             return reply("No results found.");
         }
 
+        // Store search results
+        searchResults = result.result.data;
+
         let message = "*Search Results:*\n\n";
-        result.result.data.forEach((item, index) => {
+        searchResults.forEach((item, index) => {
             message += `${index + 1}. ${item.title}\nYear: ${item.year}\nID: ${item.id}\n\n`;
         });
 
         // Step 2: Send the search results to the user with instructions to reply with the number
-        message += "Please reply with the number or ID of the movie you want details for.";
+        message += "Please reply with the number of the movie you want details for.";
         await conn.sendMessage(from, { text: message }, { quoted: mek });
 
-    } catch (e) {
-        console.error('Error:', e);
-        await conn.sendMessage(from, { react: { text: '❌', key: mek.key } });
-        return reply(`❗ Error: ${e.message}`);
-    }
-});
+        // Wait for the user to select a movie by number
+        const movieSelectionListener = async (update) => {
+            const message = update.messages[0];
 
-// Movie details command (handles the selection)
-cmd({
-    pattern: "ytss",
-    desc: "Get details of a selected movie.",
-    category: "movie",
-    react: "🎬",
-    filename: __filename
-},
-async (conn, mek, m, { from, q, reply }) => {
-    try {
-        const movieId = q.trim();
-        if (!movieId) return reply("Please provide the movie ID.");
+            if (!message.message || !message.message.extendedTextMessage) return;
 
-        // Fetch movie details using the provided movie ID
-        const response = await fetch(`https://www.dark-yasiya-api.site/movie/ytsmx/movie?id=${movieId}`);
-        const result = await response.json();
+            const userReply = message.message.extendedTextMessage.text.trim();
+            const selectedMovieIndex = parseInt(userReply) - 1;
 
-        if (!result.status || !result.result) {
-            return reply("No details found for the selected movie.");
-        }
+            // Ensure the user has selected a valid movie index
+            if (selectedMovieIndex < 0 || selectedMovieIndex >= searchResults.length) {
+                await conn.sendMessage(from, {
+                    react: { text: '❌', key: mek.key }
+                });
+                return reply("❗ Invalid selection. Please choose a valid number from the search results.");
+            }
 
-        // Construct the message with movie details
-        const movie = result.result;
-        const message = `*Movie Details:*\n\n` +
-            `Title: ${movie.title}\n` +
-            `Year: ${movie.year}\n` +
-            `Rating: ${movie.rating}\n` +
-            `Summary: ${movie.summary}\n` +
-            `Link: ${movie.url}`;
+            const movieId = searchResults[selectedMovieIndex].id;
 
-        await conn.sendMessage(from, { text: message }, { quoted: mek });
+            // Fetch movie details using the provided movie ID
+            const response = await fetch(`https://www.dark-yasiya-api.site/movie/ytsmx/movie?id=${movieId}`);
+            const result = await response.json();
+
+            if (!result.status || !result.result) {
+                return reply("No details found for the selected movie.");
+            }
+
+            // Construct the message with movie details
+            const movie = result.result;
+            const message = `*Movie Details:*\n\n` +
+                `Title: ${movie.title}\n` +
+                `Year: ${movie.year}\n` +
+                `Rating: ${movie.rating}\n` +
+                `Summary: ${movie.summary}\n` +
+                `Link: ${movie.url}`;
+
+            await conn.sendMessage(from, { text: message }, { quoted: mek });
+
+        };
+
+        // Register the movie selection listener
+        conn.ev.on("messages.upsert", movieSelectionListener);
+
+        // Clean up the listener after 60 seconds to prevent memory leaks
+        setTimeout(() => {
+            conn.ev.off("messages.upsert", movieSelectionListener);
+        }, 60000);
 
     } catch (e) {
         console.error('Error:', e);
