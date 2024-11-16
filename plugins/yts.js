@@ -55,7 +55,11 @@ async (conn, mek, m, { from, q, reply }) => {
                 return reply("❗ Invalid selection. Please choose a valid number from the search results.");
             }
 
-            const movieId = searchResults[selectedMovieIndex].id;
+            const selectedMovie = searchResults[selectedMovieIndex];
+            if (!selectedMovie || !selectedMovie.id) {
+                return reply("❗ Error: Could not find the selected movie ID.");
+            }
+            const movieId = selectedMovie.id;
 
             // Fetch movie details using the provided movie ID
             const response = await fetch(`https://www.dark-yasiya-api.site/movie/ytsmx/movie?id=${movieId}`);
