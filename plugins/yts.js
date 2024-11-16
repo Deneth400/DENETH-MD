@@ -25,11 +25,11 @@ async (conn, mek, m, { from, q, reply }) => {
 
         let message = "*Search Results:*\n\n";
         result.result.data.forEach((item, index) => {
-            message += `${index + 1}. ${item.title}\nYear: ${item.year}\n\n`;
+            message += `${index + 1}. ${item.title}\nYear: ${item.year}\nID: ${item.id}\n\n`;
         });
 
         // Step 2: Send the search results to the user with instructions to reply with the number
-        message += "Please reply with the number of the movie you want details for.";
+        message += "Please reply with the number or ID of the movie you want details for.";
         await conn.sendMessage(from, { text: message }, { quoted: mek });
 
     } catch (e) {
