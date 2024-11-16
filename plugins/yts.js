@@ -41,7 +41,7 @@ async (conn, mek, m, { from, q, reply }) => {
 
 // Movie details command (handles the selection)
 cmd({
-    pattern: "movie",
+    pattern: "ytss",
     desc: "Get details of a selected movie.",
     category: "movie",
     react: "🎬",
