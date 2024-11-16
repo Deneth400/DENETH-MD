@@ -25,17 +25,51 @@ async (conn, mek, m, { from, q, reply }) => {
 
         let message = "*Search Results:*\n\n";
         result.result.data.forEach((item, index) => {
-            message += `${index + 1}. ${item.title}\nYear: ${item.year}\nLink: ${item.url}\n\n`;
+            message += `${index + 1}. ${item.title}\nYear: ${item.year}\n\n`;
         });
 
-        // Step 2: Send the search results to the user
-        await conn.sendMessage(from, {
-            text: message,
-            contextInfo: {
-                forwardingScore: 999,
-                isForwarded: true,
-            }
-        }, { quoted: mek });
+        // Step 2: Send the search results to the user with instructions to reply with the number
+        message += "Please reply with the number of the movie you want details for.";
+        await conn.sendMessage(from, { text: message }, { quoted: mek });
+
+    } catch (e) {
+        console.error('Error:', e);
+        await conn.sendMessage(from, { react: { text: '❌', key: mek.key } });
+        return reply(`❗ Error: ${e.message}`);
+    }
+});
+
+// Movie details command (handles the selection)
+cmd({
+    pattern: "movie",
+    desc: "Get details of a selected movie.",
+    category: "movie",
+    react: "🎬",
+    filename: __filename
+},
+async (conn, mek, m, { from, q, reply }) => {
+    try {
+        const movieId = q.trim();
+        if (!movieId) return reply("Please provide the movie ID.");
+
+        // Fetch movie details using the provided movie ID
+        const response = await fetch(`https://www.dark-yasiya-api.site/movie/ytsmx/movie?id=${movieId}`);
+        const result = await response.json();
+
+        if (!result.status || !result.result) {
+            return reply("No details found for the selected movie.");
+        }
+
+        // Construct the message with movie details
+        const movie = result.result;
+        const message = `*Movie Details:*\n\n` +
+            `Title: ${movie.title}\n` +
+            `Year: ${movie.year}\n` +
+            `Rating: ${movie.rating}\n` +
+            `Summary: ${movie.summary}\n` +
+            `Link: ${movie.url}`;
+
+        await conn.sendMessage(from, { text: message }, { quoted: mek });
 
     } catch (e) {
         console.error('Error:', e);
