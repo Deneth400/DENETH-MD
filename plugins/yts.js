@@ -23,13 +23,12 @@ async (conn, mek, m, { from, q, reply }) => {
             return reply("No results found.");
         }
 
-        // Create the message with search results
         let message = "*Search Results:*\n\n";
         result.result.data.forEach((item, index) => {
-            message += `${index + 1}. ${item.title}\nYear: ${item.year}\n\n`;
+            message += `${index + 1}. ${item.title}\nYear: ${item.year}\nLink: ${item.url}\n\n`;
         });
 
-        // Send the search results to the user
+        // Step 2: Send the search results to the user
         await conn.sendMessage(from, {
             text: message,
             contextInfo: {
@@ -37,71 +36,6 @@ async (conn, mek, m, { from, q, reply }) => {
                 isForwarded: true,
             }
         }, { quoted: mek });
-
-        const movieSelectionListener = async (update) => {
-            const message = update.messages[0];
-
-            if (!message.message || !message.message.extendedTextMessage) return;
-
-            const userReply = message.message.extendedTextMessage.text.trim();
-            const selectedMovieIndex = parseInt(userReply) - 1;
-
-            // Ensure the user has selected a valid movie index
-            if (isNaN(selectedMovieIndex) || selectedMovieIndex < 0 || selectedMovieIndex >= result.result.data.length) {
-                return reply("❗ Invalid selection. Please choose a valid number from the search results.");
-            }
-
-            const selectedMovie = result.result.data[selectedMovieIndex];
-            if (!selectedMovie || !selectedMovie.url) {
-                return reply("❗ Invalid selection. Unable to retrieve movie details.");
-            }
-
-            const movieId = selectedMovie.url.split('/').pop();
-            console.log('Selected movie ID:', movieId);
-
-            // Step 3: Fetch movie details from the selected movie's ID
-            const movieResponse = await fetch(`https://www.dark-yasiya-api.site/movie/ytsmx/movie?id=${movieId}`);
-            const movieDetails = await movieResponse.json();
-            console.log('Movie Details Response:', movieDetails);
-
-            // Check if the movie details were successfully retrieved
-            if (!movieDetails || !movieDetails.status || !movieDetails.result) {
-                return reply("❗ Movie details not found.");
-            }
-
-            const movie = movieDetails.result;
-            let movieMessage = `*${movie.title}*\n\n`;
-            movieMessage += `📅 Release Date: ${movie.year}\n`;
-            movieMessage += `⏰ Duration: ${movie.runtime} minutes\n`;
-            movieMessage += `🎭 Genres: ${movie.genres.join(', ')}\n`;
-            movieMessage += `⭐ IMDb Rating: ${movie.rating}\n\n`;
-            movieMessage += `🎬 Director: ${movie.director}\n`;
-            movieMessage += `📋 Description: ${movie.description_full}\n\n`;
-
-            movie.torrents.forEach((torrent, idx) => {
-                movieMessage += `Torrent ${idx + 1}:\nQuality: ${torrent.quality}\nSize: ${torrent.size}\nLink: ${torrent.url}\n\n`;
-            });
-
-            // Step 4: Send movie details with download options
-            await conn.sendMessage(from, {
-                text: movieMessage,
-                contextInfo: {
-                    forwardingScore: 999,
-                    isForwarded: true,
-                }
-            }, { quoted: mek });
-
-            // Clean up the listener to prevent the issue of multiple messages
-            conn.ev.off("messages.upsert", movieSelectionListener);
-        };
-
-        // Register the movie selection listener
-        conn.ev.on("messages.upsert", movieSelectionListener);
-
-        // Clean up the listener after 60 seconds to prevent memory leaks
-        setTimeout(() => {
-            conn.ev.off("messages.upsert", movieSelectionListener);
-        }, 60000);
 
     } catch (e) {
         console.error('Error:', e);
