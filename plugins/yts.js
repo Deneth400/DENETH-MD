@@ -29,63 +29,53 @@ async (conn, mek, m, { from, q, reply }) => {
         // Store search results
         searchResults = result.result.data;
 
-        let searchMessage = "*Search Results:*\n\n";
+        let message = "*Search Results:*\n\n";
         searchResults.forEach((item, index) => {
-            searchMessage += `${index + 1}. ${item.title}\nYear: ${item.year}\nID: ${item.id}\n\n`;
+            message += `${index + 1}. ${item.title}\nYear: ${item.year}\nID: ${item.id}\n\n`;
         });
 
         // Step 2: Send the search results to the user with instructions to reply with the number
-        searchMessage += "Please reply with the number of the movie you want details for.";
-        await conn.sendMessage(from, { text: searchMessage }, { quoted: mek });
+        message += "Please reply with the number of the movie you want details for.";
+        await conn.sendMessage(from, { text: message }, { quoted: mek });
 
         // Wait for the user to select a movie by number
         const movieSelectionListener = async (update) => {
-            try {
-                const message = update.messages[0];
+            const message = update.messages[0];
 
-                if (!message.message || !message.message.extendedTextMessage) return;
+            if (!message.message || !message.message.extendedTextMessage) return;
 
-                const userReply = message.message.extendedTextMessage.text.trim();
-                const selectedMovieIndex = parseInt(userReply) - 1;
+            const userReply = message.message.extendedTextMessage.text.trim();
+            const selectedMovieIndex = parseInt(userReply) - 1;
 
-                // Ensure the user has selected a valid movie index
-                if (selectedMovieIndex < 0 || selectedMovieIndex >= searchResults.length) {
-                    await conn.sendMessage(from, {
-                        react: { text: '❌', key: mek.key }
-                    });
-                    return reply("❗ Invalid selection. Please choose a valid number from the search results.");
-                }
-
-                const selectedMovie = searchResults[selectedMovieIndex];
-                if (!selectedMovie || !selectedMovie.id) {
-                    return reply("❗ Error: Could not find the selected movie ID.");
-                }
-                const movieId = selectedMovie.id;
-
-                // Fetch movie details using the provided movie ID
-                const response = await fetch(`https://www.dark-yasiya-api.site/movie/ytsmx/movie?id=${movieId}`);
-                const result = await response.json();
-
-                if (!result.status || !result.result) {
-                    return reply("No details found for the selected movie.");
-                }
-
-                // Construct the message with movie details
-                const movie = result.result;
-                const detailsMessage = `*Movie Details:*\n\n` +
-                    `Title: ${movie.title}\n` +
-                    `Year: ${movie.year}\n` +
-                    `Rating: ${movie.rating}\n` +
-                    `Summary: ${movie.summary}\n` +
-                    `Link: ${movie.url}`;
-
-                await conn.sendMessage(from, { text: detailsMessage }, { quoted: mek });
-
-            } catch (error) {
-                console.error('Error:', error);
-                await conn.sendMessage(from, { react: { text: '❌', key: mek.key } });
-                return reply(`❗ Error: ${error.message}`);
+            // Ensure the user has selected a valid movie index
+            if (selectedMovieIndex < 0 || selectedMovieIndex >= searchResults.length) {
+                await conn.sendMessage(from, {
+                    react: { text: '❌', key: mek.key }
+                });
+                return reply("❗ Invalid selection. Please choose a valid number from the search results.");
             }
+
+            const movieId = searchResults[selectedMovieIndex].id;
+
+            // Fetch movie details using the provided movie ID
+            const response = await fetch(`https://www.dark-yasiya-api.site/movie/ytsmx/movie?id=${movieId}`);
+            const result = await response.json();
+
+            if (!result.status || !result.result) {
+                return reply("No details found for the selected movie.");
+            }
+
+            // Construct the message with movie details
+            const movie = result.result;
+            const message = `*Movie Details:*\n\n` +
+                `Title: ${movie.title}\n` +
+                `Year: ${movie.year}\n` +
+                `Rating: ${movie.rating}\n` +
+                `Summary: ${movie.summary}\n` +
+                `Link: ${movie.url}`;
+
+            await conn.sendMessage(from, { text: message }, { quoted: mek });
+
         };
 
         // Register the movie selection listener
