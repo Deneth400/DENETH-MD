@@ -23,13 +23,14 @@ async (conn, mek, m, { from, q, reply }) => {
             return reply("No results found.");
         }
 
+        // Create the message with search results
         let message = "*Search Results:*\n\n";
         result.result.data.forEach((item, index) => {
             message += `${index + 1}. ${item.title}\nYear: ${item.year}\n\n`;
         });
 
-        // Step 2: Send the search results to the user
-        const sentMsg = await conn.sendMessage(from, {
+        // Send the search results to the user
+        await conn.sendMessage(from, {
             text: message,
             contextInfo: {
                 forwardingScore: 999,
@@ -46,18 +47,12 @@ async (conn, mek, m, { from, q, reply }) => {
             const selectedMovieIndex = parseInt(userReply) - 1;
 
             // Ensure the user has selected a valid movie index
-            if (selectedMovieIndex < 0 || selectedMovieIndex >= result.result.data.length) {
-                await conn.sendMessage(from, {
-                    react: { text: '❌', key: mek.key }
-                });
+            if (isNaN(selectedMovieIndex) || selectedMovieIndex < 0 || selectedMovieIndex >= result.result.data.length) {
                 return reply("❗ Invalid selection. Please choose a valid number from the search results.");
             }
 
             const selectedMovie = result.result.data[selectedMovieIndex];
             if (!selectedMovie || !selectedMovie.url) {
-                await conn.sendMessage(from, {
-                    react: { text: '❌', key: mek.key }
-                });
                 return reply("❗ Invalid selection. Unable to retrieve movie details.");
             }
 
@@ -69,10 +64,8 @@ async (conn, mek, m, { from, q, reply }) => {
             const movieDetails = await movieResponse.json();
             console.log('Movie Details Response:', movieDetails);
 
+            // Check if the movie details were successfully retrieved
             if (!movieDetails || !movieDetails.status || !movieDetails.result) {
-                await conn.sendMessage(from, {
-                    react: { text: '❌', key: mek.key }
-                });
                 return reply("❗ Movie details not found.");
             }
 
