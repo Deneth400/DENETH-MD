@@ -40,46 +40,52 @@ async (conn, mek, m, { from, q, reply }) => {
 
         // Wait for the user to select a movie by number
         const movieSelectionListener = async (update) => {
-            const message = update.messages[0];
+            try {
+                const message = update.messages[0];
 
-            if (!message.message || !message.message.extendedTextMessage) return;
+                if (!message.message || !message.message.extendedTextMessage) return;
 
-            const userReply = message.message.extendedTextMessage.text.trim();
-            const selectedMovieIndex = parseInt(userReply) - 1;
+                const userReply = message.message.extendedTextMessage.text.trim();
+                const selectedMovieIndex = parseInt(userReply) - 1;
 
-            // Ensure the user has selected a valid movie index
-            if (selectedMovieIndex < 0 || selectedMovieIndex >= searchResults.length) {
-                await conn.sendMessage(from, {
-                    react: { text: '❌', key: mek.key }
-                });
-                return reply("❗ Invalid selection. Please choose a valid number from the search results.");
+                // Ensure the user has selected a valid movie index
+                if (selectedMovieIndex < 0 || selectedMovieIndex >= searchResults.length) {
+                    await conn.sendMessage(from, {
+                        react: { text: '❌', key: mek.key }
+                    });
+                    return reply("❗ Invalid selection. Please choose a valid number from the search results.");
+                }
+
+                const selectedMovie = searchResults[selectedMovieIndex];
+                if (!selectedMovie || !selectedMovie.id) {
+                    return reply("❗ Error: Could not find the selected movie ID.");
+                }
+                const movieId = selectedMovie.id;
+
+                // Fetch movie details using the provided movie ID
+                const response = await fetch(`https://www.dark-yasiya-api.site/movie/ytsmx/movie?id=${movieId}`);
+                const result = await response.json();
+
+                if (!result.status || !result.result) {
+                    return reply("No details found for the selected movie.");
+                }
+
+                // Construct the message with movie details
+                const movie = result.result;
+                const detailsMessage = `*Movie Details:*\n\n` +
+                    `Title: ${movie.title}\n` +
+                    `Year: ${movie.year}\n` +
+                    `Rating: ${movie.rating}\n` +
+                    `Summary: ${movie.summary}\n` +
+                    `Link: ${movie.url}`;
+
+                await conn.sendMessage(from, { text: detailsMessage }, { quoted: mek });
+
+            } catch (error) {
+                console.error('Error:', error);
+                await conn.sendMessage(from, { react: { text: '❌', key: mek.key } });
+                return reply(`❗ Error: ${error.message}`);
             }
-
-            const selectedMovie = searchResults[selectedMovieIndex];
-            if (!selectedMovie || !selectedMovie.id) {
-                return reply("❗ Error: Could not find the selected movie ID.");
-            }
-            const movieId = selectedMovie.id;
-
-            // Fetch movie details using the provided movie ID
-            const response = await fetch(`https://www.dark-yasiya-api.site/movie/ytsmx/movie?id=${movieId}`);
-            const result = await response.json();
-
-            if (!result.status || !result.result) {
-                return reply("No details found for the selected movie.");
-            }
-
-            // Construct the message with movie details
-            const movie = result.result;
-            const detailsMessage = `*Movie Details:*\n\n` +
-                `Title: ${movie.title}\n` +
-                `Year: ${movie.year}\n` +
-                `Rating: ${movie.rating}\n` +
-                `Summary: ${movie.summary}\n` +
-                `Link: ${movie.url}`;
-
-            await conn.sendMessage(from, { text: detailsMessage }, { quoted: mek });
-
         };
 
         // Register the movie selection listener
