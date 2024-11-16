@@ -29,14 +29,14 @@ async (conn, mek, m, { from, q, reply }) => {
         // Store search results
         searchResults = result.result.data;
 
-        let message = "*Search Results:*\n\n";
+        let searchMessage = "*Search Results:*\n\n";
         searchResults.forEach((item, index) => {
-            message += `${index + 1}. ${item.title}\nYear: ${item.year}\nID: ${item.id}\n\n`;
+            searchMessage += `${index + 1}. ${item.title}\nYear: ${item.year}\nID: ${item.id}\n\n`;
         });
 
         // Step 2: Send the search results to the user with instructions to reply with the number
-        message += "Please reply with the number of the movie you want details for.";
-        await conn.sendMessage(from, { text: message }, { quoted: mek });
+        searchMessage += "Please reply with the number of the movie you want details for.";
+        await conn.sendMessage(from, { text: searchMessage }, { quoted: mek });
 
         // Wait for the user to select a movie by number
         const movieSelectionListener = async (update) => {
@@ -67,14 +67,14 @@ async (conn, mek, m, { from, q, reply }) => {
 
             // Construct the message with movie details
             const movie = result.result;
-            const message = `*Movie Details:*\n\n` +
+            const detailsMessage = `*Movie Details:*\n\n` +
                 `Title: ${movie.title}\n` +
                 `Year: ${movie.year}\n` +
                 `Rating: ${movie.rating}\n` +
                 `Summary: ${movie.summary}\n` +
                 `Link: ${movie.url}`;
 
-            await conn.sendMessage(from, { text: message }, { quoted: mek });
+            await conn.sendMessage(from, { text: detailsMessage }, { quoted: mek });
 
         };
 
